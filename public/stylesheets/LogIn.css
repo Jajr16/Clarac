@@ -1,0 +1,50 @@
+.LogIn {
+    display: flex;
+    width: 32%;
+    height: 100%;
+    background-color: white;
+    border: 1px solid #ccc; 
+    justify-content: center;
+    align-items: center;
+    margin: 8rem auto;
+    position: relative;
+}
+
+.LogIn form {
+    align-items: center;
+    width: 70%;
+    margin: 3rem 0;
+}
+
+input {
+    margin-top: 0.5rem;
+    margin-bottom: 1.7rem;
+    padding: 0.3rem 0 0.3rem 0.3rem;
+}
+
+.title {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.log {
+    cursor: pointer;
+    margin-right: auto;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.log img {
+    height: 45px;
+    width: auto;
+    transition: all 0.3s;
+    margin-top: 0.6rem;
+    margin-bottom: 2rem;
+    margin-left: 0.7rem;
+}
+
+ .log img:hover {
+    transform: scale(1.2);
+}

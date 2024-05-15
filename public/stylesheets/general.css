@@ -1,0 +1,174 @@
+* {
+    font-family: Verdana;
+}
+
+a {
+    text-decoration: none;
+}
+
+i {
+    color: #001781;
+}
+
+html {
+    font-size: 94%;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: #eee;
+    border-radius: 1rem;
+}
+
+main {
+    margin: 7rem 3rem 0 3rem;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #fff;
+    z-index: 1;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 90%;
+    margin: auto 2rem;
+}
+
+td:nth-child(n + 3),
+th:nth-child(n + 3) {
+    text-align: center;
+}
+
+td:first-child {
+    border-left: 1px solid var(--light_gray);
+}
+
+td:last-child {
+    border-right: 1px solid var(--light_gray);
+}
+
+thead {
+    text-transform: uppercase;
+}
+
+thead th:first-child {
+    border-top-left-radius: 1rem;
+}
+
+thead th:last-child {
+    border-top-right-radius: 1rem;
+}
+
+th,
+td {
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+tr {
+    background: hsl(0, 0%, 100%);
+}
+
+tr,
+td {
+    transition: .3s ease-in;
+}
+
+thead tr:first-child {
+    background: linear-gradient(to top, #0A8EBC, #001781);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: hsla(0, 0%, 93%, 0.7);
+}
+
+td:empty {
+    background: hsla(0, 0%, 93%, 0.7);
+}
+
+tr:hover:not(#firstrow),
+tr:hover td:empty {
+    pointer-events: visible;
+}
+
+tr:hover:not(#firstrow) {
+    transform: scale(1.01);
+}
+
+header .logo {
+    cursor: pointer;
+    margin-right: auto;
+    width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+header .logo img {
+    margin-top: 0.7rem;
+    height: 45px;
+    width: auto;
+    transition: all 0.3s;
+    margin-bottom: 2rem;
+}
+
+header .logo img:hover {
+    transform: scale(1.2);
+}
+
+header {
+    display: flex;
+}
+
+label {
+    display: block;
+    font-weight: 700;
+    color: black;
+    text-transform: uppercase;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+input,
+textarea {
+    background-color: var(--light_gray);
+    border-radius: 0.7rem;
+    border: none;
+    height: 1.5rem;
+    padding-left: 0.5rem;
+}
+
+:root {
+    --displayF: flex;
+    --grey: #eee;
+    --white: #fff;
+    --light_gray: #ccc;
+}
+
+input[type="submit"] {
+    display: flex;
+    flex-direction: column;
+    background-color: #001781;
+    color: white;
+    padding: 1rem 0;
+    justify-content: center;
+    align-items: center;
+    transition: 0.5s;
+    margin-top: 1.5rem;
+}
+
+input[type="submit"]:hover {
+    transform: scale(1.1);
+}

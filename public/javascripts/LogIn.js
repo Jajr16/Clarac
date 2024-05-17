@@ -16,7 +16,6 @@ form.addEventListener('submit', (e) => {
 })
 
 ws.onmessage = (event) => {
-    console.log(event)
     const data = JSON.parse(event.data);
     if (data.return == 'success') {
         // Usuario autenticado correctamente, guardar el nombre de usuario y los permisos en localStorage
@@ -24,6 +23,7 @@ ws.onmessage = (event) => {
         localStorage.setItem('permisosModulos', JSON.stringify(data.permisosModulos)); // Guardar el objeto completo
         localStorage.setItem('area', data.area)
         console.log(data.permisosModulos);
+        ws.close()
         // Redirigir a la página de inicio de sesión exitosa
         location.href = "/users/index";
     } else {
@@ -36,3 +36,11 @@ ws.onmessage = (event) => {
         });
     }
 }
+
+ws.onerror = (error) => {
+    console.error('WebSocket Error: ', error);
+};
+
+ws.onclose = (event) => {
+    console.log('WebSocket is closed now.', event);
+};

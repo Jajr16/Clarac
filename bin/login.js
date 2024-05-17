@@ -27,7 +27,7 @@ function login(ws, data) {
                                     }
                                     permisosModulos[row.modulo].push(row.permiso);
                                 });
-                                ws.send(JSON.stringify({return: 'success', Usuario: result[0].Usuario, permisosModulos, area: area[0].Área }))
+                                ws.send(JSON.stringify({ return: 'success', Usuario: result[0].Usuario, permisosModulos, area: area[0].Área }))
                             }
                         });
                     } else {

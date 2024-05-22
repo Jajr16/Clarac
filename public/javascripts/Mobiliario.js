@@ -11,7 +11,11 @@ if (!Permisos['MOBILIARIO']) {
         const edit = $('.editM')
         edit.click(function (e) {
             const inputM = $('.EditDataM')
-
+            inputM.attr("readonly", false)
+            var modify = '<input type="submit" value="Guardar" id="modyMob" name="modyMob" class="modyMob">'
+            var cancel = '<input type="submit" value="Cancelar" id="cancelMob" name="cancelMob" class="cancelMob">'
+            $('.buttons').append(modify)
+            $('.buttons').append(cancel)
         })
 
         // FUNCIONOALIDAD WEBSOCKETS
@@ -20,14 +24,14 @@ if (!Permisos['MOBILIARIO']) {
                 type: 'Consul_Mobiliario',
                 user: localStorage.getItem('user')
             };
-            
+
             ws.send(JSON.stringify(data));
         }
-        
+
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             const tbody = document.querySelector(".data-mob tbody")
-            
+
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${data.Articulo}</td>
@@ -35,12 +39,16 @@ if (!Permisos['MOBILIARIO']) {
             `;
 
             tr.addEventListener('click', () => {
-                if($('.fa-pencil-square-o').css('visibility', 'hidden')){
+                if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
                     $('.fa-pencil-square-o').css('visibility', 'visible')
+                    const inputM = $('.EditDataM')
+                    inputM.attr("readonly", true)
+                    $('.modyMob').remove()
+                    $('.cancelMob').remove()
                 }
                 $('.Fname').text(data.Articulo);
-                $('.UbiM').text(data.Ubicacion);
-                $('.CantidadM').text(data.Cantidad);
+                $('.UbiM').val(data.Ubicacion);
+                $('.CantidadM').val(data.Cantidad);
                 $('.DescM').text(data.Descripcion);
             });
 

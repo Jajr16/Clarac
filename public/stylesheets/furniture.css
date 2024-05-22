@@ -73,6 +73,7 @@
 
 .table-responsive table {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 39rem;
 }
 
 .table-responsive thead {
@@ -208,4 +209,17 @@
 .DescM {
     height: 8rem;
     width: 98%;
+}
+
+.cancelMob {
+    background-color: rgb(134, 0, 0)!important;
+}
+
+.buttons {
+    display: flex;
+    margin-bottom: 0!important;
+}
+
+.buttons input {
+    margin-top: 0;
 }

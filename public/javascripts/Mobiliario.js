@@ -6,7 +6,7 @@ var pathname = window.location.pathname;
 if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
-    if (pathname == "/users/ConsulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
+    if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
         // FUNCIONALIDAD PÁGINA
         const edit = $('.editM')
         edit.click(function (e) {
@@ -20,7 +20,7 @@ if (!Permisos['MOBILIARIO']) {
                 type: 'Consul_Mobiliario',
                 user: localStorage.getItem('user')
             };
-
+            
             ws.send(JSON.stringify(data));
         }
         

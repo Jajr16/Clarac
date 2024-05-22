@@ -7,6 +7,14 @@ if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
     if (pathname == "/users/ConsulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
+        // FUNCIONALIDAD PÁGINA
+        const edit = $('.editM')
+        edit.click(function (e) {
+            const inputM = $('.EditDataM')
+
+        })
+
+        // FUNCIONOALIDAD WEBSOCKETS
         ws.onopen = function () {
             const data = {
                 type: 'Consul_Mobiliario',
@@ -15,18 +23,28 @@ if (!Permisos['MOBILIARIO']) {
 
             ws.send(JSON.stringify(data));
         }
-
+        
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             const tbody = document.querySelector(".data-mob tbody")
+            
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${data.Articulo}</td>
+                <td>${data.Cantidad}</td>
+            `;
 
-            let filaHTML = `
-                <tr>
-                    <td>${data.Articulo}</td>
-                    <td>${data.Cantidad}</td>
-                </tr>`;
+            tr.addEventListener('click', () => {
+                if($('.fa-pencil-square-o').css('visibility', 'hidden')){
+                    $('.fa-pencil-square-o').css('visibility', 'visible')
+                }
+                $('.Fname').text(data.Articulo);
+                $('.UbiM').text(data.Ubicacion);
+                $('.CantidadM').text(data.Cantidad);
+                $('.DescM').text(data.Descripcion);
+            });
 
-            tbody.innerHTML += filaHTML;
+            tbody.appendChild(tr);
         }
 
         ws.onerror = (error) => {

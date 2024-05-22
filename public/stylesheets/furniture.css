@@ -92,6 +92,7 @@
 
 .description-furniture div {
     margin-bottom: 1rem;
+    align-items: center;
 }
 
 .Columns {
@@ -113,6 +114,8 @@
     display: flex;
     width: 12rem;
     align-items: center;
+    width: auto;
+    margin-right: 1rem;
 }
 
 .menu-item {
@@ -189,4 +192,20 @@
     border-width: 10px;
     border-left-color: #ccc;;
     transform: translateY(-50%) rotate(180deg);
+}
+
+.DesciptionM {
+    background-color: #ccc;
+    padding: 0.3rem;
+    padding-left: 0.5rem;
+    border-radius: 0.7rem;
+    width: 100%;
+    height: 1rem;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+.DescM {
+    height: 8rem;
+    width: 98%;
 }

@@ -12,26 +12,27 @@
         </table>
     </div>
     <div class="item2 data">
+        <i class="fa fa-pencil-square-o editM" aria-hidden="true" style="float: right; color: #001781; visibility: hidden;"></i>
         <div class="named-furniture">
             <img src="/images/Fondo.jpg" class="furniture-image">
             <label>Mobiliario:</label>
-            <p class="Fname">Mesa</p>
+            <p class="Fname"></p>
         </div>
         <div class="description-furniture">
             <div class="DF">
                 <label>Ubicación:</label>
-                <input autocomplete="off" type="text" id="UbiM" name="UbiM" required maxlength="400"
-                    oninput="mayus(this);" onkeypress="return checkA(event)">
+                <input autocomplete="off" type="text" id="UbiM" name="UbiM" class="UbiM EditDataM" required maxlength="400"
+                    oninput="mayus(this);" onkeypress="return checkA(event)" style="display: none;">
             </div>
             <div class="DF">
                 <label>Cantidad:</label>
-                <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" required min="1"
-                    onkeypress="return checkN(event)">
+                <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" class="CantidadM EditDataM" required min="1"
+                    onkeypress="return checkN(event)" style="display: none;">
             </div>
             <div>
                 <label style="margin-bottom: 1rem;">Descripción:</label>
-                <textarea class="furniture-description" id="DescM" name="DescM" oninput="mayus(this);"
-                    onkeypress="return checkA(event)" required></textarea>
+                <textarea class="furniture-description DescM EditDataM" id="DescM" name="DescM" oninput="mayus(this);"
+                    onkeypress="return checkA(event)" required style="display: none;"></textarea>
             </div>
         </div>
     </div>

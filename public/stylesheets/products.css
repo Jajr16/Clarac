@@ -1,0 +1,225 @@
+
+/* CSS PANTALLA MOBILIARIO */
+
+.products-description {
+    width: 100%;
+    height: 8rem;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: none;
+    overflow-y: hidden;
+    border: 1px solid #ccc;
+}
+
+.sidebar {
+    top: 0;
+    height: 100%;
+    width: 4.5%;
+    position: fixed;
+    background: linear-gradient(to top, #0A8EBC, #001781);
+    z-index: 2;
+    flex-direction: column;
+    display: flex;
+}
+
+.menu {
+    position: relative;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.menu li {
+    margin-bottom: 2rem;
+    list-style: none;
+    position: relative;
+}
+
+.item1 {
+    flex: 1 1 40%;
+    margin-right: 2rem;
+}
+
+.item2 {
+    flex: 1 1 45%;
+    background-color: var(--white);
+    border: 1px solid var(--light_gray);
+    border-radius: 1rem;
+    padding: 1.3rem 1.2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.products-image {
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    border-radius: 10%;
+    border: 1px solid var(--light_gray);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.208);
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    height: 30.5rem;
+    scrollbar-width: none;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 1rem;
+}
+
+.table-responsive table {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 39rem;
+}
+
+.table-responsive thead {
+    position: sticky;
+    top: 0;
+}
+
+.named-products {
+    display: flex;
+    align-items: center;
+}
+
+.named-products img {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.description-products div {
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.Columns {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem 4rem;
+    justify-content: space-between;
+}
+
+.Pname {
+    text-transform: capitalize;
+}
+
+.DP {
+    display: var(--displayF);
+}
+
+.DP label {
+    display: flex;
+    width: 12rem;
+    align-items: center;
+    width: auto;
+    margin-right: 1rem;
+}
+
+.menu-item {
+    display: inline-block;
+    transition: all .3s;
+}
+
+.menu li:hover{
+	transition: all .3s;
+}
+
+.mini-menu {
+    position: absolute;
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 1.5s;
+    background-color: #ccc;
+    top: -1rem;
+    left: 2rem;
+    padding-left: 0;
+    border-radius: 0.6rem;
+    width: 11.5rem;
+}
+
+.mini-menu li a{
+    display: block;
+	padding: 15px;
+	text-decoration: none;
+}
+
+.mini-menu li {
+    margin: 0;
+}
+
+.mini-menu li:first-child {
+    border-top-left-radius: 0.6rem;
+    border-top-right-radius: 0.6rem;
+}
+
+.mini-menu li:last-child {
+    border-bottom-left-radius: 0.6rem;
+    border-bottom-right-radius: 0.6rem;
+}
+
+.mini-menu li:hover {
+    margin: 0;
+    background-color: #001781;
+    color: white;
+}
+
+.mini-menu li:last-child{
+    margin-bottom: 0;
+}
+
+.mini-menu li a{
+    display: block;
+	padding: 15px;
+	text-decoration: none;
+}
+
+.menu li:hover .mini-menu{
+	visibility: visible;
+	opacity: 1;
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.menu-item .mini-menu::after {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: -1.2rem; 
+    border: 1px solid transparent;
+    border-width: 10px;
+    border-left-color: #ccc;;
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.DesciptionP {
+    background-color: #ccc;
+    padding: 0.3rem;
+    padding-left: 0.5rem;
+    border-radius: 0.7rem;
+    width: 100%;
+    height: 1rem;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+.DescP {
+    height: 8rem;
+    width: 98%;
+}
+
+.cancelProd {
+    background-color: rgb(134, 0, 0)!important;
+}
+
+.buttons {
+    display: flex;
+    margin-bottom: 0!important;
+}
+
+.buttons input {
+    margin-top: 0;
+}

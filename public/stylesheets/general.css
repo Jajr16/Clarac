@@ -181,3 +181,20 @@ input[type="submit"]:hover {
     justify-content: space-around;
     width: 9rem;
 }
+
+::-webkit-scrollbar {
+    width: 12px; 
+}
+
+::-webkit-scrollbar-track {
+    background: #000000; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #001781; 
+    border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0A8EBC;
+}

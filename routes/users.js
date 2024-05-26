@@ -11,4 +11,9 @@ router.get('/consulMob', function (req, res, next) {
   res.render('consulMob', { title: 'Consultar Mobiliario', layout: 'other_layout' });
 });
 
+// Consulta de productos
+router.get('/consulProd', function (req, res, next) {
+  res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });
+});
+
 module.exports = router;

@@ -1,43 +1,41 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>
+      <%= title %>
+    </title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/general.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/LogIn.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://kit.fontawesome.com/9c84429ff8.js" crossorigin="anonymous"></script>
+  </head>
 
-<head>
-  <title>
-    <%= title %>
-  </title>
-  <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
-  <link rel="stylesheet" type="text/css" href="/stylesheets/general.css">
-  <link rel="stylesheet" type="text/css" href="/stylesheets/LogIn.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://kit.fontawesome.com/9c84429ff8.js" crossorigin="anonymous"></script>
-</head>
-
-<body>
-  <header>
-    <%- include('partials/nav_log.ejs') %>
-  </header>
-  <div class="LogIn">
-    <form name="Formulario" id="Formulario">
-      <h1 class="title">Iniciar Sesión</h1>
-      <!--Nombre-->
-      <div class="field">
-        <label class="label">Usuario</label>
-        <input autocomplete="off" type="text" name="Nombre" id="Nombre" placeholder="Ingresa tu usuario" required>
-      </div>
-      <!--Contraseña-->
-      <div class="field">
-        <label class="label">Contraseña</label>
-        <input autocomplete="off" type="password" name="Contrasena" id="Contrasena" placeholder="Ingresa tu contraseña"
-          required>
-      </div>
-      <input type="submit" value="Aceptar" class="">
-    </form>
-  </div>
-</body>
-<script src="/javascripts/LogIn.js"></script>
-<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-<script type="text/javascript" src="/javascripts/textVal.js"></script>
-
+  <body>
+    <header>
+      <%- include('partials/nav_log.ejs') %>
+    </header>
+    <div class="LogIn">
+      <form name="Formulario" id="Formulario">
+        <h1 class="title">Iniciar Sesión</h1>
+        <!--Nombre-->
+        <div class="field">
+          <label class="label">Usuario</label>
+          <input autocomplete="off" type="text" name="Nombre" id="Nombre" placeholder="Ingresa tu usuario" required>
+        </div>
+        <!--Contraseña-->
+        <div class="field">
+          <label class="label">Contraseña</label>
+          <input autocomplete="off" type="password" name="Contrasena" id="Contrasena" placeholder="Ingresa tu contraseña"
+            required>
+        </div>
+        <input type="submit" value="Aceptar" class="">
+      </form>
+    </div>
+  </body>
+  <script src="/javascripts/LogIn.js"></script>
+  <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
+  <script type="text/javascript" src="/javascripts/textVal.js"></script>
 </html>

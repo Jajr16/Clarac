@@ -34,8 +34,6 @@ if (!Permisos['MOBILIARIO']) {
                 icon: "success",
                 title: "Operación exitosa",
                 text: message,
-            }).then(() => {
-                location.href = '/users/consulMob'
             })
         }
 

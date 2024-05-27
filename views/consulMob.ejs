@@ -14,9 +14,10 @@
     <div class="item2 data">
         <i class="fa fa-pencil-square-o editM" aria-hidden="true" style="float: right; color: #001781; visibility: hidden;"></i>
         <div class="named-furniture">
-            <img src="/images/Fondo.jpg" class="furniture-image">
+            <input type="file" id="inputFile" style="display: none;"><img src="/images/add-image.png" class="furniture-image">
             <label>Mobiliario:</label>
-            <p class="Fname"></p>
+            <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditDataM" required maxlength="400"
+                    oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
         </div>
         <div class="description-furniture">
             <div class="DF">
@@ -37,5 +38,6 @@
             <div class="buttons"></div>
         </div>
     </div>
+    <i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i>
 </div>
 <script type="text/javascript" src="/javascripts/Mobiliario.js"></script>

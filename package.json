@@ -13,6 +13,9 @@
     "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
     "http-errors": "~1.6.3",
+    "image-size": "^1.1.1",
+    "image-type": "^5.2.0",
+    "mongoose": "^8.4.0",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
     "ws": "^8.17.0"

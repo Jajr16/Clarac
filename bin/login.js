@@ -27,15 +27,15 @@ function login(ws, data) {
                                     }
                                     permisosModulos[row.modulo].push(row.permiso);
                                 });
-                                ws.send(JSON.stringify({ return: 'success', Usuario: result[0].Usuario, permisosModulos, area: area[0].Área }))
+                                ws.send(JSON.stringify({ type: 'success', Usuario: result[0].Usuario, permisosModulos, area: area[0].Área }))
                             }
                         });
                     } else {
-                        ws.send(JSON.stringify({return: 'logInError', message: 'El usuario no cuenta con ningún permiso.' }))
+                        ws.send(JSON.stringify({type: 'logInError', message: 'El usuario no cuenta con ningún permiso.' }))
                     }
                 });
             } else {
-                ws.send(JSON.stringify({return: 'logInError', message: 'Nombre de usuario o contraseña incorrectos.' }))
+                ws.send(JSON.stringify({type: 'logInError', message: 'Nombre de usuario o contraseña incorrectos.' }))
             }
         }
     });

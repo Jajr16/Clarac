@@ -13,7 +13,7 @@ function consulmob(ws, data) {
                         else {
                             if (result.length > 0) {//Si sí hizo una búsqueda
                                 for (var i = 0; i < result.length; i++) {
-                                    ws.send(JSON.stringify({ return: 'Desp_Mobiliario', Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área }))
+                                    ws.send(JSON.stringify({ type: 'Desp_Mobiliario', Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área }))
                                 }
                             }
                             result.length = 0;
@@ -25,7 +25,7 @@ function consulmob(ws, data) {
                         else {
                             if (result.length > 0) {//Si sí hizo una búsqueda
                                 for (var i = 0; i < result.length; i++) {
-                                    ws.send(JSON.stringify({ return: 'Desp_Mobiliario', Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área }));//Mandar usuario y token al cliente
+                                    ws.send(JSON.stringify({ type: 'Desp_Mobiliario', Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área }));//Mandar usuario y token al cliente
                                 }
                             }
                             result.length = 0;

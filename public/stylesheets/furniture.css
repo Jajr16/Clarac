@@ -56,9 +56,10 @@
     width: 10rem;
     height: 10rem;
     object-fit: cover;
-    border-radius: 10%;
-    border: 1px solid var(--light_gray);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.208);
+}
+
+.furniture-image:hover {
+    scale: (1.1);
 }
 
 .table-responsive {
@@ -222,4 +223,11 @@
 
 .buttons input {
     margin-top: 0;
+}
+
+.fa-circle-plus {
+    color: #001781;
+    top: 0.3rem;
+    left: 0.3rem;
+    position: relative;
 }

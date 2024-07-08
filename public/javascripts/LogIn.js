@@ -17,7 +17,7 @@ form.addEventListener('submit', (e) => {
 
 ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    if (data.return == 'success') {
+    if (data.type == 'success') {
         // Usuario autenticado correctamente, guardar el nombre de usuario y los permisos en localStorage
         localStorage.setItem('user', data.Usuario);
         localStorage.setItem('permisosModulos', JSON.stringify(data.permisosModulos)); // Guardar el objeto completo
@@ -25,7 +25,7 @@ ws.onmessage = (event) => {
         console.log(data.permisosModulos);
         ws.close()
         // Redirigir a la página de inicio de sesión exitosa
-        location.href = "/users/index";
+        location.href = "/users/home";
     } else {
         Swal.fire({
             icon: "error",

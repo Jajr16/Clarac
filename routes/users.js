@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/index', function(req, res, next) {
-  res.render('index', { title: 'CLARAC | Home', layout: 'other_layout'  });
+router.get('/home', function(req, res, next) {
+  res.render('home', { title: 'CLARAC | Home', layout: 'other_layout'  });
 });
 
 // Consulta de mobiliario

@@ -70,12 +70,12 @@ if (!Permisos['MOBILIARIO']) {
                             $('.modyMob').remove();
                             $('.cancelMob').remove();
                         }
-                        if ($('.editM').css('display', 'none')){
+                        if ($('.editM').css('display', 'none')) {
                             $('.editM').css('display', 'block')
-                        } 
-                        if ($('.fa-circle-plus').css('display', 'none')){
+                        }
+                        if ($('.fa-circle-plus').css('display', 'none')) {
                             $('.fa-circle-plus').css('display', 'block')
-                        } 
+                        }
                         $('.Fname').val(data.Articulo);
                         $('.UbiM').val(data.Ubicacion);
                         $('.CantidadM').val(data.Cantidad);
@@ -83,17 +83,17 @@ if (!Permisos['MOBILIARIO']) {
                         const getImage = {
                             type: "Obtener_Imagen",
                             articulo: data.Articulo,
-                            descripcion: data.Descripcion,
-                            empleado: user
                         }
                         sendWebSocketMessage(getImage)
+                        ws.onmessage = handleSocketResponse;
                     });
                     tbody.appendChild(tr);
                     break
                 case 'Imagen_Obtenida':
+                    console.log('Caca')
                     const imgElement = document.querySelector('.furniture-image');
-                    imgElement.src = `data:image/jpeg;base64,${data.imagenBase64}`;
-                    break
+                    imgElement.src = `data:${data.contentType};base64,${data.imagenBase64}`;
+                    break;
                 case 'Actualizar_Tabla':
                     $('.data-mob tbody').append(`<tr><td>${data.Articulo}</td><td>${data.Cantidad}</td></tr>`)
                     break
@@ -102,8 +102,6 @@ if (!Permisos['MOBILIARIO']) {
                     break;
             }
         }
-
-        ws.onmessage = handleSocketResponse;
 
         function addFurniture() {
             const updatedData = {
@@ -120,6 +118,7 @@ if (!Permisos['MOBILIARIO']) {
             };
 
             sendWebSocketMessage(data)
+            ws.onmessage = handleSocketResponse;
         }
 
         var ImageFunction = function () {
@@ -191,7 +190,7 @@ if (!Permisos['MOBILIARIO']) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = function () {
-                const imageBase64 = reader.result;
+                const imageBase64 = reader.result.split(',')[1]; // Obtener la parte base64
 
                 const message = {
                     type: 'Guardar_Imagen',
@@ -199,9 +198,9 @@ if (!Permisos['MOBILIARIO']) {
                     articulo: articulo,
                     descripcion: descripcion,
                     empleado: user,
-                    // nombreArchivo: file.name // Enviar el nombre del archivo
+                    contentType: file.type
                 };
-                sendWebSocketMessage(message)
+                sendWebSocketMessage(message);
             };
         }
 
@@ -219,6 +218,7 @@ if (!Permisos['MOBILIARIO']) {
                 data: updatedData,
             };
             sendWebSocketMessage(data)
+            ws.onmessage = handleSocketResponse;
         }
         // FUNCIONALIDAD PÁGINA
         const edit = $('.editM');
@@ -259,6 +259,7 @@ if (!Permisos['MOBILIARIO']) {
                 user: localStorage.getItem('user')
             };
             sendWebSocketMessage(data)
+            ws.onmessage = handleSocketResponse;
         };
 
     }

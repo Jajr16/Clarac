@@ -89,3 +89,4 @@ Error: ER_DUP_ENTRY: Duplicate entry 'BBB-B-758' for key 'mobiliario.PRIMARY' | 
 Error: ER_DUP_ENTRY: Duplicate entry '0DWADWAD-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 26/05/2024 22:16
 Error: ER_DUP_ENTRY: Duplicate entry '0DWADWADDDDDDD-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 26/05/2024 22:16
 Error: ER_DUP_ENTRY: Duplicate entry '999666555-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 26/05/2024 22:25
+Error: ER_DUP_ENTRY: Duplicate entry '0-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 07/07/2024 14:22

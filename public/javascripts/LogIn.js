@@ -16,7 +16,7 @@ form.addEventListener('submit', (e) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'CSRF-Token': data.csrfToken  // Incluir el token CSRF en los headers de la solicitud
+                    'CSRF-Token': data.csrfToken 
                 },
                 body: JSON.stringify({ username, pass })
             })

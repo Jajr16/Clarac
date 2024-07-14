@@ -7,36 +7,6 @@ if (!Permisos['MOBILIARIO']) {
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
 
-        connectWebSocket();
-
-        function showErrorAlert(message) {
-            Swal.fire({
-                icon: "error",
-                title: 'Hubo un error :(',
-                text: message,
-            });
-        }
-
-        function sendWebSocketMessage(data) {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(data));
-            } else {
-                console.error('WebSocket no está abierto, no se puede enviar el mensaje:', data);
-                ws.addEventListener('open', function onOpen() {
-                    ws.send(JSON.stringify(data));
-                    ws.removeEventListener('open', onOpen);
-                });
-            }
-        }
-
-        function showSuccessAlert(message) {
-            Swal.fire({
-                icon: "success",
-                title: "Operación exitosa",
-                text: message,
-            })
-        }
-
         function handleSocketResponse(event) {
             const data = JSON.parse(event.data)
             switch (data.type) {
@@ -54,40 +24,7 @@ if (!Permisos['MOBILIARIO']) {
                     showSuccessAlert(data.message)
                     break
                 case 'Desp_Mobiliario':
-                    const tbody = document.querySelector(".data-mob tbody");
 
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${data.Articulo}</td>
-                        <td>${data.Cantidad}</td>
-                    `;
-
-                    tr.addEventListener('click', () => {
-                        if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
-                            $('.fa-pencil-square-o').css('visibility', 'visible');
-                            const inputM = $('.EditDataM');
-                            inputM.attr("readonly", true);
-                            $('.modyMob').remove();
-                            $('.cancelMob').remove();
-                        }
-                        if ($('.editM').css('display', 'none')) {
-                            $('.editM').css('display', 'block')
-                        }
-                        if ($('.fa-circle-plus').css('display', 'none')) {
-                            $('.fa-circle-plus').css('display', 'block')
-                        }
-                        $('.Fname').val(data.Articulo);
-                        $('.UbiM').val(data.Ubicacion);
-                        $('.CantidadM').val(data.Cantidad);
-                        $('.DescM').val(data.Descripcion);
-                        const getImage = {
-                            type: "Obtener_Imagen",
-                            articulo: data.Articulo,
-                        }
-                        sendWebSocketMessage(getImage)
-                        ws.onmessage = handleSocketResponse;
-                    });
-                    tbody.appendChild(tr);
                     break
                 case 'Imagen_Obtenida':
                     console.log('Caca')
@@ -111,6 +48,15 @@ if (!Permisos['MOBILIARIO']) {
                 Descripcion: document.querySelector('.DescM').value,
                 User: user
             };
+
+            fetch('/csrf-token')
+                .then(response => response.json())
+                .then(data => {
+
+                }).catch(error => {
+                    console.error('Error al obtener token CSRF:', error);
+                    // Manejar el error al obtener el token CSRF
+                });
 
             const data = {
                 type: 'Altas_Mobiliario',
@@ -179,31 +125,6 @@ if (!Permisos['MOBILIARIO']) {
             edit.css('display', 'block')
         }
 
-        function addImage(inputFile, articulo, descripcion) {
-            const file = inputFile.files[0];
-
-            if (!file) {
-                console.error('No se ha seleccionado ningún archivo.');
-                return;
-            }
-            // 789456130951753
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
-                const imageBase64 = reader.result.split(',')[1]; // Obtener la parte base64
-
-                const message = {
-                    type: 'Guardar_Imagen',
-                    imagenBase64: imageBase64,
-                    articulo: articulo,
-                    descripcion: descripcion,
-                    empleado: user,
-                    contentType: file.type
-                };
-                sendWebSocketMessage(message);
-            };
-        }
-
         function modify(oldName) {
             const updatedData = {
                 Articulo: document.querySelector('.Fname').value,
@@ -252,15 +173,59 @@ if (!Permisos['MOBILIARIO']) {
             });
         });
 
-        // FUNCIONOALIDAD WEBSOCKETS
-        ws.onopen = function () {
-            const data = {
-                type: 'Consul_Mobiliario',
-                user: localStorage.getItem('user')
-            };
-            sendWebSocketMessage(data)
-            ws.onmessage = handleSocketResponse;
-        };
+        fetch('/csrf-token')
+            .then(response => response.json())
+            .then(data => {
+                fetch('/Mobiliario', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'CSRF-Token': data.csrfToken
+                    },
+                    body: JSON.stringify({ username: user })
+                }).then(response => response.json())
+                    .then(data => {
+                        const tbody = document.querySelector(".data-mob tbody");
+
+                        data.forEach(item => {
+                            let tr = document.createElement('tr');
+                            tr.innerHTML = `
+                    <td>${item.Articulo}</td>
+                    <td>${item.Cantidad}</td>
+                `;
+
+                            tr.addEventListener('click', () => {
+                                if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
+                                    $('.fa-pencil-square-o').css('visibility', 'visible');
+                                    const inputM = $('.EditDataM');
+                                    inputM.attr("readonly", true);
+                                    $('.modyMob').remove();
+                                    $('.cancelMob').remove();
+                                }
+                                if ($('.editM').css('display', 'none')) {
+                                    $('.editM').css('display', 'block')
+                                }
+                                if ($('.fa-circle-plus').css('display', 'none')) {
+                                    $('.fa-circle-plus').css('display', 'block')
+                                }
+                                $('.Fname').val(item.Articulo);
+                                $('.UbiM').val(item.Ubicacion);
+                                $('.CantidadM').val(item.Cantidad);
+                                $('.DescM').val(item.Descripcion);
+
+                            });
+                            tbody.appendChild(tr);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            })
+            .catch(error => {
+                console.error('Error al obtener token CSRF:', error);
+                // Manejar el error al obtener el token CSRF
+            });
 
     }
 }

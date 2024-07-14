@@ -3,8 +3,6 @@ var Errores = require('./Error');
 
 function Login(req, callback) {
     const { username, pass } = req.body;
-    console.log(req.body)
-    console.log(pass)
 
     db.query('select*from usuario where Usuario = BINARY  ? and Pass = BINARY  ?', [username, pass], function (err, result) {
         if (err) {

@@ -1,40 +1,55 @@
 var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
 var Errores = require('./Error')
 
-function consulmob(ws, data) {
-    db.query('select Área from empleado inner join usuario on empleado.Num_emp = usuario.Num_emp where usuario = ?', [data.user], function (err, res) {
+function consulmob(req, callback) {
+    const { username } = req.body;
 
-        if (err) { Errores(err); } // Se hace un control de errores
-        else {
-            if (res.length > 0) {//Si sí hizo una búsqueda
-                if (!(res[0].Área === 'SISTEMAS')) {
-                    db.query('select*from mobiliario', [data.user], function (err, result) {
-                        if (err) { Errores(err); } // Se hace un control de errores
-                        else {
-                            if (result.length > 0) {//Si sí hizo una búsqueda
-                                for (var i = 0; i < result.length; i++) {
-                                    ws.send(JSON.stringify({ type: 'Desp_Mobiliario', Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área }))
-                                }
-                            }
-                            result.length = 0;
-                        }
-                    });
-                } else {
-                    db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
-                        if (err) { Errores(err); } // Se hace un control de errores
-                        else {
-                            if (result.length > 0) {//Si sí hizo una búsqueda
-                                for (var i = 0; i < result.length; i++) {
-                                    ws.send(JSON.stringify({ type: 'Desp_Mobiliario', Articulo: result[i].Articulo, Descripcion: result[i].Descripcion, Ubicacion: result[i].Ubicacion, Cantidad: result[i].Cantidad, Area: result[i].Área }));//Mandar usuario y token al cliente
-                                }
-                            }
-                            result.length = 0;
-                        }
-                    });
-                }
+    db.query('SELECT Área FROM empleado INNER JOIN usuario ON empleado.Num_emp = usuario.Num_emp WHERE usuario = ?', [username], function (err, res) {
+        if (err) {
+            Errores(err);
+            return callback(err);
+        }
+
+        if (res.length > 0) { // Si se encontró el usuario
+            if (!(res[0].Área === 'SISTEMAS')) {
+                db.query('SELECT * FROM mobiliario', function (err, result) {
+                    if (err) {
+                        Errores(err);
+                        return callback(err);
+                    }
+
+                    const dataToSend = result.map(item => ({
+                        Articulo: item.Articulo,
+                        Descripcion: item.Descripcion,
+                        Ubicacion: item.Ubicacion,
+                        Cantidad: item.Cantidad,
+                        Area: item.Área
+                    }));
+
+                    callback(null, dataToSend);
+                });
+            } else {
+                db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
+                    if (err) {
+                        Errores(err);
+                        return callback(err);
+                    }
+
+                    const dataToSend = result.map(item => ({
+                        Articulo: item.Articulo,
+                        Descripcion: item.Descripcion,
+                        Ubicacion: item.Ubicacion,
+                        Cantidad: item.Cantidad,
+                        Area: item.Área
+                    }));
+
+                    callback(null, dataToSend);
+                });
             }
+        } else {
+            callback(null, []); // Si no se encontró el usuario, devolver un arreglo vacío
         }
     });
 }
 
-module.exports = consulmob
+module.exports = consulmob;

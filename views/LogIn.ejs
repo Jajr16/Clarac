@@ -4,8 +4,7 @@
     <title>
       <%= title %>
     </title>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/general.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/LogIn.css">
@@ -18,17 +17,18 @@
       <%- include('partials/nav_log.ejs') %>
     </header>
     <div class="LogIn">
-      <form name="Formulario" id="Formulario">
+      <div id="errorMessage"></div>
+      <form action="" name="Formulario" id="Formulario" method="POST">
         <h1 class="title">Iniciar Sesión</h1>
         <!--Nombre-->
         <div class="field">
           <label class="label">Usuario</label>
-          <input autocomplete="off" type="text" name="Nombre" id="Nombre" placeholder="Ingresa tu usuario" required>
+          <input autocomplete="off" type="text" name="user" id="user" placeholder="Ingresa tu usuario" required>
         </div>
         <!--Contraseña-->
         <div class="field">
           <label class="label">Contraseña</label>
-          <input autocomplete="off" type="password" name="Contrasena" id="Contrasena" placeholder="Ingresa tu contraseña"
+          <input autocomplete="off" type="password" name="pass" id="pass" placeholder="Ingresa tu contraseña"
             required>
         </div>
         <input type="submit" value="Aceptar" class="">

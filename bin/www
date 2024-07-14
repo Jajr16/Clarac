@@ -7,7 +7,6 @@
 var app = require('../app');
 var debug = require('debug')('clarac:server');
 var http = require('http');
-const configureWebSocket = require('../WebSockets');
 
 
 /**
@@ -22,9 +21,6 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-
-configureWebSocket(server)
-
 /**
  * Listen on provided port, on all network interfaces.
  */

@@ -1,18 +1,22 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-const { MongoClient, GridFSBucket } = require('mongodb');
-var logger = require('morgan');
+const express = require('express');
+const app = express();
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const csrf = require('csurf');
+const { body, validationResult } = require('express-validator');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const login = require('./bin/login');
 
-const layout = require('express-ejs-layouts')
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-var app = express();
+const layout = require('express-ejs-layouts');
 
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -21,60 +25,66 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(layout)
+app.use(layout);
 
-const url = 'mongodb://localhost:27017/'
-const dbName = 'Clarac'
+// Configurar express-session
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: true,
+        httpOnly: true,
+        maxAge: 3600000
+    }
+}));
 
-const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
-let db;
-let bucket;
+// Configurar csrf
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
 
-client.connect().then(() => {
-  console.log('Connected to MongoDB');
-  db = client.db(dbName);
-  bucket = new GridFSBucket(db, {
-    bucketName: 'images'
-  });
-
-  app.get('/images/:id', (req, res) => {
-    const id = req.params.id;
-    const downloadStream = bucket.openDownloadStream(ObjectId(id));
-
-    downloadStream.on('data', (chunk) => {
-      res.write(chunk);
-    });
-
-    downloadStream.on('end', () => {
-      res.end();
-    });
-
-    downloadStream.on('error', (err) => {
-      console.error('Error downloading image from GridFS', err);
-      res.status(404).send('Image not found');
-    });
-  });
-}).catch(err => {
-  console.error('Error connecting to MongoDB', err);
+// Configurar limitador de intentos de inicio de sesión
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: 'Demasiados intentos de inicio de sesión, por favor inténtelo de nuevo más tarde.'
 });
 
+// Rutas
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+// Ruta para obtener el token CSRF
+app.get('/csrf-token', csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
 });
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// Ruta para el login
+app.post('/login', loginLimiter, csrfProtection, (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    login(req, (err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
+
+        res.json(result);
+    });
+});
+
+// Manejo de errores
+app.use(function (req, res, next) {
+    next(createError(404));
+});
+
+app.use(function (err, req, res, next) {
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;

@@ -12,6 +12,8 @@ require('dotenv').config();
 
 const login = require('./bin/login');
 const furnitures = require('./bin/Mobiliario');
+const addFurnit = require('./bin/AddMobiliario');
+const modFurnit = require('./bin/MobiliarioModify');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -62,6 +64,26 @@ app.get('/csrf-token', csrfProtection, (req, res) => {
 
 app.post('/Mobiliario', (req, res) => {
   furnitures(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+
+    res.json(result);
+  });
+})
+// MOBILIARIO
+app.post('/new_mob', csrfProtection, (req, res) => {
+  addFurnit(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+
+    res.json(result);
+  });
+})
+
+app.post('/mod_mob', csrfProtection, (req, res) => {
+  modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }

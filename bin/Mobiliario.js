@@ -26,7 +26,7 @@ function consulmob(req, callback) {
                         Area: item.Área
                     }));
 
-                    callback(null, dataToSend);
+                    return callback(null, dataToSend);
                 });
             } else {
                 db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
@@ -43,11 +43,11 @@ function consulmob(req, callback) {
                         Area: item.Área
                     }));
 
-                    callback(null, dataToSend);
+                    return callback(null, dataToSend);
                 });
             }
         } else {
-            callback(null, []); // Si no se encontró el usuario, devolver un arreglo vacío
+            return callback(null, []); // Si no se encontró el usuario, devolver un arreglo vacío
         }
     });
 }

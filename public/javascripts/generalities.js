@@ -13,3 +13,13 @@ function showSuccessAlert(message) {
         text: message,
     })
 }
+
+function showSuccessAlertReload(message) {
+    Swal.fire({
+        icon: "success",
+        title: "Operación exitosa",
+        text: message,
+    }).then(() => {
+        location.reload();
+    })
+}

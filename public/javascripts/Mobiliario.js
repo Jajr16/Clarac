@@ -15,7 +15,7 @@ if (!Permisos['MOBILIARIO']) {
                     break
                 case 'Mobiliario_Respuesta':
                     console.log('sadasd')
-                    showSuccessAlert(data.message)
+
                     break
                 case 'ErrorModMob':
                     showErrorAlert(data.message)
@@ -40,7 +40,8 @@ if (!Permisos['MOBILIARIO']) {
             }
         }
 
-        function addFurniture() {
+        function addFurniture(e) {
+            e.preventDefault()
             const updatedData = {
                 Articulo: document.querySelector('.Fname').value,
                 Cantidad: document.querySelector('.CantidadM').value,
@@ -52,19 +53,28 @@ if (!Permisos['MOBILIARIO']) {
             fetch('/csrf-token')
                 .then(response => response.json())
                 .then(data => {
-
+                    fetch('/new_mob', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'CSRF-Token': data.csrfToken
+                        },
+                        body: JSON.stringify(updatedData)
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'Mobiliario_Respuesta') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
                 }).catch(error => {
                     console.error('Error al obtener token CSRF:', error);
-                    // Manejar el error al obtener el token CSRF
                 });
-
-            const data = {
-                type: 'Altas_Mobiliario',
-                data: updatedData,
-            };
-
-            sendWebSocketMessage(data)
-            ws.onmessage = handleSocketResponse;
         }
 
         var ImageFunction = function () {
@@ -84,7 +94,7 @@ if (!Permisos['MOBILIARIO']) {
                 inputM.attr("placeholder", 'Ingresa los datos del mobiliario');
                 inputM.val('')
 
-                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addFurniture()" class="modyMob">`;
+                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addFurniture(event)" class="modyMob">`;
                 var cancel = '<input type="submit" value="Cancelar" id="cancelMob" onclick="dissapear()" name="cancelMob" class="cancelMob">';
                 $('.modyMob').remove();
                 $('.cancelMob').remove();
@@ -125,14 +135,43 @@ if (!Permisos['MOBILIARIO']) {
             edit.css('display', 'block')
         }
 
-        function modify(oldName) {
+        function modify(oldName, oldDesc, e) {
+            e.preventDefault()
             const updatedData = {
                 Articulo: document.querySelector('.Fname').value,
                 Cantidad: document.querySelector('.CantidadM').value,
                 Ubicacion: document.querySelector('.UbiM').value,
                 Descripcion: document.querySelector('.DescM').value,
-                dataOld: oldName
+                dataOldA: oldName,
+                dataOldD: oldDesc,
+                user
             };
+
+            fetch('/csrf-token')
+                .then(response => response.json())
+                .then(data => {
+                    fetch('/mod_mob', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'CSRF-Token': data.csrfToken
+                        },
+                        body: JSON.stringify(updatedData)
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'RespDelMob') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                }).catch(error => {
+                    console.error('Error al obtener token CSRF:', error);
+                });
 
             const data = {
                 type: 'Cambios_Mobiliario',
@@ -146,12 +185,13 @@ if (!Permisos['MOBILIARIO']) {
 
         edit.click(function (e) {
             var nombre_Articulo = $('.Fname').val();
+            var desc_Articulo = $('.DescM').val();
             const inputM = $('.EditDataM');
             const image = $('.furniture-image')
 
             image.css('cursor', 'pointer')
             inputM.attr("readonly", false);
-            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}')" class="modyMob">`;
+            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="modyMob">`;
             var cancel = '<input type="submit" value="Cancelar" id="cancelMob" onclick="dissapear()" name="cancelMob" class="cancelMob">';
             $('.modyMob').remove();
             $('.cancelMob').remove();

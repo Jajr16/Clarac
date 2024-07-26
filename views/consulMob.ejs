@@ -14,10 +14,16 @@
     <div class="item2 data">
         <i class="fa fa-pencil-square-o editM" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
-        <form method="POST" enctype="multipart/form-data">
+
+        <form action='/upload' method="POST" enctype="multipart/form-data">
+            <input type="file" id="file" name="file">
+            <input type="submit" value="Guardar">
+        </form>
+
+        <!-- <form method="POST" enctype="multipart/form-data">
             <div class="named-furniture">
-                <input type="file" id="inputFile" style="display: none;"><img src="/images/add-image.png"
-                    class="furniture-image">
+                <input type="file" id="inputFile" name="inputFile" style="display: none;"><img
+                    src="/images/add-image.png" class="furniture-image">
                 <label>Mobiliario:</label>
                 <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditDataM" required
                     maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
@@ -40,7 +46,7 @@
                 </div>
                 <div class="buttons"></div>
             </div>
-        </form>
+        </form> -->
     </div>
     <i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i>
 </div>

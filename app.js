@@ -1,13 +1,19 @@
 const express = require('express');
-const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-const csrf = require('csurf');
 const { body, validationResult } = require('express-validator');
+var createError = require('http-errors');
 const rateLimit = require('express-rate-limit');
-const cors = require('cors');
+const multer = require('multer');
+const { GridFsStorage } = require('multer-gridfs-storage');
+const MongoClient = require('mongodb').MongoClient;
+const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
+const crypto = require('crypto');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const login = require('./bin/login');
@@ -20,15 +26,20 @@ const usersRouter = require('./routes/users');
 
 const layout = require('express-ejs-layouts');
 
+const app = express();
+
+// Set view engine and views directory
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Middleware setup
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(layout);
+app.use(methodOverride('_method'));
 
 // Configurar express-session
 app.use(session({
@@ -36,15 +47,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 3600000
   }
 }));
-
-// Configurar csrf
-const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection);
 
 // Configurar limitador de intentos de inicio de sesión
 const loginLimiter = rateLimit({
@@ -53,47 +60,126 @@ const loginLimiter = rateLimit({
   message: 'Demasiados intentos de inicio de sesión, por favor inténtelo de nuevo más tarde.'
 });
 
+// Conexión a MongoDB
+const url = 'mongodb://localhost:27017/Clarac';
+const conn = mongoose.createConnection(url);
+
+let gfs;
+
+conn.once('open', () => {
+  // Init stream
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads');
+});
+
+// Configuración de GridFsStorage
+const storage = new GridFsStorage({
+  url: url,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) {
+          console.error('Error generating random bytes:', err);
+          return reject(err);
+        }
+        const filename = buf.toString('hex') + path.extname(file.originalname);
+        const fileInfo = {
+          filename: filename,
+          bucketName: 'uploads'
+        };
+        console.log('File info:', fileInfo);  // Logging fileInfo for debugging
+        resolve(fileInfo);
+      });
+    });
+  }
+});
+const upload = multer({ storage });
+
 // Rutas
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-// Ruta para obtener el token CSRF
-app.get('/csrf-token', csrfProtection, (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
-});
 
 app.post('/Mobiliario', (req, res) => {
   furnitures(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-
     res.json(result);
   });
-})
-// MOBILIARIO
-app.post('/new_mob', csrfProtection, (req, res) => {
+});
+
+app.post('/new_mob', (req, res) => {
   addFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-
     res.json(result);
   });
-})
+});
 
-app.post('/mod_mob', csrfProtection, (req, res) => {
+app.post('/mod_mob', (req, res) => {
   modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-
     res.json(result);
   });
-})
+});
+
+// Ruta para subir archivos
+app.post('/upload', (req, res, next) => {
+  console.log('Entrando a la ruta /upload');
+  next();
+}, upload.single('file'), (req, res) => {
+  console.log('Después de multer');
+  if (!req.file) {
+    console.log('No file uploaded');
+    return res.status(400).json({ type: 'error', message: 'No file uploaded' });
+  }
+  res.json({ file: req.file });
+});
+
+// Get Images
+app.get('/files', (req, res) => {
+  gfs.files.find().toArray((err, files) => {
+    console.log(files)
+    if (!files || files.length === 0) {
+      console.log('NO hay na')
+      return res.status(404).json({ err: 'No hay archivos guardados' });
+    }
+    console.log('Si hubo al')
+    res.json(files);
+  });
+});
+
+// Get one file
+app.get('/files/:filename', (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    if (!file) {
+      return res.status(404).json({ err: 'No se encuentra el archivo' });
+    }
+    res.json(file);
+  });
+});
+
+// Display Images
+app.get('/image/:filename', (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    if (!file) {
+      return res.status(404).json({ err: 'No se encuentra el archivo' });
+    }
+
+    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png' || file.contentType === 'image/jpg') {
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({ err: 'No es una imagen' });
+    }
+  });
+});
 
 // Ruta para el login
-app.post('/login', loginLimiter, csrfProtection, (req, res) => {
+app.post('/login', loginLimiter, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -103,7 +189,6 @@ app.post('/login', loginLimiter, csrfProtection, (req, res) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-
     res.json(result);
   });
 });

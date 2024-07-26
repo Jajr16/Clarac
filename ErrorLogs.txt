@@ -1,2 +1,3 @@
 Error: ER_DUP_ENTRY: Duplicate entry '0-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 16/07/2024 20:21
 Error: ER_DUP_ENTRY: Duplicate entry '0-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 16/07/2024 20:23
+Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: '' for column 'Cantidad' at row 1 | Error obtenido el -> 16/07/2024 22:33

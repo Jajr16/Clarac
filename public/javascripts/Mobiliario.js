@@ -6,40 +6,6 @@ if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
-
-        function handleSocketResponse(event) {
-            const data = JSON.parse(event.data)
-            switch (data.type) {
-                case 'Error_Mobiliario_Respuesta':
-                    showErrorAlert(data.message)
-                    break
-                case 'Mobiliario_Respuesta':
-                    console.log('sadasd')
-
-                    break
-                case 'ErrorModMob':
-                    showErrorAlert(data.message)
-                    break
-                case 'RespDelMob':
-                    showSuccessAlert(data.message)
-                    break
-                case 'Desp_Mobiliario':
-
-                    break
-                case 'Imagen_Obtenida':
-                    console.log('Caca')
-                    const imgElement = document.querySelector('.furniture-image');
-                    imgElement.src = `data:${data.contentType};base64,${data.imagenBase64}`;
-                    break;
-                case 'Actualizar_Tabla':
-                    $('.data-mob tbody').append(`<tr><td>${data.Articulo}</td><td>${data.Cantidad}</td></tr>`)
-                    break
-                default:
-                    console.log('Mensaje no manejado:', data);
-                    break;
-            }
-        }
-
         function addFurniture(e) {
             e.preventDefault()
             const updatedData = {
@@ -49,31 +15,23 @@ if (!Permisos['MOBILIARIO']) {
                 Descripcion: document.querySelector('.DescM').value,
                 User: user
             };
-
-            fetch('/csrf-token')
-                .then(response => response.json())
+            fetch('/new_mob', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            }).then(response => response.json())
                 .then(data => {
-                    fetch('/new_mob', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'CSRF-Token': data.csrfToken
-                        },
-                        body: JSON.stringify(updatedData)
-                    }).then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'Mobiliario_Respuesta') {
-                                showSuccessAlertReload(data.message)
-                            } else {
-                                showErrorAlert(data.message)
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error en la solicitud:', error);
-                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                        });
-                }).catch(error => {
-                    console.error('Error al obtener token CSRF:', error);
+                    if (data.type === 'Mobiliario_Respuesta') {
+                        showSuccessAlertReload(data.message)
+                    } else {
+                        showErrorAlert(data.message)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
         }
 
@@ -147,30 +105,23 @@ if (!Permisos['MOBILIARIO']) {
                 user
             };
 
-            fetch('/csrf-token')
-                .then(response => response.json())
+            fetch('/mod_mob', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            }).then(response => response.json())
                 .then(data => {
-                    fetch('/mod_mob', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'CSRF-Token': data.csrfToken
-                        },
-                        body: JSON.stringify(updatedData)
-                    }).then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'RespDelMob') {
-                                showSuccessAlertReload(data.message)
-                            } else {
-                                showErrorAlert(data.message)
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error en la solicitud:', error);
-                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                        });
-                }).catch(error => {
-                    console.error('Error al obtener token CSRF:', error);
+                    if (data.type === 'RespDelMob') {
+                        showSuccessAlertReload(data.message)
+                    } else {
+                        showErrorAlert(data.message)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
 
             const data = {
@@ -213,58 +164,49 @@ if (!Permisos['MOBILIARIO']) {
             });
         });
 
-        fetch('/csrf-token')
-            .then(response => response.json())
+        fetch('/Mobiliario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: user })
+        }).then(response => response.json())
             .then(data => {
-                fetch('/Mobiliario', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'CSRF-Token': data.csrfToken
-                    },
-                    body: JSON.stringify({ username: user })
-                }).then(response => response.json())
-                    .then(data => {
-                        const tbody = document.querySelector(".data-mob tbody");
+                const tbody = document.querySelector(".data-mob tbody");
 
-                        data.forEach(item => {
-                            let tr = document.createElement('tr');
-                            tr.innerHTML = `
-                    <td>${item.Articulo}</td>
-                    <td>${item.Cantidad}</td>
-                `;
+                data.forEach(item => {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+            <td>${item.Articulo}</td>
+            <td>${item.Cantidad}</td>
+        `;
 
-                            tr.addEventListener('click', () => {
-                                if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
-                                    $('.fa-pencil-square-o').css('visibility', 'visible');
-                                    const inputM = $('.EditDataM');
-                                    inputM.attr("readonly", true);
-                                    $('.modyMob').remove();
-                                    $('.cancelMob').remove();
-                                }
-                                if ($('.editM').css('display', 'none')) {
-                                    $('.editM').css('display', 'block')
-                                }
-                                if ($('.fa-circle-plus').css('display', 'none')) {
-                                    $('.fa-circle-plus').css('display', 'block')
-                                }
-                                $('.Fname').val(item.Articulo);
-                                $('.UbiM').val(item.Ubicacion);
-                                $('.CantidadM').val(item.Cantidad);
-                                $('.DescM').val(item.Descripcion);
+                    tr.addEventListener('click', () => {
+                        if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
+                            $('.fa-pencil-square-o').css('visibility', 'visible');
+                            const inputM = $('.EditDataM');
+                            inputM.attr("readonly", true);
+                            $('.modyMob').remove();
+                            $('.cancelMob').remove();
+                        }
+                        if ($('.editM').css('display', 'none')) {
+                            $('.editM').css('display', 'block')
+                        }
+                        if ($('.fa-circle-plus').css('display', 'none')) {
+                            $('.fa-circle-plus').css('display', 'block')
+                        }
+                        $('.Fname').val(item.Articulo);
+                        $('.UbiM').val(item.Ubicacion);
+                        $('.CantidadM').val(item.Cantidad);
+                        $('.DescM').val(item.Descripcion);
 
-                            });
-                            tbody.appendChild(tr);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                     });
+                    tbody.appendChild(tr);
+                });
             })
             .catch(error => {
-                console.error('Error al obtener token CSRF:', error);
-                // Manejar el error al obtener el token CSRF
+                console.error('Error en la solicitud:', error);
+                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
             });
 
     }

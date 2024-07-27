@@ -4,12 +4,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const { body, validationResult } = require('express-validator');
-var createError = require('http-errors');
+const createError = require('http-errors');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
-const MongoClient = require('mongodb').MongoClient;
-const Grid = require('gridfs-stream');
+const { MongoClient, ObjectId, GridFSBucket } = require('mongodb');
 const methodOverride = require('method-override');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
@@ -64,12 +63,16 @@ const loginLimiter = rateLimit({
 const url = 'mongodb://localhost:27017/Clarac';
 const conn = mongoose.createConnection(url);
 
-let gfs;
+let gfsBucket;
 
 conn.once('open', () => {
-  // Init stream
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection('uploads');
+  console.log('Conexión a MongoDB establecida.');
+  gfsBucket = new GridFSBucket(conn.db, { bucketName: 'uploads' });
+  console.log('GridFSBucket inicializado y colección "uploads" seleccionada.');
+});
+
+conn.on('error', (err) => {
+  console.error('Error de conexión a MongoDB:', err);
 });
 
 // Configuración de GridFsStorage
@@ -127,8 +130,8 @@ app.post('/mod_mob', (req, res) => {
 });
 
 // Ruta para subir archivos
-app.post('/upload', (req, res, next) => {
-  console.log('Entrando a la ruta /upload');
+app.post('/users/upload', (req, res, next) => {
+  console.log('Entrando a la ruta /users/upload');
   next();
 }, upload.single('file'), (req, res) => {
   console.log('Después de multer');
@@ -140,42 +143,91 @@ app.post('/upload', (req, res, next) => {
 });
 
 // Get Images
-app.get('/files', (req, res) => {
-  gfs.files.find().toArray((err, files) => {
-    console.log(files)
+app.get('/users/files', async (req, res) => {
+  if (!gfsBucket) {
+    console.log('gfsBucket no está inicializado');
+    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+  }
+
+  console.log('Obteniendo archivos de GridFS...');
+
+  try {
+    const files = await gfsBucket.find().toArray();
+
+    console.log('Archivos obtenidos:', files);
     if (!files || files.length === 0) {
-      console.log('NO hay na')
+      console.log('No hay archivos guardados');
       return res.status(404).json({ err: 'No hay archivos guardados' });
     }
-    console.log('Si hubo al')
+
+    console.log('Devolviendo lista de archivos');
     res.json(files);
-  });
+
+  } catch (err) {
+    console.error('Error al obtener archivos:', err);
+    res.status(500).json({ err: 'Error al obtener archivos' });
+  }
 });
 
+
 // Get one file
-app.get('/files/:filename', (req, res) => {
-  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-    if (!file) {
-      return res.status(404).json({ err: 'No se encuentra el archivo' });
+app.get('/users/files/:filename', async (req, res) => {
+  if (!gfsBucket) {
+    console.log('gfsBucket no está inicializado');
+    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+  }
+
+  console.log('Obteniendo archivo...')
+
+  try {
+    const file = await gfsBucket.find({ filename: req.params.filename }).toArray();
+
+    if (!file || file.length === 0) {
+      console.log('No se encontró el archivo');
+      return res.status(404).json({ err: 'No se encontró el archivo' });
     }
+
+    console.log('Archivo encontrado...', file);
     res.json(file);
-  });
+
+  } catch (err) {
+    console.error('Error al obtener el archivo: ', err);
+    res.status(500).json({ err: 'Error al obtener archivos' });
+  }
 });
 
 // Display Images
-app.get('/image/:filename', (req, res) => {
-  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-    if (!file) {
-      return res.status(404).json({ err: 'No se encuentra el archivo' });
+app.get('/users/image/:filename', async (req, res) => {
+  if (!gfsBucket) {
+    console.log('gfsBucket no está inicializado');
+    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+  }
+
+  console.log('Obteniendo archivo de GridFS...', req.params.filename);
+
+  try {
+    const file = await gfsBucket.find({ filename: req.params.filename }).toArray();
+
+    if (!file || file.length === 0) {
+      console.log('No se encontró el archivo');
+      return res.status(404).json({ err: 'No se encontró el archivo' });
     }
 
-    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png' || file.contentType === 'image/jpg') {
-      const readstream = gfs.createReadStream(file.filename);
+    const fileData = file[0];
+
+    if (fileData.contentType === 'image/jpeg' || fileData.contentType === 'image/png' || fileData.contentType === 'image/jpg') {
+      console.log('Es una imagen, devolviendo el stream');
+      const readstream = gfsBucket.openDownloadStreamByName(fileData.filename);
       readstream.pipe(res);
     } else {
+      console.log('El archivo no es una imagen');
       res.status(404).json({ err: 'No es una imagen' });
     }
-  });
+
+  } catch (err) {
+    console.error('Error al obtener el archivo: ', err);
+    res.status(500).json({ err: 'Error al obtener archivos' });
+  }
 });
 
 // Ruta para el login

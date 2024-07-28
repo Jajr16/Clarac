@@ -6,44 +6,64 @@ if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
-        function addFurniture(e) {
+        function addImage(e) {
             e.preventDefault()
-            const updatedData = {
-                Articulo: document.querySelector('.Fname').value,
-                Cantidad: document.querySelector('.CantidadM').value,
-                Ubicacion: document.querySelector('.UbiM').value,
-                Descripcion: document.querySelector('.DescM').value,
-                User: user
-            };
-            fetch('/new_mob', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedData)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'Mobiliario_Respuesta') {
-                        showSuccessAlertReload(data.message)
-                    } else {
-                        showErrorAlert(data.message)
-                    }
+
+            const inputFile = document.getElementById('file');
+            const articulo = document.querySelector('.Fname').value;
+            const descripcion = document.querySelector('.DescM').value;
+            const cantidad = document.querySelector('.CantidadM').value
+            const ubicacion = document.querySelector('.UbiM').value
+            console.log(inputFile)
+
+            if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '') {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
                 })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                });
+            } else if (!inputFile.files || !inputFile.files[0]) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Sube una imagen del mobiliario para poder continuar.',
+                })
+            } else {
+                const formData = new FormData();
+                formData.append('articulo', articulo)
+                formData.append('descripcion', descripcion)
+                formData.append('Cantidad', cantidad)
+                formData.append('Ubicacion', ubicacion)
+                formData.append('user', user);
+                formData.append('file', inputFile.files[0]);
+
+                fetch('/users/upload', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
         }
 
         var ImageFunction = function () {
+            const inputFile = document.getElementById('file');
             inputFile.click();
         }
 
         // IMAGEN
         document.addEventListener('DOMContentLoaded', function () {
-            const inputFile = document.getElementById('inputFile');
             const addF = $('.fa-circle-plus')
-            addF.click(function () {
+            addF.click(function (e) {
                 const inputM = $('.EditDataM');
                 const image = $('.furniture-image')
 
@@ -52,7 +72,7 @@ if (!Permisos['MOBILIARIO']) {
                 inputM.attr("placeholder", 'Ingresa los datos del mobiliario');
                 inputM.val('')
 
-                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addFurniture(event)" class="modyMob">`;
+                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="modyMob">`;
                 var cancel = '<input type="submit" value="Cancelar" id="cancelMob" onclick="dissapear()" name="cancelMob" class="cancelMob">';
                 $('.modyMob').remove();
                 $('.cancelMob').remove();
@@ -64,15 +84,6 @@ if (!Permisos['MOBILIARIO']) {
                 const imagen = document.getElementsByClassName('furniture-image')[0];
 
                 imagen.addEventListener('click', ImageFunction);
-
-                inputFile.addEventListener('change', function () {
-                    if (inputFile.files.length > 0) {
-                        const articulo = document.querySelector('.Fname').value;
-                        const descripcion = document.querySelector('.DescM').value;
-
-                        addImage(inputFile, articulo, descripcion);
-                    }
-                });
             })
 
         });
@@ -153,15 +164,6 @@ if (!Permisos['MOBILIARIO']) {
             const imagen = document.getElementsByClassName('furniture-image')[0];
 
             imagen.addEventListener('click', ImageFunction);
-
-            inputFile.addEventListener('change', function () {
-                if (inputFile.files.length > 0) {
-                    const articulo = document.querySelector('.Fname').value;
-                    const descripcion = document.querySelector('.DescM').value;
-
-                    addImage(inputFile, articulo, descripcion);
-                }
-            });
         });
 
         fetch('/Mobiliario', {

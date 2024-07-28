@@ -25,7 +25,6 @@ function consulmob(req, callback) {
                         Cantidad: item.Cantidad,
                         Area: item.Área
                     }));
-
                     return callback(null, dataToSend);
                 });
             } else {

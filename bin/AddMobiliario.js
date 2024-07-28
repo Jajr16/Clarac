@@ -24,8 +24,9 @@ function cargarArchivoJSON() {
 function addFurniture(req, callback) {
     const data = req.body
     console.log(data)
+    console.log(data.articulo)
 
-    db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
+    db.query('SELECT empleado.Num_Emp, empleado.Área FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.user], function (err, result) {
         if (err) { Errores(err); return callback(err); } // Se hace un control de errores
         else {
             if (result.length > 0) {//Si sí hizo una búsqueda
@@ -33,7 +34,7 @@ function addFurniture(req, callback) {
                 var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
                 var area = result[0].Área; // Se obtiene el area del arreglo
 
-                db.query('insert into mobiliario values (NULL,?,?,?,?,?,?)', [data.Articulo, data.Descripcion, num_emp, data.Ubicacion, data.Cantidad, area], function (err2, result) {
+                db.query('insert into mobiliario values (NULL,?,?,?,?,?,?)', [data.articulo, data.descripcion, num_emp, data.Ubicacion, data.Cantidad, area], function (err2, result) {
                     if (err2) { Errores(err2); return callback(err); } // Se hace un control de errores
                     else {
                         if (result) {
@@ -42,12 +43,12 @@ function addFurniture(req, callback) {
                             articulos.push({ "ARTICULO": data.Articulo });
 
                             guardarArchivoJSON(articulos);
-                            return callback(null, { type: 'Mobiliario_Respuesta', message: 'Mobiliario dado de alta.' })
+                            return callback(null, { type: 'success', message: 'Mobiliario dado de alta.' })
                         }
                     }
                 });
             } else {
-                return callback(null, { type: 'Error_Mobiliario_Respuesta', message: 'El mobiliario no se pudo dar de alta.' })
+                return callback(null, { type: 'failed', message: 'El mobiliario no se pudo dar de alta.' })
             }
         }
     });

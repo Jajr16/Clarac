@@ -85,9 +85,14 @@ const storage = new GridFsStorage({
           console.error('Error generating random bytes:', err);
           return reject(err);
         }
-        const filename = buf.toString('hex') + path.extname(file.originalname);
+        // Verifica que req.body contiene los campos necesarios
+        if (!req.body.articulo || !req.body.descripcion || !req.body.user) {
+          return reject(new Error('Missing required fields in req.body'));
+        }
+        const customId = `${req.body.articulo}_${req.body.descripcion}_${req.body.user}`;
         const fileInfo = {
-          filename: filename,
+          _id: customId,
+          filename: file.originalname,
           bucketName: 'uploads'
         };
         console.log('File info:', fileInfo);  // Logging fileInfo for debugging
@@ -130,16 +135,19 @@ app.post('/mod_mob', (req, res) => {
 });
 
 // Ruta para subir archivos
-app.post('/users/upload', (req, res, next) => {
-  console.log('Entrando a la ruta /users/upload');
-  next();
-}, upload.single('file'), (req, res) => {
-  console.log('Después de multer');
+app.post('/users/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     console.log('No file uploaded');
+    res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });
     return res.status(400).json({ type: 'error', message: 'No file uploaded' });
   }
-  res.json({ file: req.file });
+  addFurnit(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+
 });
 
 // Get Images
@@ -169,6 +177,30 @@ app.get('/users/files', async (req, res) => {
   }
 });
 
+app.get('/users/files/:id', async (req, res) => {
+  if (!gfsBucket) {
+    console.log('gfsBucket no está inicializado');
+    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+  }
+
+  console.log('Obteniendo archivo...');
+
+  try {
+    const file = await gfsBucket.find({ _id: req.params.id }).toArray();
+
+    if (!file || file.length === 0) {
+      console.log('No se encontró el archivo');
+      return res.status(404).json({ err: 'No se encontró el archivo' });
+    }
+
+    console.log('Archivo encontrado...', file);
+    res.json(file);
+
+  } catch (err) {
+    console.error('Error al obtener el archivo: ', err);
+    res.status(500).json({ err: 'Error al obtener archivos' });
+  }
+});
 
 // Get one file
 app.get('/users/files/:filename', async (req, res) => {
@@ -197,27 +229,27 @@ app.get('/users/files/:filename', async (req, res) => {
 });
 
 // Display Images
-app.get('/users/image/:filename', async (req, res) => {
+app.get('/users/image/:id', async (req, res) => {
   if (!gfsBucket) {
     console.log('gfsBucket no está inicializado');
     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
   }
 
-  console.log('Obteniendo archivo de GridFS...', req.params.filename);
+  console.log('Obteniendo archivo de GridFS...', req.params.id);
 
   try {
-    const file = await gfsBucket.find({ filename: req.params.filename }).toArray();
+    const fileImageCursor = await gfsBucket.find({ _id: req.params.id }).toArray();
 
-    if (!file || file.length === 0) {
+    if (!fileImageCursor || fileImageCursor.length === 0) {
       console.log('No se encontró el archivo');
       return res.status(404).json({ err: 'No se encontró el archivo' });
     }
 
-    const fileData = file[0];
+    const fileImage = fileImageCursor[0];
 
-    if (fileData.contentType === 'image/jpeg' || fileData.contentType === 'image/png' || fileData.contentType === 'image/jpg') {
+    if (fileImage.contentType === 'image/jpeg' || fileImage.contentType === 'image/png' || fileImage.contentType === 'image/jpg') {
       console.log('Es una imagen, devolviendo el stream');
-      const readstream = gfsBucket.openDownloadStreamByName(fileData.filename);
+      const readstream = gfsBucket.openDownloadStream(fileImage._id);
       readstream.pipe(res);
     } else {
       console.log('El archivo no es una imagen');

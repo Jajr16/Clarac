@@ -63,6 +63,14 @@ const loginLimiter = rateLimit({
 const url = 'mongodb://localhost:27017/Clarac';
 const conn = mongoose.createConnection(url);
 
+mongoose.connect(url)
+  .then(() => {
+    console.log('Conexión a MongoDB establecida.');
+  })
+  .catch(err => {
+    console.error('Error de conexión a MongoDB:', err);
+  });
+
 let gfsBucket;
 
 conn.once('open', () => {
@@ -75,9 +83,74 @@ conn.on('error', (err) => {
   console.error('Error de conexión a MongoDB:', err);
 });
 
+function customId(req) {
+  const abc1 = 'abcdefghij';
+  const abc2 = 'klmnñopqrs';
+  const abc3 = 'tuvwxyzABC';
+  const abc4 = 'DEFGHIJKLM';
+  const abc5 = 'NÑOPQRSTUV';
+  const abc6 = 'WXYZ123456';
+  const abc7 = '7890';
+  let customId = `${req.body.articulo}A${req.body.descripcion}A${req.body.user}`;
+  console.log(customId)
+  let count = 0;
+
+  const getHexEquivalent = (char) => {
+    if (abc1.includes(char)) return abc1.indexOf(char).toString();
+    if (abc2.includes(char)) return abc2.indexOf(char).toString();
+    if (abc3.includes(char)) return abc3.indexOf(char).toString();
+    if (abc4.includes(char)) return abc4.indexOf(char).toString();
+    if (abc5.includes(char)) return abc5.indexOf(char).toString();
+    if (abc6.includes(char)) return abc6.indexOf(char).toString();
+    if (abc7.includes(char)) return abc7.indexOf(char).toString();
+    return '1';
+  };
+
+  // Replace invalid characters and add indices
+  let newId = '';
+  for (let i = 0; i < customId.length; i++) {
+    const char = customId[i];
+    if (/[0-9a-fA-F]/.test(char)) {
+      newId += char;
+    } else {
+      newId += getHexEquivalent(char);
+    }
+  }
+
+  // Extend to 24 characters if necessary
+  while (newId.length < 24) {
+    const char = newId[count];
+    if (abc1.indexOf(char) !== -1) {
+      newId = newId.concat(abc1.indexOf(char));
+    } else if (abc2.indexOf(char) !== -1) {
+      newId = newId.concat(abc2.indexOf(char));
+    } else if (abc3.indexOf(char) !== -1) {
+      newId = newId.concat(abc3.indexOf(char));
+    } else if (abc4.indexOf(char) !== -1) {
+      newId = newId.concat(abc4.indexOf(char));
+    } else if (abc5.indexOf(char) !== -1) {
+      newId = newId.concat(abc5.indexOf(char));
+    } else if (abc6.indexOf(char) !== -1) {
+      newId = newId.concat(abc6.indexOf(char));
+    } else if (abc7.indexOf(char) !== -1) {
+      newId = newId.concat(abc7.indexOf(char));
+    } else {
+      newId = newId.concat(1);
+    }
+    count = count + 1;
+  }
+
+  // Ensure all characters are uppercase
+  customId = newId.toUpperCase();
+
+  console.log(customId);
+  return customId
+}
+
 // Configuración de GridFsStorage
 const storage = new GridFsStorage({
   url: url,
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buf) => {
@@ -85,22 +158,27 @@ const storage = new GridFsStorage({
           console.error('Error generating random bytes:', err);
           return reject(err);
         }
-        // Verifica que req.body contiene los campos necesarios
+
+        console.log('req.body:', req.body); // Log completo de req.body
+
         if (!req.body.articulo || !req.body.descripcion || !req.body.user) {
+          console.log('Campos faltantes en req.body:', req.body);
           return reject(new Error('Missing required fields in req.body'));
         }
-        const customId = `${req.body.articulo}_${req.body.descripcion}_${req.body.user}`;
-        const fileInfo = {
-          _id: customId,
-          filename: file.originalname,
+
+        const fileInfo = {// Aquí usamos new ObjectId para asegurar que sea un ObjectId
+          filename: customId(req),
           bucketName: 'uploads'
         };
+
         console.log('File info:', fileInfo);  // Logging fileInfo for debugging
+
         resolve(fileInfo);
       });
     });
   }
 });
+
 const upload = multer({ storage });
 
 // Rutas
@@ -134,21 +212,44 @@ app.post('/mod_mob', (req, res) => {
   });
 });
 
-// Ruta para subir archivos
+app.post('/users/check-filename',  upload.none(), async (req, res) => {
+  let filename = customId(req)
+  console.log('El id es este ', filename)
+
+  if (!filename) {
+    return res.status(400).json({ type: 'error', message: 'Filename is required' });
+  }
+
+  try {
+    const filesCollection = mongoose.connection.db.collection('uploads.files');
+    const existingFile = await filesCollection.findOne({ filename: filename });
+
+    if (existingFile) {
+      return res.status(400).json({ type: 'error', message: 'Ya subiste este mobiliario, inténtalo de nuevo.' });
+    }
+
+    res.json({ type: 'success', message: 'Filename is unique' });
+  } catch (error) {
+    console.error('Error while checking filename:', error);
+    res.status(500).json({ type: 'error', message: 'Error in the server', details: error });
+  }
+});
+
 app.post('/users/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     console.log('No file uploaded');
     res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });
     return res.status(400).json({ type: 'error', message: 'No file uploaded' });
   }
+  console.log('req.body in /users/upload:', req.body); // Log req.body
   addFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
     res.json(result);
   });
-
 });
+
 
 // Get Images
 app.get('/users/files', async (req, res) => {
@@ -177,30 +278,30 @@ app.get('/users/files', async (req, res) => {
   }
 });
 
-app.get('/users/files/:id', async (req, res) => {
-  if (!gfsBucket) {
-    console.log('gfsBucket no está inicializado');
-    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
-  }
+// app.get('/users/files/:id', async (req, res) => {
+//   if (!gfsBucket) {
+//     console.log('gfsBucket no está inicializado');
+//     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+//   }
 
-  console.log('Obteniendo archivo...');
+//   console.log('Obteniendo archivo...');
 
-  try {
-    const file = await gfsBucket.find({ _id: req.params.id }).toArray();
+//   try {
+//     const file = await gfsBucket.find({ _id: req.params.id }).toArray();
 
-    if (!file || file.length === 0) {
-      console.log('No se encontró el archivo');
-      return res.status(404).json({ err: 'No se encontró el archivo' });
-    }
+//     if (!file || file.length === 0) {
+//       console.log('No se encontró el archivo');
+//       return res.status(404).json({ err: 'No se encontró el archivo' });
+//     }
 
-    console.log('Archivo encontrado...', file);
-    res.json(file);
+//     console.log('Archivo encontrado...', file);
+//     res.json(file);
 
-  } catch (err) {
-    console.error('Error al obtener el archivo: ', err);
-    res.status(500).json({ err: 'Error al obtener archivos' });
-  }
-});
+//   } catch (err) {
+//     console.error('Error al obtener el archivo: ', err);
+//     res.status(500).json({ err: 'Error al obtener archivos' });
+//   }
+// });
 
 // Get one file
 app.get('/users/files/:filename', async (req, res) => {
@@ -208,8 +309,6 @@ app.get('/users/files/:filename', async (req, res) => {
     console.log('gfsBucket no está inicializado');
     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
   }
-
-  console.log('Obteniendo archivo...')
 
   try {
     const file = await gfsBucket.find({ filename: req.params.filename }).toArray();
@@ -219,14 +318,13 @@ app.get('/users/files/:filename', async (req, res) => {
       return res.status(404).json({ err: 'No se encontró el archivo' });
     }
 
-    console.log('Archivo encontrado...', file);
-    res.json(file);
-
+    res.json(file[0]);
   } catch (err) {
-    console.error('Error al obtener el archivo: ', err);
-    res.status(500).json({ err: 'Error al obtener archivos' });
+    console.error('Error al obtener el archivo:', err);
+    res.status(500).json({ err: 'Error al obtener el archivo' });
   }
 });
+
 
 // Display Images
 app.get('/users/image/:id', async (req, res) => {

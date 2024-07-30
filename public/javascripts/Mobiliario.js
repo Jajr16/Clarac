@@ -35,23 +35,40 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('Cantidad', cantidad)
                 formData.append('Ubicacion', ubicacion)
                 formData.append('user', user);
-                formData.append('file', inputFile.files[0]);
 
-                fetch('/users/upload', {
+                fetch('/users/check-filename', {
                     method: 'POST',
-                    body: formData
-                }).then(response => response.json())
+                    body: formData  // Enviar el FormData sin especificar el Content-Type
+                })
+                    .then(response => response.json())
                     .then(data => {
                         if (data.type === 'success') {
-                            showSuccessAlertReload(data.message)
+                            console.log('Todo bien');
+                            formData.append('file', inputFile.files[0]);
+                            return fetch('/users/upload', {
+                                method: 'POST',
+                                body: formData  // Enviar el FormData sin especificar el Content-Type
+                            });
                         } else {
-                            showErrorAlert(data.message)
+                            console.log('Todo mal');
+                            showErrorAlert(data.message);
                         }
                     })
-                    .catch(error => {
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message);
+                        } else {
+                            showErrorAlert(data.message);
+                        }
+                    }).catch(error => {
                         console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
+                        // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    })
+                    .catch (error => {
+                    console.error('Error en la solicitud:', error);
+                    // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
             }
         }
 
@@ -197,6 +214,7 @@ if (!Permisos['MOBILIARIO']) {
                         if ($('.fa-circle-plus').css('display', 'none')) {
                             $('.fa-circle-plus').css('display', 'block')
                         }
+                        fetch('')
                         $('.Fname').val(item.Articulo);
                         $('.UbiM').val(item.Ubicacion);
                         $('.CantidadM').val(item.Cantidad);

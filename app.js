@@ -212,7 +212,7 @@ app.post('/mod_mob', (req, res) => {
   });
 });
 
-app.post('/users/check-filename',  upload.none(), async (req, res) => {
+app.post('/users/check-filename', upload.none(), async (req, res) => {
   let filename = customId(req)
   console.log('El id es este ', filename)
 
@@ -304,21 +304,34 @@ app.get('/users/files', async (req, res) => {
 // });
 
 // Get one file
-app.get('/users/files/:filename', async (req, res) => {
+app.post('/users/disp_image', upload.none(), async (req, res) => {
+  let filename = customId(req)
+  console.log('Pues el filename que encontró es', filename)
+
   if (!gfsBucket) {
     console.log('gfsBucket no está inicializado');
     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
   }
 
   try {
-    const file = await gfsBucket.find({ filename: req.params.filename }).toArray();
+    const file = await gfsBucket.find({ filename: filename }).toArray();
 
     if (!file || file.length === 0) {
       console.log('No se encontró el archivo');
       return res.status(404).json({ err: 'No se encontró el archivo' });
     }
 
-    res.json(file[0]);
+    const fileImage = file[0]
+
+    if (fileImage.contentType === 'image/jpeg' || fileImage.contentType === 'image/png' || fileImage.contentType === 'image/jpg') {
+      console.log('Es una imagen, devolviendo el stream');
+      const readstream = gfsBucket.openDownloadStream(fileImage._id);
+      readstream.pipe(res);
+    } else {
+      console.log('El archivo no es una imagen');
+      res.status(404).json({ err: 'No es una imagen' });
+    }
+
   } catch (err) {
     console.error('Error al obtener el archivo:', err);
     res.status(500).json({ err: 'Error al obtener el archivo' });

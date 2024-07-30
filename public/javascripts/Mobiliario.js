@@ -65,10 +65,10 @@ if (!Permisos['MOBILIARIO']) {
                         console.error('Error en la solicitud:', error);
                         // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                     })
-                    .catch (error => {
-                    console.error('Error en la solicitud:', error);
-                    // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                });
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
             }
         }
 
@@ -214,11 +214,31 @@ if (!Permisos['MOBILIARIO']) {
                         if ($('.fa-circle-plus').css('display', 'none')) {
                             $('.fa-circle-plus').css('display', 'block')
                         }
-                        fetch('')
-                        $('.Fname').val(item.Articulo);
-                        $('.UbiM').val(item.Ubicacion);
-                        $('.CantidadM').val(item.Cantidad);
-                        $('.DescM').val(item.Descripcion);
+
+                        const formData = new FormData();
+                        formData.append('articulo', item.Articulo)
+                        formData.append('descripcion', item.Descripcion)
+                        formData.append('user', user);
+
+                        fetch('/users/disp_image', {
+                            method: 'POST',
+                            body: formData
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.blob(); 
+                        }).then(blob => {
+                            const url = URL.createObjectURL(blob); // Crear URL del blob
+                            document.querySelector('.furniture-image').src = url;
+                            $('.Fname').val(item.Articulo);
+                            $('.UbiM').val(item.Ubicacion);
+                            $('.CantidadM').val(item.Cantidad);
+                            $('.DescM').val(item.Descripcion);
+                        }).catch(error => {
+                            console.error('Error en la solicitud:', error);
+                        });
+
 
                     });
                     tbody.appendChild(tr);

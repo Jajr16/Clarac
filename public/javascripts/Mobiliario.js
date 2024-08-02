@@ -14,7 +14,6 @@ if (!Permisos['MOBILIARIO']) {
             const descripcion = document.querySelector('.DescM').value;
             const cantidad = document.querySelector('.CantidadM').value
             const ubicacion = document.querySelector('.UbiM').value
-            console.log(inputFile)
 
             if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '') {
                 Swal.fire({
@@ -85,6 +84,7 @@ if (!Permisos['MOBILIARIO']) {
                 const image = $('.furniture-image')
 
                 image.css('cursor', 'pointer')
+                image.attr('src', "/images/add-image.png")   
                 inputM.attr("readonly", false);
                 inputM.attr("placeholder", 'Ingresa los datos del mobiliario');
                 inputM.val('')
@@ -114,6 +114,7 @@ if (!Permisos['MOBILIARIO']) {
             $('.modyMob').remove()
             $('.cancelMob').remove()
             $('.fa-circle-plus').css('display', 'block')
+            document.querySelector('.furniture-image').src = "/images/add-image.png"
 
             imagen.removeEventListener('click', ImageFunction);
             imagen.style.cursor = 'default';
@@ -123,22 +124,20 @@ if (!Permisos['MOBILIARIO']) {
 
         function modify(oldName, oldDesc, e) {
             e.preventDefault()
-            const updatedData = {
-                Articulo: document.querySelector('.Fname').value,
-                Cantidad: document.querySelector('.CantidadM').value,
-                Ubicacion: document.querySelector('.UbiM').value,
-                Descripcion: document.querySelector('.DescM').value,
-                dataOldA: oldName,
-                dataOldD: oldDesc,
-                user
-            };
 
+            const formData = new FormData();
+            formData.append('Narticulo', document.querySelector('.Fname').value)
+            formData.append('Ndescripcion', document.querySelector('.DescM').value)
+            formData.append('user', user);
+            formData.append('cantidad', document.querySelector('.CantidadM').value);
+            formData.append('ubicacion', document.querySelector('.UbiM').value);
+            formData.append('articulo', oldName);
+            formData.append('descripcion', oldDesc);
+
+            console.log(formData)
             fetch('/mod_mob', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedData)
+                body: formData
             }).then(response => response.json())
                 .then(data => {
                     if (data.type === 'RespDelMob') {
@@ -152,12 +151,24 @@ if (!Permisos['MOBILIARIO']) {
                     document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
 
-            const data = {
-                type: 'Cambios_Mobiliario',
-                data: updatedData,
-            };
-            sendWebSocketMessage(data)
-            ws.onmessage = handleSocketResponse;
+            const inputFile = document.getElementById('file');
+            if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
+            } else {
+                formData.append('file', inputFile.files[0])
+                console.log('Caraculo')
+                console.log(inputFile.files)
+                fetch('/renew', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            console.log(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+            }
         }
         // FUNCIONALIDAD PÁGINA
         const edit = $('.editM');
@@ -227,7 +238,7 @@ if (!Permisos['MOBILIARIO']) {
                             if (!response.ok) {
                                 throw new Error('Network response was not ok');
                             }
-                            return response.blob(); 
+                            return response.blob();
                         }).then(blob => {
                             const url = URL.createObjectURL(blob); // Crear URL del blob
                             document.querySelector('.furniture-image').src = url;

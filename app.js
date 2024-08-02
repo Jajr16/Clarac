@@ -83,7 +83,7 @@ conn.on('error', (err) => {
   console.error('Error de conexión a MongoDB:', err);
 });
 
-function customId(req) {
+function customId(req, update) {
   const abc1 = 'abcdefghij';
   const abc2 = 'klmnñopqrs';
   const abc3 = 'tuvwxyzABC';
@@ -91,7 +91,13 @@ function customId(req) {
   const abc5 = 'NÑOPQRSTUV';
   const abc6 = 'WXYZ123456';
   const abc7 = '7890';
-  let customId = `${req.body.articulo}A${req.body.descripcion}A${req.body.user}`;
+  let customId
+
+  if (req.body.Narticulo && req.body.Ndescripcion && update) {
+    customId = `${req.body.Narticulo}A${req.body.Ndescripcion}A${req.body.user}`;
+  } else {
+    customId = `${req.body.articulo}A${req.body.descripcion}A${req.body.user}`;
+  }
   console.log(customId)
   let count = 0;
 
@@ -159,19 +165,19 @@ const storage = new GridFsStorage({
           return reject(err);
         }
 
-        console.log('req.body:', req.body); // Log completo de req.body
+        console.log('req.body:', req.body);
 
         if (!req.body.articulo || !req.body.descripcion || !req.body.user) {
           console.log('Campos faltantes en req.body:', req.body);
           return reject(new Error('Missing required fields in req.body'));
         }
 
-        const fileInfo = {// Aquí usamos new ObjectId para asegurar que sea un ObjectId
-          filename: customId(req),
+        const fileInfo = {
+          filename: customId(req, true),
           bucketName: 'uploads'
         };
 
-        console.log('File info:', fileInfo);  // Logging fileInfo for debugging
+        console.log('File info:', fileInfo);
 
         resolve(fileInfo);
       });
@@ -203,7 +209,8 @@ app.post('/new_mob', (req, res) => {
   });
 });
 
-app.post('/mod_mob', (req, res) => {
+app.post('/mod_mob', upload.none(), async (req, res) => {
+  console.log(req.body, "Putoputo")
   modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -212,12 +219,49 @@ app.post('/mod_mob', (req, res) => {
   });
 });
 
+app.post('/renew', upload.single('file'), async (req, res) => {
+  try {
+
+    if (!req.file) {
+      return res.json({ type: 'No image' })
+    } else {
+
+      let filename = customId(req, false)
+      console.log('El filename es este ', filename)
+
+      if (!filename) {
+        return res.status(400).json({ type: 'error', message: 'Nombre del archivo requerido.' });
+      }
+
+      const filesCollection = mongoose.connection.db.collection('uploads.files');
+      const existingFile = await filesCollection.findOne({ filename: filename });
+
+      if (existingFile) {
+        await gfsBucket.delete(existingFile._id)
+      }
+
+      const customFilename = customId(req, true);
+      const file = {
+        filename: customFilename,
+        bucketName: 'uploads',
+      };
+
+      res.json({ type: 'success', message: 'Imagen actualizada con éxito.' })
+    }
+
+
+  } catch (err) {
+    console.error('Error al modificar el mobiliario:', err);
+    res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+  }
+})
+
 app.post('/users/check-filename', upload.none(), async (req, res) => {
-  let filename = customId(req)
+  let filename = customId(req, false)
   console.log('El id es este ', filename)
 
   if (!filename) {
-    return res.status(400).json({ type: 'error', message: 'Filename is required' });
+    return res.status(400).json({ type: 'error', message: 'Nombre del archivo requerido.' });
   }
 
   try {
@@ -305,7 +349,7 @@ app.get('/users/files', async (req, res) => {
 
 // Get one file
 app.post('/users/disp_image', upload.none(), async (req, res) => {
-  let filename = customId(req)
+  let filename = customId(req, false)
   console.log('Pues el filename que encontró es', filename)
 
   if (!gfsBucket) {

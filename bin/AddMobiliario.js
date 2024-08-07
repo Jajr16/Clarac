@@ -54,4 +54,4 @@ function addFurniture(req, callback) {
     });
 }
 
-module.exports = addFurniture
+module.exports = addFurniture;

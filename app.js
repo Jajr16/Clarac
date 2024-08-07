@@ -15,10 +15,23 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+// Constante del login
 const login = require('./bin/login');
+
+// * Constantes para mobiliario * //
 const furnitures = require('./bin/Mobiliario');
 const addFurnit = require('./bin/AddMobiliario');
 const modFurnit = require('./bin/MobiliarioModify');
+
+// * Constantes para productos * //
+const products = require('./bin/Productos');
+const addProduct = require('./bin/AddProductos');
+const modProduct = require('./bin/ProductosModify');
+
+// * Constantes para equipos * //
+const equipments = require('./bin/Equipos');
+const addEquip = require('./bin/AddEquipos');
+const modEquip = require('./bin/EquiposModify');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -42,7 +55,7 @@ app.use(methodOverride('_method'));
 
 // Configurar express-session
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: 'secreto',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -191,6 +204,9 @@ const upload = multer({ storage });
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+
+// *** Rutas para mobiliario *** //
+// Consultas de mobiliario
 app.post('/Mobiliario', (req, res) => {
   furnitures(req, (err, result) => {
     if (err) {
@@ -199,7 +215,7 @@ app.post('/Mobiliario', (req, res) => {
     res.json(result);
   });
 });
-
+// Altas de mobiliario
 app.post('/new_mob', (req, res) => {
   addFurnit(req, (err, result) => {
     if (err) {
@@ -208,9 +224,8 @@ app.post('/new_mob', (req, res) => {
     res.json(result);
   });
 });
-
+// Modificar mobiliario
 app.post('/mod_mob', upload.none(), async (req, res) => {
-  console.log(req.body, "Putoputo")
   modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -218,6 +233,15 @@ app.post('/mod_mob', upload.none(), async (req, res) => {
     res.json(result);
   });
 });
+// Eliminar mobiliario
+/*app.post('/del_mob', (req, res) => {
+  delFurnit(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});*/
 
 app.post('/renew', upload.single('file'), async (req, res) => {
   try {
@@ -416,6 +440,84 @@ app.get('/users/image/:id', async (req, res) => {
     res.status(500).json({ err: 'Error al obtener archivos' });
   }
 });
+
+// *** Rutas para productos *** //
+// Consultas de productos
+app.post('/Productos', (req, res) => {
+  products(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Altas de productos
+app.post('/new_prod', (req, res) => {
+  addProduct(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Modificar producto
+app.post('/mod_prod', upload.none(), async (req, res) => {
+  modProduct(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Eliminar producto
+/*app.post('/del_prod', (req, res) => {
+  delProduct(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});*/
+
+
+// *** Rutas para equipos *** //
+// Consultas de equipos
+app.post('/Equipos', (req, res) => {
+  equipments(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Altas de equipos
+app.post('/new_eqp', (req, res) => {
+  addEquip(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Modificar equipo
+app.post('/mod_eqp', upload.none(), async (req, res) => {
+  modEquip(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Eliminar equipo
+/*app.post('/del_eqp', (req, res) => {
+  delEquip(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});*/
+
 
 // Ruta para el login
 app.post('/login', loginLimiter, (req, res) => {

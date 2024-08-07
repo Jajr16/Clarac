@@ -16,4 +16,9 @@ router.get('/consulProd', function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });
 });
 
+// Consulta de Equipos
+router.get('/consulEqp', function (req, res, next) {
+  res.render('consulEqp', { title: 'Consultar Equipos', layout: 'other_layout' });
+});
+
 module.exports = router;

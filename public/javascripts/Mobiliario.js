@@ -6,6 +6,7 @@ if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
+        
         function addImage(e) {
             e.preventDefault()
 
@@ -155,7 +156,6 @@ if (!Permisos['MOBILIARIO']) {
             if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
             } else {
                 formData.append('file', inputFile.files[0])
-                console.log('Caraculo')
                 console.log(inputFile.files)
                 fetch('/renew', {
                     method: 'POST',

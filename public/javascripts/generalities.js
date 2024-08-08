@@ -32,7 +32,11 @@ function showSuccessAlertReload(message) {
     })
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function empty_table(tabla, n) {
+    $('#' + tabla + ' tbody').append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     const resp = $('.Resp')
     const employ = $('.Employees')
     if (resp && employ) {

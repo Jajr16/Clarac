@@ -403,13 +403,23 @@ app.get('/getEmploys', upload.none(), async (req, res) => {
 })
 
 app.post('/responsivas', upload.none(), async (req, res) => {
-  getResponsives(req, (err, result) => {
+  getResponsives(req, async (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-    res.json(result);
-  })
-})
+
+    if (result && result.pdfBuffer) {
+      // Enviar el PDF como un blob directamente
+      res.writeHead(200, {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename="responsiva.pdf"',
+      });
+      res.end(result.pdfBuffer);
+    } else {
+      res.status(400).json({ type: 'error', message: 'No se pudo generar el PDF' });
+    }
+  });
+});
 
 // Ruta para el login
 app.post('/login', loginLimiter, (req, res) => {

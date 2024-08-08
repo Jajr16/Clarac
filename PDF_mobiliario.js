@@ -31,7 +31,7 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     <html>
     <head>
         <title>
-            <%= title%>
+            Responsiva mobiliario - ${NombreEmp}
         </title>
         <meta http-equiv="Expires" content="0">
         <meta http-equiv="Last-Modified" content="0">
@@ -71,11 +71,11 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     </body>
     </html>
     `;
-
+    console.log('Antes de puppeteer.launch')
     const browser = await puppeteer.launch({
         ignoreDefaultArgs: ['--disable-popup-blocking'],
-        args: ['--disable-popup-blocking'],
-        headless: "new",
+        args: ['--disable-popup-blocking', '--no-sandbox', '--disable-setuid-sandbox'],
+        headless: "true",
         defaultViewport: {
             width: 750,
             height: 500,
@@ -85,11 +85,12 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
             isLandscape: false,
         }
     });
+
     const page = await browser.newPage();
 
     await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
     await page.addStyleTag({ content: cssContent });
-
+    
     await page.emulateMediaType("screen");
 
     const pdfBuffer = await page.pdf({

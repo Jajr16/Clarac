@@ -29,7 +29,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
     <html>
     <head>
         <title>
-            <%= title%>
+            Responsiva Equipos - ${NombreEmp}
         </title>
         <meta http-equiv="Expires" content="0">
         <meta http-equiv="Last-Modified" content="0">
@@ -90,7 +90,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
 
     const browser = await puppeteer.launch({
         ignoreDefaultArgs: ['--disable-popup-blocking'],
-        args: ['--disable-popup-blocking'],
+        args: ['--disable-popup-blocking', '--no-sandbox', '--disable-setuid-sandbox'],
         headless: "new",
         defaultViewport: {
             width: 750,

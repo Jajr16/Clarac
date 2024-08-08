@@ -18,8 +18,10 @@ function getResponsives(req, callback) {
                         if (err) { Errores(err); return callback(err); } // Se hace un control de errores
                         else {
                             if (res) {
+                                console.log('si llegué aquí')
                                 mobiliario_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
-                                    .then((pdfBuffer) => {
+                                .then((pdfBuffer) => {
+                                        console.log('aquí también')
                                         return callback(null, { mensaje: 'Responsiva de mobiliario generada.', pdfBuffer });//Mandar mensaje de error a cliente
                                     }).catch(error => {
                                         console.error('Error al generar o descargar el PDF:', error);
@@ -35,10 +37,10 @@ function getResponsives(req, callback) {
                             if (res) {
                                 equipos_generatePDF(num_emp, areaEmp, data.NombreEmp, res)
                                     .then((pdfBuffer) => {
-                                        socket.emit('Responsiva_Respuesta', { mensaje: 'Responsiva de equipos generada.', pdfBuffer });//Mandar mensaje de error a cliente
+                                        return callback(null, { mensaje: 'Responsiva de equipos generada.', pdfBuffer });//Mandar mensaje de error a cliente
                                     }).catch(error => {
-                                        socket.emit('Responsiva_Respuesta', { mensaje: 'No se pudo generar la responsiva, inténtelo de nuevo' });
                                         console.error('Error al generar o descargar el PDF:', error);
+                                        return callback(null,  { err: true,  mensaje: 'No se pudo generar la responsiva, inténtelo de nuevo' });
                                     });
                             }
                         }

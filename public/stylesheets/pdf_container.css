@@ -1,0 +1,12 @@
+.pdfContainer {
+    display: none;
+    place-self: center;
+    width: 90%;
+    height: 35rem;
+    margin: 1rem 0 2rem 0;
+}
+
+.pdfViewer {
+    width: 100%;
+    height: 100%;
+}

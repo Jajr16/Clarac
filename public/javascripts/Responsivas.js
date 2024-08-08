@@ -36,9 +36,16 @@ if (!Permisos['RESPONSIVAS']) {
                     employ.append($('<option>', { value: item.employee, text: item.employee }))
                 })
             })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+            });
     })
 
     const FormResp = document.querySelector("#crearRespon");
+    const pdfContainer = document.getElementById('pdfContainer');
+    const pdfViewer = document.getElementById('pdfViewer');
+
     FormResp.addEventListener("submit", (e) => {
         e.preventDefault()
         const responsivas = $(".Resp")
@@ -54,10 +61,28 @@ if (!Permisos['RESPONSIVAS']) {
                 method: 'POST',
                 body: formData
             })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            showErrorAlert(data.message);
+                            throw new Error(data.message);
+                        });
+                    }
+                    return response.blob(); // Convertir la respuesta a blob
                 })
+                .then(blob => {
+                    Swal.fire("Responsiva generada correctamente").then(() => {
+                        // Crear una URL para el blob y establecerla como iframe
+                        const pdfUrl = URL.createObjectURL(blob);
+                        pdfViewer.src = pdfUrl;
+
+                        pdfContainer.style.display = 'flex';
+                    });
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                });
         }
     })
 }

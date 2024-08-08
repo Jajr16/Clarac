@@ -61,11 +61,11 @@ if (!Permisos['MOBILIARIO']) {
                         }
                     }).catch(error => {
                         console.error('Error en la solicitud:', error);
-                        // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                     })
                     .catch(error => {
                         console.error('Error en la solicitud:', error);
-                        // document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                     });
             }
         }
@@ -147,7 +147,7 @@ if (!Permisos['MOBILIARIO']) {
                 })
                 .catch(error => {
                     console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                 });
 
             const inputFile = document.getElementById('file');
@@ -256,7 +256,7 @@ if (!Permisos['MOBILIARIO']) {
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
             });
 
     }

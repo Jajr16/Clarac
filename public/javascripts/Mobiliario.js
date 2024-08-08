@@ -42,7 +42,6 @@ if (!Permisos['MOBILIARIO']) {
                     .then(response => response.json())
                     .then(data => {
                         if (data.type === 'success') {
-                            console.log('Todo bien');
                             formData.append('file', inputFile.files[0]);
                             return fetch('/users/upload', {
                                 method: 'POST',

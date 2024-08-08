@@ -14,11 +14,13 @@ const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
+// IMPORT LIBRARIES
 const login = require('./bin/login');
 const furnitures = require('./bin/Mobiliario');
 const addFurnit = require('./bin/AddMobiliario');
 const modFurnit = require('./bin/MobiliarioModify');
+const getEmploys = require('./bin/getEmploys')
+const getResponsives = require('./bin/getResponsives')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -210,7 +212,6 @@ app.post('/new_mob', (req, res) => {
 });
 
 app.post('/mod_mob', upload.none(), async (req, res) => {
-  console.log(req.body, "Putoputo")
   modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -322,31 +323,6 @@ app.get('/users/files', async (req, res) => {
   }
 });
 
-// app.get('/users/files/:id', async (req, res) => {
-//   if (!gfsBucket) {
-//     console.log('gfsBucket no está inicializado');
-//     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
-//   }
-
-//   console.log('Obteniendo archivo...');
-
-//   try {
-//     const file = await gfsBucket.find({ _id: req.params.id }).toArray();
-
-//     if (!file || file.length === 0) {
-//       console.log('No se encontró el archivo');
-//       return res.status(404).json({ err: 'No se encontró el archivo' });
-//     }
-
-//     console.log('Archivo encontrado...', file);
-//     res.json(file);
-
-//   } catch (err) {
-//     console.error('Error al obtener el archivo: ', err);
-//     res.status(500).json({ err: 'Error al obtener archivos' });
-//   }
-// });
-
 // Get one file
 app.post('/users/disp_image', upload.none(), async (req, res) => {
   let filename = customId(req, false)
@@ -416,6 +392,24 @@ app.get('/users/image/:id', async (req, res) => {
     res.status(500).json({ err: 'Error al obtener archivos' });
   }
 });
+
+app.get('/getEmploys', upload.none(), async (req, res) => {
+  getEmploys((err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+})
+
+app.post('/responsivas', upload.none(), async (req, res) => {
+  getResponsives(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  })
+})
 
 // Ruta para el login
 app.post('/login', loginLimiter, (req, res) => {

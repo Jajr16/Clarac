@@ -31,3 +31,16 @@ function showSuccessAlertReload(message) {
         location.reload();
     })
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const resp = $('.Resp')
+    const employ = $('.Employees')
+    if (resp && employ) {
+        new SlimSelect({
+            select: '.Resp'
+        });
+        new SlimSelect({
+            select: '.Employees'
+        });
+    }
+});

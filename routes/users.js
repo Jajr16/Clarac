@@ -16,4 +16,9 @@ router.get('/consulProd', function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });
 });
 
+// Responsivas
+router.get('/responsivas', function (req, res, next) {
+  res.render('responsivas', { title: 'Responsivas' });
+});
+
 module.exports = router;

@@ -1,7 +1,7 @@
 
-/* CSS PANTALLA PRODUCTOS */
+/* CSS PANTALLA MOBILIARIO */
 
-.product-description {
+.furniture-description {
     width: 100%;
     height: 8rem;
     padding: 10px;
@@ -52,10 +52,20 @@
     box-sizing: border-box;
 }
 
+.furniture-image {
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+}
+
+.furniture-image:hover {
+    scale: (1.1);
+}
+
 .table-responsive {
     display: block;
     width: 100%;
-    height: 40.5rem;
+    height: 30.5rem;
     scrollbar-width: none;
     overflow-x: auto;
     overflow-y: auto;
@@ -64,7 +74,7 @@
 
 .table-responsive table {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-height: 49rem;
+    max-height: 39rem;
 }
 
 .table-responsive thead {
@@ -72,7 +82,17 @@
     top: 0;
 }
 
-.description-product div {
+.named-furniture {
+    display: flex;
+    align-items: center;
+}
+
+.named-furniture img {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.description-furniture div {
     margin-bottom: 1rem;
     align-items: center;
 }
@@ -84,21 +104,20 @@
     justify-content: space-between;
 }
 
-.Pname {
+.Fname {
     text-transform: capitalize;
 }
 
-.DP {
+.DF {
     display: var(--displayF);
 }
 
-.DP label {
+.DF label {
     display: flex;
     width: 12rem;
     align-items: center;
     width: auto;
     margin-right: 1rem;
-    margin-bottom: 2rem;
 }
 
 .menu-item {
@@ -177,7 +196,7 @@
     transform: translateY(-50%) rotate(180deg);
 }
 
-.DesciptionP {
+.DesciptionM {
     background-color: #ccc;
     padding: 0.3rem;
     padding-left: 0.5rem;
@@ -188,12 +207,12 @@
     margin-block-end: 0;
 }
 
-.DescP {
+.DescM {
     height: 8rem;
     width: 98%;
 }
 
-.cancelProd {
+.cancelMob {
     background-color: rgb(134, 0, 0)!important;
 }
 

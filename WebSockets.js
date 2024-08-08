@@ -1,8 +1,23 @@
 const WebSocket = require('ws');
+
+// Constante del login
 const login = require('./bin/login')
+
+// * Constantes para mobiliario * //
 const consulmob = require('./bin/Mobiliario')
 const modifyMob = require('./bin/MobiliarioModify')
 const addFurniture = require('./bin/AddMobiliario')
+
+// * Constantes para productos * //
+const consulprod = require('./bin/Productos')
+const modifyprod = require('./bin/ProductosModify')
+const addProduct = require('./bin/AddProductos')
+
+// * Constantes para equipos * //
+const consuleqp = require('./bin/Equipos')
+const modifyeqp = require('./bin/EquiposModify')
+const addEqp = require('./bin/AddEquipos')
+
 const Excel = require('exceljs');
 const path = require('path');
 const { MongoClient, GridFSBucket } = require('mongodb');
@@ -88,7 +103,7 @@ function configureWebSocket(server) {
 
                             // Obtener metadatos para incluir el tipo de contenido
                             try {
-                                console.log('El articulo es '+articulo)
+                                console.log('El articulo es ' + articulo)
                                 bucket.find({ filename: articulo }).toArray((err, files) => {
                                     console.log('asdasd')
                                     if (err) {
@@ -128,8 +143,6 @@ function configureWebSocket(server) {
                                     message: 'Error en la operación de búsqueda en GridFS.'
                                 }));
                             }
-
-
                         });
 
                         downloadStream.on('error', (err) => {
@@ -142,7 +155,18 @@ function configureWebSocket(server) {
                     }).catch(err => {
                         console.error('Error connecting to MongoDB', err);
                     });
-
+                } else if (data.type === 'Consul_Productos') {
+                    consulprod(ws, data)
+                } else if (data.type === 'Cambios_Productos') {
+                    modifyprod(wss, data)
+                } else if (data.type === 'Altas_Productos') {
+                    addProduct(wss, data)
+                } else if (data.type === 'Consul_Equipos') {
+                    consuleqp(ws, data)
+                } else if (data.type === 'Cambios_Equipos') {
+                    modifyeqp(wss, data)
+                } else if (data.type === 'Altas_Equipos') {
+                    addEqp(wss, data)
                 }
             } catch (error) {
                 console.error(error)

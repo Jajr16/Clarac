@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/home', function(req, res, next) {
-  res.render('home', { title: 'CLARAC | Home', layout: 'other_layout'  });
+router.get('/home', function (req, res, next) {
+  res.render('home', { title: 'CLARAC | Home', layout: 'other_layout' });
 });
 
 // Consulta de mobiliario
@@ -19,6 +19,11 @@ router.get('/consulProd', function (req, res, next) {
 // Responsivas
 router.get('/responsivas', function (req, res, next) {
   res.render('responsivas', { title: 'Responsivas' });
+});
+
+// Consulta de Equipos
+router.get('/consulEqp', function (req, res, next) {
+  res.render('consulEqp', { title: 'Consultar Equipos', layout: 'other_layout' });
 });
 
 module.exports = router;

@@ -18,4 +18,4 @@ function modifyMob(req, callback) {
     });
 }
 
-module.exports = modifyMob
+module.exports = modifyMob;

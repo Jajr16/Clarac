@@ -12,7 +12,9 @@
         </table>
     </div>
     <div class="item2 data boxes-containers">
-        <i class="fa fa-pencil-square-o editM" aria-hidden="true"
+        <i class="fa-solid fa-trash trash" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+        <i class="fa fa-pencil-square-o edit" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
 
         <form method="POST" enctype="multipart/form-data">
@@ -20,23 +22,23 @@
                 <input type="file" id="file" name="file" style="display: none;"><img
                     src="/images/add-image.png" class="furniture-image">
                 <label>Mobiliario:</label>
-                <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditDataM" required
+                <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditData" required
                     maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
             </div>
             <div class="description-furniture">
                 <div class="DF">
                     <label>Ubicación:</label>
-                    <input autocomplete="off" type="text" id="UbiM" name="UbiM" class="UbiM EditDataM" required
+                    <input autocomplete="off" type="text" id="UbiM" name="UbiM" class="UbiM EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DF">
                     <label>Cantidad:</label>
-                    <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" class="CantidadM EditDataM"
+                    <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" class="CantidadM EditData"
                         required min="1" onkeypress="return checkN(event)" readonly>
                 </div>
                 <div>
                     <label style="margin-bottom: 1rem;">Descripción:</label>
-                    <textarea class="furniture-description DescM EditDataM" id="DescM" name="DescM"
+                    <textarea class="furniture-description DescM EditData" id="DescM" name="DescM"
                         oninput="mayus(this);" onkeypress="return checkA(event)" required readonly></textarea>
                 </div>
                 <div class="buttons"></div>

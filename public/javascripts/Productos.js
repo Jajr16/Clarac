@@ -149,19 +149,9 @@ if (!Permisos['ALMACÉN']) {
         `;
 
                     tr.addEventListener('click', () => {
-                        if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
-                            $('.fa-pencil-square-o').css('visibility', 'visible');
-                            const inputP = $('.EditDataP');
-                            inputP.attr("readonly", true);
-                            $('.modyProd').remove();
-                            $('.cancelProd').remove();
-                        }
-                        if ($('.editP').css('display', 'none')) {
-                            $('.editP').css('display', 'block')
-                        }
-                        if ($('.fa-circle-plus').css('display', 'none')) {
-                            $('.fa-circle-plus').css('display', 'block')
-                        }
+                        
+                        iconsLogic()
+
                         $('.CodBarrasP').val(item.Cod_Barras);
                         $('.CateP').val(item.Categoria);
                         $('.Pname').val(item.Articulo);

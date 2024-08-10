@@ -355,3 +355,41 @@ input[type="submit"]:hover {
     width: 70%;
     padding: 0 1rem;
 }
+
+.item1 {
+    flex: 1 1 40%;
+    margin-right: 2rem;
+}
+
+.item2 {
+    flex: 1 1 45%;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    height: 30.5rem;
+    scrollbar-width: none;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 1rem;
+}
+
+.table-responsive table {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 39rem;
+}
+
+.table-responsive thead {
+    position: sticky;
+    top: 0;
+}
+
+.edit {
+    margin-right: 1rem;
+    margin-bottom: 0.7rem;
+}
+
+.Cancel {
+    background-color: rgb(134, 0, 0)!important;
+}

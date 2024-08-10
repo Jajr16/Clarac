@@ -6,7 +6,7 @@ if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
-        
+
         function addImage(e) {
             e.preventDefault()
 
@@ -64,10 +64,6 @@ if (!Permisos['MOBILIARIO']) {
                         console.error('Error en la solicitud:', error);
                         // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                     })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                    });
             }
         }
 
@@ -80,24 +76,16 @@ if (!Permisos['MOBILIARIO']) {
         document.addEventListener('DOMContentLoaded', function () {
             const addF = $('.fa-circle-plus')
             addF.click(function (e) {
-                const inputM = $('.EditDataM');
                 const image = $('.furniture-image')
 
                 image.css('cursor', 'pointer')
-                image.attr('src', "/images/add-image.png")   
-                inputM.attr("readonly", false);
-                inputM.attr("placeholder", 'Ingresa los datos del mobiliario');
-                inputM.val('')
+                image.attr('src', "/images/add-image.png")
 
-                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="modyMob">`;
-                var cancel = '<input type="submit" value="Cancelar" id="cancelMob" onclick="dissapear()" name="cancelMob" class="cancelMob">';
-                $('.modyMob').remove();
-                $('.cancelMob').remove();
-                $('.buttons').append(add);
-                $('.buttons').append(cancel);
+                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
 
-                const edit = $('.editM');
-                edit.css('display', 'none')
+                addFunctions(add, cancel, 'Ingresa los datos del mobiliario')
+
                 const imagen = document.getElementsByClassName('furniture-image')[0];
 
                 imagen.addEventListener('click', ImageFunction);
@@ -105,21 +93,13 @@ if (!Permisos['MOBILIARIO']) {
 
         });
 
-        function dissapear() {
-            const inputM = $('.EditDataM')
+        function dissapearImage() {
             const imagen = document.getElementsByClassName('furniture-image')[0];
 
-            inputM.attr("placeholder", '')
-            inputM.attr("readonly", true)
-            $('.modyMob').remove()
-            $('.cancelMob').remove()
-            $('.fa-circle-plus').css('display', 'block')
             document.querySelector('.furniture-image').src = "/images/add-image.png"
 
             imagen.removeEventListener('click', ImageFunction);
             imagen.style.cursor = 'default';
-            const edit = $('.editM');
-            edit.css('display', 'block')
         }
 
         function modify(oldName, oldDesc, e) {
@@ -170,23 +150,23 @@ if (!Permisos['MOBILIARIO']) {
             }
         }
         // FUNCIONALIDAD PÁGINA
-        const edit = $('.editM');
+        const trash = $('.trash')
+        trash.click(function (e) {
+            
+        })
+
+        const edit = $('.edit');
 
         edit.click(function (e) {
             var nombre_Articulo = $('.Fname').val();
             var desc_Articulo = $('.DescM').val();
-            const inputM = $('.EditDataM');
             const image = $('.furniture-image')
 
             image.css('cursor', 'pointer')
-            inputM.attr("readonly", false);
-            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="modyMob">`;
-            var cancel = '<input type="submit" value="Cancelar" id="cancelMob" onclick="dissapear()" name="cancelMob" class="cancelMob">';
-            $('.modyMob').remove();
-            $('.cancelMob').remove();
-            $('.fa-circle-plus').css('display', 'none')
-            $('.buttons').append(modify);
-            $('.buttons').append(cancel);
+            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="Modify">`;
+            var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
+
+            editsFunctions(modify, cancel)
 
             const imagen = document.getElementsByClassName('furniture-image')[0];
 
@@ -211,19 +191,7 @@ if (!Permisos['MOBILIARIO']) {
         `;
 
                     tr.addEventListener('click', () => {
-                        if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
-                            $('.fa-pencil-square-o').css('visibility', 'visible');
-                            const inputM = $('.EditDataM');
-                            inputM.attr("readonly", true);
-                            $('.modyMob').remove();
-                            $('.cancelMob').remove();
-                        }
-                        if ($('.editM').css('display', 'none')) {
-                            $('.editM').css('display', 'block')
-                        }
-                        if ($('.fa-circle-plus').css('display', 'none')) {
-                            $('.fa-circle-plus').css('display', 'block')
-                        }
+                        iconsLogic()
 
                         const formData = new FormData();
                         formData.append('articulo', item.Articulo)

@@ -12,12 +12,12 @@ function consulprod(req, callback) {
 
         if (res.length > 0) { // Si se encontró el usuario
             if (!(res[0].Área === 'SISTEMAS')) {
-                db.query('SELECT * FROM almacen', function (err, result) {
+                db.query('SELECT * FROM almacen order by eliminado', function (err, result) {
                     if (err) {
                         Errores(err);
                         return callback(err);
                     }
-            
+
                     const dataToSend = result.map(item => ({
                         Cod_Barras: item.Cod_Barras,
                         Categoria: item.Categoria,
@@ -25,17 +25,18 @@ function consulprod(req, callback) {
                         Marca: item.Marca,
                         Descripcion: item.Descripcion,
                         Unidad: item.Unidad,
-                        Existencia: item.Existencia
+                        Existencia: item.Existencia,
+                        Eliminado: item.eliminado
                     }));
                     return callback(null, dataToSend);
                 });
             } else {
-                db.query('SELECT * FROM almacen', function (err, result) {
+                db.query('SELECT * FROM almacen order by eliminado', function (err, result) {
                     if (err) {
                         Errores(err);
                         return callback(err);
                     }
-            
+
                     const dataToSend = result.map(item => ({
                         Cod_Barras: item.Cod_Barras,
                         Categoria: item.Categoria,
@@ -43,7 +44,8 @@ function consulprod(req, callback) {
                         Marca: item.Marca,
                         Descripcion: item.Descripcion,
                         Unidad: item.Unidad,
-                        Existencia: item.Existencia
+                        Existencia: item.Existencia,
+                        Eliminado: item.eliminado
                     }));
                     return callback(null, dataToSend);
                 });

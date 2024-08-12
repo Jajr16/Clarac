@@ -1,5 +1,5 @@
-Error: ER_DUP_ENTRY: Duplicate entry '0-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 16/07/2024 20:21
-Error: ER_DUP_ENTRY: Duplicate entry '0-0-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 16/07/2024 20:23
-Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect integer value: '' for column 'Cantidad' at row 1 | Error obtenido el -> 16/07/2024 22:33
-Error: ER_DUP_ENTRY: Duplicate entry '4-4-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 28/07/2024 2:18
-Error: ER_DUP_ENTRY: Duplicate entry '4-4-758' for key 'mobiliario.PRIMARY' | Error obtenido el -> 28/07/2024 2:19
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', Descripcion = '1', Num_emp = 'ajimenez'' at line 1 | Error obtenido el -> 11/08/2024 21:3
+Error: ER_TRUNCATED_WRONG_VALUE: Truncated incorrect DOUBLE value: 'ajimenez' | Error obtenido el -> 11/08/2024 21:8
+Error: ER_TRUNCATED_WRONG_VALUE: Truncated incorrect DOUBLE value: 'ajimenez' | Error obtenido el -> 11/08/2024 21:10
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 'ajimenez')' at line 1 | Error obtenido el -> 11/08/2024 21:14
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 'ajimenez')' at line 1 | Error obtenido el -> 11/08/2024 21:17

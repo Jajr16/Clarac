@@ -7,6 +7,36 @@ if (!Permisos['MOBILIARIO']) {
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.querySelector('.fileInput');
+            const imagePreview = document.querySelector('.furniture-image');
+
+            // Manejar el cambio en el input de archivo
+            fileInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block'; // Mostrar la imagen seleccionada
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    fileInput.value = '';
+                    imagePreview.src = '/images/add-image.png';
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Por favor, selecciona un archivo que sea una imagen.',
+                    })
+                }
+            });
+        });
+
         function addImage(e) {
             e.preventDefault()
 
@@ -147,12 +177,41 @@ if (!Permisos['MOBILIARIO']) {
                             showErrorAlert(data.message)
                         }
                     })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                    });
             }
         }
         // FUNCIONALIDAD PÁGINA
         const trash = $('.trash')
         trash.click(function (e) {
-            
+            var nombre_Articulo = $('.Fname').val();
+            var desc_Articulo = $('.DescM').val();
+
+            var formData = new FormData()
+            formData.append('articulo', nombre_Articulo)
+            formData.append('descripcion', desc_Articulo)
+            formData.append('user', user)
+
+            if (nombre_Articulo !== '' && desc_Articulo !== '') {
+                fetch('/delMob', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                    });
+            }
         })
 
         const edit = $('.edit');

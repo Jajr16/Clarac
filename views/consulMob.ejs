@@ -1,3 +1,20 @@
+<div class="Fone-item">
+    <div class="boxes-containers one-item">
+        <div class="title-container">
+            Mobiliario en posesión
+        </div>
+        <div class="content-container">
+            <form name="crearRespon" id="crearRespon">
+                <div class="FTB">
+                    <select id="mySelect" class="Resp" required>
+                        <option disabled selected>Buscar mobiliario...</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="Columns">
     <div class="table-responsive item1">
         <table class="data-mob">
@@ -19,7 +36,7 @@
 
         <form method="POST" enctype="multipart/form-data">
             <div class="named-furniture">
-                <input type="file" id="file" name="file" style="display: none;"><img
+                <input type="file" id="file" name="file" class="fileInput" accept="image/*" style="display: none;"><img
                     src="/images/add-image.png" class="furniture-image">
                 <label>Mobiliario:</label>
                 <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditData" required

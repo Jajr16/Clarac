@@ -22,11 +22,13 @@ const login = require('./bin/login');
 const furnitures = require('./bin/Mobiliario');
 const addFurnit = require('./bin/AddMobiliario');
 const modFurnit = require('./bin/MobiliarioModify');
+const delFurnit = require('./bin/deleteMobiliario');
 
 // * Constantes para productos * //
 const products = require('./bin/Productos');
 const addProduct = require('./bin/AddProductos');
 const modProduct = require('./bin/ProductosModify');
+const delProduct = require('./bin/deleteProductos');
 
 // * Constantes para equipos * //
 const equipments = require('./bin/Equipos');
@@ -200,6 +202,7 @@ const storage = new GridFsStorage({
   }
 });
 
+
 const upload = multer({ storage });
 
 // Rutas
@@ -235,15 +238,29 @@ app.post('/mod_mob', upload.none(), async (req, res) => {
     res.json(result);
   });
 });
-// Eliminar mobiliario
-/*app.post('/del_mob', (req, res) => {
-  delFurnit(req, (err, result) => {
+
+app.post('/delMob', upload.none(), async (req, res) => {
+  delFurnit(req, async (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
+
+    let filename = customId(req, false)
+
+    if (!filename) {
+      return res.status(400).json({ type: 'error', message: 'Nombre del archivo requerido.' });
+    }
+
+    const filesCollection = mongoose.connection.db.collection('uploads.files');
+    const existingFile = await filesCollection.findOne({ filename: filename });
+
+    if (existingFile) {
+      await gfsBucket.delete(existingFile._id)
+    }
+
     res.json(result);
   });
-});*/
+})
 
 app.post('/renew', upload.single('file'), async (req, res) => {
   try {
@@ -311,7 +328,7 @@ app.post('/users/upload', upload.single('file'), (req, res) => {
     res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });
     return res.status(400).json({ type: 'error', message: 'No file uploaded' });
   }
-  console.log('req.body in /users/upload:', req.body); // Log req.body
+  
   addFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -475,14 +492,14 @@ app.post('/mod_prod', upload.none(), async (req, res) => {
   });
 });
 // Eliminar producto
-/*app.post('/del_prod', (req, res) => {
+app.post('/del_prod', upload.none(), async (req, res) => {
   delProduct(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
     res.json(result);
   });
-});*/
+});
 
 
 // *** Rutas para equipos *** //

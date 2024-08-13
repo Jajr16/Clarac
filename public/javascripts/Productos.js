@@ -100,6 +100,7 @@ if (!Permisos['ALMACÉN']) {
                 });
         }
 
+        // Borrar producto
         const trash = $('.trash')
         trash.click(function (e) {
             var CB = $('.CodBarrasP').val()

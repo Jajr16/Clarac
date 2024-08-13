@@ -1,7 +1,7 @@
 
-/* CSS PANTALLA MOBILIARIO */
+/* CSS PANTALLA EQUIPOS */
 
-.furniture-description {
+.equipment-description {
     width: 100%;
     height: 8rem;
     padding: 10px;
@@ -37,62 +37,7 @@
     position: relative;
 }
 
-.item1 {
-    flex: 1 1 40%;
-    margin-right: 2rem;
-}
-
-.item2 {
-    flex: 1 1 45%;
-    background-color: var(--white);
-    border: 1px solid var(--light_gray);
-    border-radius: 1rem;
-    padding: 1.3rem 1.2rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-}
-
-.furniture-image {
-    width: 10rem;
-    height: 10rem;
-    object-fit: cover;
-}
-
-.furniture-image:hover {
-    scale: (1.1);
-}
-
-.table-responsive {
-    display: block;
-    width: 100%;
-    height: 30.5rem;
-    scrollbar-width: none;
-    overflow-x: auto;
-    overflow-y: auto;
-    border-radius: 1rem;
-}
-
-.table-responsive table {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-height: 39rem;
-}
-
-.table-responsive thead {
-    position: sticky;
-    top: 0;
-}
-
-.named-furniture {
-    display: flex;
-    align-items: center;
-}
-
-.named-furniture img {
-    margin-right: 1rem;
-    margin-bottom: 1rem;
-}
-
-.description-furniture div {
+.description-equipment div {
     margin-bottom: 1rem;
     align-items: center;
 }
@@ -104,20 +49,21 @@
     justify-content: space-between;
 }
 
-.Fname {
+.Ename {
     text-transform: capitalize;
 }
 
-.DF {
-    display: var(--displayF);
+.DE {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 }
 
-.DF label {
+.DE label {
     display: flex;
     width: 12rem;
     align-items: center;
     width: auto;
-    margin-right: 1rem;
 }
 
 .menu-item {
@@ -196,23 +142,7 @@
     transform: translateY(-50%) rotate(180deg);
 }
 
-.DesciptionM {
-    background-color: #ccc;
-    padding: 0.3rem;
-    padding-left: 0.5rem;
-    border-radius: 0.7rem;
-    width: 100%;
-    height: 1rem;
-    margin-block-start: 0;
-    margin-block-end: 0;
-}
-
-.DescM {
-    height: 8rem;
-    width: 98%;
-}
-
-.cancelMob {
+.cancelEqp {
     background-color: rgb(134, 0, 0)!important;
 }
 

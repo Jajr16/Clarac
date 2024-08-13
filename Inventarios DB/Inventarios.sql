@@ -735,7 +735,8 @@ select*from almacen;
 select*from facturas_almacen;
 select*from factus_productos;
 select*from almacen;
-
+select*from equipo;
+select*from permisos;
 
 CREATE TABLE soli_com (
     Cod_Barras_SCom VARCHAR(45),

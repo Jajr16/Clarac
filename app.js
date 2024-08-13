@@ -34,6 +34,8 @@ const delProduct = require('./bin/deleteProductos');
 const equipments = require('./bin/Equipos');
 const addEquip = require('./bin/AddEquipos');
 const modEquip = require('./bin/EquiposModify');
+const delEquip = require('./bin/deleteEquipos');
+
 const getEmploys = require('./bin/getEmploys')
 const getResponsives = require('./bin/getResponsives')
 
@@ -531,14 +533,14 @@ app.post('/mod_eqp', upload.none(), async (req, res) => {
   });
 });
 // Eliminar equipo
-/*app.post('/del_eqp', (req, res) => {
+app.post('/del_eqp', (req, res) => {
   delEquip(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
     res.json(result);
   });
-});*/
+});
 
 
 // Ruta para el login

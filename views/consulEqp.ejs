@@ -1,43 +1,68 @@
+<div class="Fone-item">
+    <div class="boxes-containers one-item">
+        <div class="title-container">
+            Equipos en posesión
+        </div>
+        <div class="content-container">
+            <form name="crearRespon" id="crearRespon">
+                <div class="FTB">
+                    <select id="mySelect" class="Resp" required>
+                        <option disabled selected>Buscar equipo...</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="Columns">
     <div class="table-responsive item1">
-        <table class="data-mob">
+        <table class="data-eqp">
             <thead>
                 <tr>
-                    <th>Articulo</th>
-                    <th>Cantidad</th>
+                    <th>Equipo</th>
+                    <th>Número de serie</th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
     </div>
-    <div class="item2 data">
-        <i class="fa fa-pencil-square-o editM" aria-hidden="true"
+    <div class="boxes-containers item2 data">
+        <div class="subtitle-container">
+            Detalles del equipo
+        </div>
+        <i class="fa-solid fa-trash trash" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+        <i class="fa fa-pencil-square-o edit" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
 
         <form method="POST" enctype="multipart/form-data">
-            <div class="named-furniture">
-                <input type="file" id="file" name="file" style="display: none;"><img
-                    src="/images/add-image.png" class="furniture-image">
-                <label>Equipo:</label>
-                <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditDataM" required
-                    maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
-            </div>
-            <div class="description-furniture">
-                <div class="DF">
-                    <label>Ubicación:</label>
-                    <input autocomplete="off" type="text" id="UbiM" name="UbiM" class="UbiM EditDataM" required
+            <div class="description-equipment">
+                <div class="DE">
+                    <label>Equipo:</label>
+                    <input autocomplete="off" type="text" id="Ename" name="Ename" class="Ename EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
-                <div class="DF">
-                    <label>Cantidad:</label>
-                    <input autocomplete="off" type="text" id="CantidadM" name="CantidadM" class="CantidadM EditDataM"
-                        required min="1" onkeypress="return checkN(event)" readonly>
+                <div class="DE">
+                    <label>Número de serie:</label>
+                    <input autocomplete="off" type="text" id="NumSerieE" name="NumSerieE" class="NumSerieE EditData"
+                        required maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
-                <div>
-                    <label style="margin-bottom: 1rem;">Descripción:</label>
-                    <textarea class="furniture-description DescM EditDataM" id="DescM" name="DescM"
-                        oninput="mayus(this);" onkeypress="return checkA(event)" required readonly></textarea>
+                <div class="DE">
+                    <label>Marca:</label>
+                    <input autocomplete="off" type="text" id="MarcaE" name="MarcaE" class="MarcaE EditData" required
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE">
+                    <label>Modelo:</label>
+                    <input autocomplete="off" type="text" id="ModeloE" name="ModeloE" class="ModeloE EditData" required
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE">
+                    <label>Ubicación:</label>
+                    <input autocomplete="off" type="text" id="UbiE" name="UbiE" class="UbiE EditData" required
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="buttons"></div>
             </div>
@@ -45,5 +70,5 @@
     </div>
     <i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i>
 </div>
-<link rel="stylesheet" type="text/css" href="/stylesheets/furniture.css">
-<script type="text/javascript" src="/javascripts/Mobiliario.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/equipments.css">
+<script type="text/javascript" src="/javascripts/Equipos.js"></script>

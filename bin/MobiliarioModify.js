@@ -3,8 +3,7 @@ var Errores = require('./Error')
 
 function modifyMob(req, callback) {
     const data = req.body
-    console.log(data)
-    console.log(data.articulo)
+
     db.query('UPDATE mobiliario SET Articulo = ?, Descripcion = ?, Ubicacion = ?, Cantidad = ? WHERE Articulo = ? AND Descripcion = ? AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = ?)', [data.Narticulo, data.Ndescripcion, data.ubicacion, data.cantidad, data.articulo, data.descripcion, data.user], function (err2, result) {
         if (err2) { Errores(err2); return callback(err); } // Se hace un control de errores
         else {

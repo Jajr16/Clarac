@@ -1,3 +1,20 @@
+<div class="Fone-item">
+    <div class="boxes-containers one-item">
+        <div class="title-container">
+            Productos de almacén
+        </div>
+        <div class="content-container">
+            <form name="crearRespon" id="crearRespon">
+                <div class="FTB">
+                    <select id="mySelect" class="Resp" required>
+                        <option disabled selected>Buscar producto...</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="Columns">
     <div class="table-responsive item1">
         <table class="data-prod">
@@ -11,46 +28,51 @@
             </tbody>
         </table>
     </div>
-    <div class="item2 data">
-        <i class="fa fa-pencil-square-o editP" aria-hidden="true"
+    <div class="boxes-containers item2 data">
+        <div class="subtitle-container">
+            Detalles del producto
+        </div>
+        <i class="fa-solid fa-trash trash" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+        <i class="fa fa-pencil-square-o edit" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
 
         <form method="POST" enctype="multipart/form-data">
             <div class="description-product">
                 <div class="DP">
                     <label>Producto:</label>
-                    <input autocomplete="off" type="text" id="Pname" name="Pname" class="Pname EditDataP" required
-                    maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
-                </div>
-                <div class="DP">
-                    <label>Código de barras:</label>
-                    <input autocomplete="off" type="text" id="CodBarrasP" name="CodBarrasP" class="CodBarrasP EditDataP" required
+                    <input autocomplete="off" type="text" id="Pname" name="Pname" class="Pname EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
+                    <label>Código de barras:</label>
+                    <input autocomplete="off" type="text" id="CodBarrasP" name="CodBarrasP" class="CodBarrasP EditData"
+                        required maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DP">
                     <label>Categoría:</label>
-                    <input autocomplete="off" type="text" id="CateP" name="CateP" class="CateP EditDataP" required
+                    <input autocomplete="off" type="text" id="CateP" name="CateP" class="CateP EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Marca:</label>
-                    <input autocomplete="off" type="text" id="MarcaP" name="MarcaP" class="MarcaP EditDataP" required
+                    <input autocomplete="off" type="text" id="MarcaP" name="MarcaP" class="MarcaP EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Unidad de medida:</label>
-                    <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" class="UnidadP EditDataP" required
+                    <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" class="UnidadP EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Existencia:</label>
-                    <input autocomplete="off" type="text" id="ExistenciaP" name="ExistenciaP" class="ExistenciaP EditDataP"
-                        required min="1" onkeypress="return checkN(event)" readonly>
+                    <input autocomplete="off" type="text" id="ExistenciaP" name="ExistenciaP"
+                        class="ExistenciaP EditData" required min="1" onkeypress="return checkN(event)" readonly>
                 </div>
                 <div>
                     <label style="margin-bottom: 1rem;">Descripción:</label>
-                    <textarea class="product-description DescP EditDataP" id="DescP" name="DescP"
-                        oninput="mayus(this);" onkeypress="return checkA(event)" required readonly></textarea>
+                    <textarea class="product-description DescP EditData" id="DescP" name="DescP" oninput="mayus(this);"
+                        onkeypress="return checkA(event)" required readonly></textarea>
                 </div>
                 <div class="buttons"></div>
             </div>

@@ -28,7 +28,7 @@ function consuleqp(req, callback) {
                     return callback(null, dataToSend);
                 });
             } else {
-                db.query('SELECT * FROM equipo', function (err, result) {
+                db.query('SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp', function (err, result) {
                     if (err) {
                         Errores(err);
                         return callback(err);

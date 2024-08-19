@@ -46,16 +46,16 @@ if (!Permisos['ALMACÉN']) {
         document.addEventListener('DOMContentLoaded', function () {
             const addP = $('.fa-circle-plus')
             addP.click(function (e) {
-                const inputP = $('.EditDataP');
-  
+                const inputP = $('.EditData');
+
                 inputP.attr("readonly", false);
                 inputP.attr("placeholder", 'Ingresa los datos del producto');
                 inputP.val('')
 
-                var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="addProduct(event)" class="modyProd">`;
-                var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="cancelProd">';
-                $('.modyProd').remove();
-                $('.cancelProd').remove();
+                var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="addProduct(event)" class="Modify">`;
+                var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
+                $('.Modify').remove();
+                $('.Cancel').remove();
                 $('.buttons').append(add);
                 $('.buttons').append(cancel);
 
@@ -64,19 +64,6 @@ if (!Permisos['ALMACÉN']) {
             })
 
         });
-
-        function dissapear() {
-            const inputP = $('.EditDataP')
-
-            inputP.attr("placeholder", '')
-            inputP.attr("readonly", true)
-            $('.modyProd').remove()
-            $('.cancelProd').remove()
-            $('.fa-circle-plus').css('display', 'block')
-
-            const edit = $('.editP');
-            edit.css('display', 'block')
-        }
 
         function modify(oldCodBarras, e) {
 
@@ -113,19 +100,46 @@ if (!Permisos['ALMACÉN']) {
                 });
         }
 
+        // Borrar producto
+        const trash = $('.trash')
+        trash.click(function (e) {
+            var CB = $('.CodBarrasP').val()
+
+            if (CB !== '') {
+                const formData = new FormData()
+                formData.append('Cod_Barras', CB)
+
+                fetch('/del_prod', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
+        })
+
         // FUNCIONALIDAD PÁGINA
-        const edit = $('.editP');
+        const edit = $('.edit');
 
         edit.click(function (e) {
 
             var Cod_Barras = $('.CodBarrasP').val();
 
-            const inputP = $('.EditDataP');
+            const inputP = $('.EditData');
             inputP.attr("readonly", false);
-            var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="modyProd">`;
-            var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="cancelProd">';
-            $('.modyProd').remove();
-            $('.cancelProd').remove();
+            var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
+            var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
+            $('.Modify').remove();
+            $('.Cancel').remove();
             $('.fa-circle-plus').css('display', 'none')
             $('.buttons').append(modify);
             $('.buttons').append(cancel);
@@ -147,21 +161,9 @@ if (!Permisos['ALMACÉN']) {
             <td>${item.Articulo}</td>
             <td>${item.Existencia}</td>
         `;
-
                     tr.addEventListener('click', () => {
-                        if ($('.fa-pencil-square-o').css('visibility', 'hidden')) {
-                            $('.fa-pencil-square-o').css('visibility', 'visible');
-                            const inputP = $('.EditDataP');
-                            inputP.attr("readonly", true);
-                            $('.modyProd').remove();
-                            $('.cancelProd').remove();
-                        }
-                        if ($('.editP').css('display', 'none')) {
-                            $('.editP').css('display', 'block')
-                        }
-                        if ($('.fa-circle-plus').css('display', 'none')) {
-                            $('.fa-circle-plus').css('display', 'block')
-                        }
+                        iconsLogic()
+
                         $('.CodBarrasP').val(item.Cod_Barras);
                         $('.CateP').val(item.Categoria);
                         $('.Pname').val(item.Articulo);
@@ -171,6 +173,8 @@ if (!Permisos['ALMACÉN']) {
                         $('.ExistenciaP').val(item.Existencia);
 
                     });
+                    if (item.Eliminado !== 1) { }
+                    
                     tbody.appendChild(tr);
                 });
             })

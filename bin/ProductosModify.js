@@ -3,7 +3,7 @@ var Errores = require('./Error')
 
 function modifyProd(req, callback) {
     const data = req.body
-    console.log(data)
+    
     db.query('UPDATE almacen SET Cod_Barras = ?, Categoria = ?, Articulo = ?, Marca = ?, Descripcion = ?, Unidad = ?, Existencia = ? WHERE Cod_Barras = ?', [data.Cod_Barras, data.Categoria, data.Articulo, data.Marca, data.Descripcion, data.Unidad, data.Existencia, data.dataOldCB], function (err2, result) {
         if (err2) { Errores(err2); } // Se hace un control de errores
         else {

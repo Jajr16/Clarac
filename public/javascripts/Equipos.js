@@ -17,8 +17,8 @@ if (!Permisos['EQUIPOS']) {
                 Equipo: document.querySelector('.Ename').value,
                 Marca: document.querySelector('.MarcaE').value,
                 Modelo: document.querySelector('.ModeloE').value,
-                User: user,
-                Ubi: document.querySelector('.UbiE').value
+                Ubi: document.querySelector('.UbiE').value,
+                User: user
 
             };
 
@@ -106,6 +106,7 @@ if (!Permisos['EQUIPOS']) {
             var NumSerie = $('.NumSerieE').val()
 
             if (NumSerie !== '') {
+
                 const formData = new FormData()
                 formData.append('Num_Serie', NumSerie)
                 formData.append('user', user)
@@ -172,7 +173,7 @@ if (!Permisos['EQUIPOS']) {
                         $('.UbiE').val(item.Ubi);
 
                     });
-                    
+
                     tbody.appendChild(tr);
                 });
             })

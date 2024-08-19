@@ -532,8 +532,8 @@ app.post('/mod_eqp', upload.none(), async (req, res) => {
     res.json(result);
   });
 });
-// Eliminar equipo
-app.post('/del_eqp', (req, res) => {
+// Eliminar producto
+app.post('/del_eqp', upload.none(), async (req, res) => {
   delEquip(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

@@ -3,7 +3,6 @@ var Errores = require('./Error')
 
 function delFurnit(req, callback) {
     const data = req.body
-
     db.query('select*from mobiliario', function (err, result) {
         if (err) { Errores(err); return callback(err) } // Se hace un control de errores
         else {

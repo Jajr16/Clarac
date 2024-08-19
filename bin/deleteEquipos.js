@@ -3,8 +3,7 @@ var Errores = require('./Error')
 
 function delEquip(req, callback) {
     const data = req.body
-
-    db.query('select * from equipo', function (err, result) {
+    db.query('select*from equipo', function (err, result) {
         if (err) { Errores(err); return callback(err) } // Se hace un control de errores
         else {
             if (result.length > 0) { //Si sí hizo una búsqueda

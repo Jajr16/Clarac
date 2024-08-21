@@ -51,8 +51,9 @@
                 </div>
                 <div class="DP">
                     <label>Categoría:</label>
-                    <input autocomplete="off" type="text" id="CateP" name="CateP" class="CateP EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select id="CateP" name="CateP" class="CateP EditData" required disabled>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="DP">
                     <label>Marca:</label>
@@ -61,8 +62,9 @@
                 </div>
                 <div class="DP">
                     <label>Unidad de medida:</label>
-                    <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" class="UnidadP EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select id="UnidadP" name="UnidadP" class="UnidadP EditData" required disabled>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="DP">
                     <label>Existencia:</label>
@@ -82,3 +84,4 @@
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/products.css">
 <script type="text/javascript" src="/javascripts/Productos.js"></script>
+<script type="text/javascript" src="/javascripts/desp_list_prod.js"></script>

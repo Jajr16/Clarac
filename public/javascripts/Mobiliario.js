@@ -104,12 +104,17 @@ if (!Permisos['MOBILIARIO']) {
 
         // IMAGEN
         document.addEventListener('DOMContentLoaded', function () {
+            
             const addF = $('.fa-circle-plus')
+            const inputP = $('.EditData');
+
             addF.click(function (e) {
                 const image = $('.furniture-image')
 
                 image.css('cursor', 'pointer')
                 image.attr('src', "/images/add-image.png")
+
+                inputP.attr("disabled", false);
 
                 var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
                 var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
@@ -119,7 +124,22 @@ if (!Permisos['MOBILIARIO']) {
                 const imagen = document.getElementsByClassName('furniture-image')[0];
 
                 imagen.addEventListener('click', ImageFunction);
-            })
+                
+            });
+
+            // Función para manejar el botón "Cancelar"
+            window.dissapear = function () {
+                // Volver a deshabilitar el input
+                inputP.attr("disabled", true);
+
+                // Mostrar el botón "fa-circle-plus" de nuevo
+                addF.show();
+
+                // Opcional: ocultar los botones "Guardar" y "Cancelar" y mostrar otros elementos si es necesario.
+                $('.Modify').remove();
+                $('.Cancel').remove();
+                $('.editE').css('display', 'inline'); // Mostrar de nuevo los elementos ocultos
+            };
 
         });
 
@@ -222,6 +242,10 @@ if (!Permisos['MOBILIARIO']) {
             const image = $('.furniture-image')
 
             image.css('cursor', 'pointer')
+
+            const inputE = $('.EditData');
+            inputE.attr("disabled", false);
+
             var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
 

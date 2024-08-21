@@ -8,47 +8,61 @@ if (!Permisos['EQUIPOS']) {
     if (pathname == "/users/consulEqp" && (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('1') || Permisos['EQUIPOS'].includes('3'))) {
 
         function addEquipment(e) {
-
-            e.preventDefault()
+            e.preventDefault();
 
             const addData = {
-
                 Num_Serie: document.querySelector('.NumSerieE').value,
                 Equipo: document.querySelector('.Ename').value,
                 Marca: document.querySelector('.MarcaE').value,
                 Modelo: document.querySelector('.ModeloE').value,
                 Ubi: document.querySelector('.UbiE').value,
                 User: user
-
             };
 
-            fetch('/new_eqp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(addData)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'success') {
-                        showSuccessAlertReload(data.message)
-                    } else {
-                        showErrorAlert(data.message)
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+            // Verificar si hay algún valor vacío en addData
+            const hasEmptyField = Object.values(addData).some(value => value.trim() === '');
+
+            if (hasEmptyField) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
                 });
+            } else {
+                fetch('/new_eqp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message);
+                        } else {
+                            showErrorAlert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
         }
+
+
 
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
+
             const addP = $('.fa-circle-plus')
+            const inputP = $('.EditData');
+
             addP.click(function (e) {
-                const inputP = $('.EditData');
 
                 inputP.attr("readonly", false);
+                inputP.attr("disabled", false);
                 inputP.attr("placeholder", 'Ingresa los datos del equipo');
                 inputP.val('')
 
@@ -61,8 +75,21 @@ if (!Permisos['EQUIPOS']) {
 
                 const edit = $('.editE');
                 edit.css('display', 'none')
-            })
+            });
 
+            // Función para manejar el botón "Cancelar"
+            window.dissapear = function () {
+                // Volver a deshabilitar el input
+                inputP.attr("disabled", true);
+
+                // Mostrar el botón "fa-circle-plus" de nuevo
+                addP.show();
+
+                // Opcional: ocultar los botones "Guardar" y "Cancelar" y mostrar otros elementos si es necesario.
+                $('.Modify').remove();
+                $('.Cancel').remove();
+                $('.editE').css('display', 'inline'); // Mostrar de nuevo los elementos ocultos
+            };
         });
 
         function modify(oldNum_Serie, e) {
@@ -138,6 +165,8 @@ if (!Permisos['EQUIPOS']) {
 
             const inputE = $('.EditData');
             inputE.attr("readonly", false);
+            inputE.attr("disabled", false);
+
             var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
             $('.Modify').remove();

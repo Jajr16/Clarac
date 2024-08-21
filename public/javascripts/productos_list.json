@@ -1,0 +1,24 @@
+{
+    "categorias": [
+        {
+            "CATEGORIA": "PAPELERÍA"
+        },
+        {
+            "CATEGORIA": "LIMPIEZA"
+        },
+        {
+            "CATEGORIA": "FERRETERÍA"
+        }
+    ],
+    "unidades": [
+        {
+            "UNIDAD": "LITROS"
+        },
+        {
+            "UNIDAD": "KILOS"
+        },
+        {
+            "UNIDAD": "METROS"
+        }
+    ]
+}

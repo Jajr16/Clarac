@@ -22,33 +22,47 @@ if (!Permisos['ALMACÉN']) {
                 Existencia: document.querySelector('.ExistenciaP').value,
             };
 
-            fetch('/new_prod', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(addData)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'success') {
-                        showSuccessAlertReload(data.message)
-                    } else {
-                        showErrorAlert(data.message)
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+            // Verificar si hay algún valor vacío en addData
+            const hasEmptyField = Object.values(addData).some(value => value.trim() === '');
+
+            if (hasEmptyField) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
                 });
+            } else {
+                fetch('/new_prod', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addData)
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
         }
 
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
+
             const addP = $('.fa-circle-plus')
+            const inputP = $('.EditData');
+
             addP.click(function (e) {
-                const inputP = $('.EditData');
 
                 inputP.attr("readonly", false);
+                inputP.attr("disabled", false);
                 inputP.attr("placeholder", 'Ingresa los datos del producto');
                 inputP.val('')
 
@@ -61,7 +75,21 @@ if (!Permisos['ALMACÉN']) {
 
                 const edit = $('.editP');
                 edit.css('display', 'none')
-            })
+            });
+
+            // Función para manejar el botón "Cancelar"
+            window.dissapear = function () {
+                // Volver a deshabilitar el input
+                inputP.attr("disabled", true);
+
+                // Mostrar el botón "fa-circle-plus" de nuevo
+                addP.show();
+
+                // Opcional: ocultar los botones "Guardar" y "Cancelar" y mostrar otros elementos si es necesario.
+                $('.Modify').remove();
+                $('.Cancel').remove();
+                $('.editP').css('display', 'inline'); // Mostrar de nuevo los elementos ocultos
+            };
 
         });
 
@@ -134,8 +162,10 @@ if (!Permisos['ALMACÉN']) {
 
             var Cod_Barras = $('.CodBarrasP').val();
 
-            const inputP = $('.EditData');
-            inputP.attr("readonly", false);
+            const inputE = $('.EditData');
+            inputE.attr("readonly", false);
+            inputE.attr("disabled", false);
+
             var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
             $('.Modify').remove();

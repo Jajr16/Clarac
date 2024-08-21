@@ -738,6 +738,8 @@ select*from almacen;
 select*from equipo;
 select*from permisos;
 
+delete from equipo where N_Inventario = 11;
+
 CREATE TABLE soli_com (
     Cod_Barras_SCom VARCHAR(45),
     emp_SCom int,

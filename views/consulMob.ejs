@@ -39,8 +39,9 @@
                 <input type="file" id="file" name="file" class="fileInput" accept="image/*" style="display: none;"><img
                     src="/images/add-image.png" class="furniture-image">
                 <label>Mobiliario:</label>
-                <input autocomplete="off" type="text" id="Fname" name="Fname" class="Fname EditData" required
-                    maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select id="Fname" name="Fname" class="Fname EditData" required disabled>
+                        <option value=""></option>
+                    </select>
             </div>
             <div class="description-furniture">
                 <div class="DF">
@@ -66,3 +67,4 @@
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/furniture.css">
 <script type="text/javascript" src="/javascripts/Mobiliario.js"></script>
+<script type="text/javascript" src="/javascripts/desp_list_mob.js"></script>

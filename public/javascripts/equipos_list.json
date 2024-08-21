@@ -1,0 +1,38 @@
+[
+    {
+        "EQUIPO": "CPU"
+    },
+    {
+        "EQUIPO": "IMPRESORA"
+    },
+    {
+        "EQUIPO": "NOBREAK"
+    },
+    {
+        "EQUIPO": "REGULADOR"
+    },
+    {
+        "EQUIPO": "MULTIFUNCIONAL"
+    },
+    {
+        "EQUIPO": "TELÉFONO"
+    },
+    {
+        "EQUIPO": "PIZARRÓN DIGITAL"
+    },
+    {
+        "EQUIPO": "SERVIDOR"
+    },
+    {
+        "EQUIPO": "SWITCH"
+    },
+    {
+        "EQUIPO": "GATEWAY"
+    },
+    {
+        "EQUIPO": "BOCINA"
+    },
+    {
+        "EQUIPO": "PROYECTOR"
+    }
+]

@@ -41,8 +41,9 @@
             <div class="description-equipment">
                 <div class="DE">
                     <label>Equipo:</label>
-                    <input autocomplete="off" type="text" id="Ename" name="Ename" class="Ename EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select id="Ename" name="Ename" class="Ename EditData" required disabled>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="DE">
                     <label>Número de serie:</label>
@@ -72,3 +73,4 @@
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/equipments.css">
 <script type="text/javascript" src="/javascripts/Equipos.js"></script>
+<script type="text/javascript" src="/javascripts/desp_list_eqp.js"></script>

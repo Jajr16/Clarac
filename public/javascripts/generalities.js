@@ -99,18 +99,21 @@ function empty_table(tabla, n) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const resp = $('.Resp')
-    const employ = $('.Employees')
-    if (resp) {
+    if ($('.Resp').length) {
         console.log('Cacaca')
         new SlimSelect({
             select: '.Resp'
         });
     }
-    if (employ) {
+    if ($('.Employees').length) {
         console.log('Cacaca1')
         new SlimSelect({
             select: '.Employees'
         });
+    }
+    if ($('.CateP').length) {
+        new SlimSelect({
+            select: '.CateP'
+        })
     }
 });

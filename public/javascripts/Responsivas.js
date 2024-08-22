@@ -76,7 +76,7 @@ if (!Permisos['RESPONSIVAS']) {
                         const pdfUrl = URL.createObjectURL(blob);
                         pdfViewer.src = pdfUrl;
 
-                        pdfContainer.style.display = 'flex*';
+                        pdfContainer.style.display = 'flex';
                     });
                 })
                 .catch(error => {

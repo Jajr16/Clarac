@@ -101,10 +101,14 @@ function empty_table(tabla, n) {
 document.addEventListener('DOMContentLoaded', function () {
     const resp = $('.Resp')
     const employ = $('.Employees')
-    if (resp && employ) {
+    if (resp) {
+        console.log('Cacaca')
         new SlimSelect({
             select: '.Resp'
         });
+    }
+    if (employ) {
+        console.log('Cacaca1')
         new SlimSelect({
             select: '.Employees'
         });

@@ -149,39 +149,57 @@ if (!Permisos['MOBILIARIO']) {
                 method: 'POST',
                 body: formData
             }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'RespDelMob') {
-                        showSuccessAlertReload(data.message)
+                .then(data1 => {
+                    if (data1.type === 'RespDelMob') {
+
+                        const inputFile = document.getElementById('file');
+
+                        if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
+                            fetch('/renameImage', {
+                                method: 'POST',
+                                body: formData
+                            }).then(response => response.json())
+                                .then(data => {
+                                    if (data.type === 'success') {
+                                        showSuccessAlertReload(data1.message)
+                                        console.log(data.message)
+                                    } else {
+                                        showErrorAlert(data.message)
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error en la solicitud:', error);
+                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                });
+                        } else {
+                            formData.append('file', inputFile.files[0])
+
+                            fetch('/renew', {
+                                method: 'POST',
+                                body: formData
+                            }).then(response => response.json())
+                                .then(data => {
+                                    if (data.type === 'success') {
+                                        showSuccessAlertReload(data1.message)
+                                        console.log(data.message)
+                                    } else {
+                                        showErrorAlert(data.message)
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error en la solicitud:', error);
+                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                });
+                        }
+
                     } else {
-                        showErrorAlert(data.message)
+                        showErrorAlert(data1.message)
                     }
                 })
                 .catch(error => {
                     console.error('Error en la solicitud:', error);
                     showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                 });
-
-            const inputFile = document.getElementById('file');
-            if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
-            } else {
-                formData.append('file', inputFile.files[0])
-                console.log(inputFile.files)
-                fetch('/renew', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            console.log(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                    });
-            }
         }
         // FUNCIONALIDAD PÁGINA
         const trash = $('.trash')
@@ -241,13 +259,44 @@ if (!Permisos['MOBILIARIO']) {
         }).then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector(".data-mob tbody");
+                const selMob = $('.Mob')
 
                 data.forEach(item => {
+                    selMob.append($('<option>', { value: item.Articulo, text: item.Articulo }))
+
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
             <td>${item.Articulo}</td>
             <td>${item.Cantidad}</td>
         `;
+
+                    $('.Mob').change(function () {
+                        iconsLogic()
+
+                        const formData = new FormData();
+                        formData.append('articulo', item.Articulo)
+                        formData.append('descripcion', item.Descripcion)
+                        formData.append('user', user);
+
+                        fetch('/users/disp_image', {
+                            method: 'POST',
+                            body: formData
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.blob();
+                        }).then(blob => {
+                            const url = URL.createObjectURL(blob); // Crear URL del blob
+                            document.querySelector('.furniture-image').src = url;
+                            $('.Fname').val(item.Articulo);
+                            $('.UbiM').val(item.Ubicacion);
+                            $('.CantidadM').val(item.Cantidad);
+                            $('.DescM').val(item.Descripcion);
+                        }).catch(error => {
+                            console.error('Error en la solicitud:', error);
+                        });
+                    })
 
                     tr.addEventListener('click', () => {
                         iconsLogic()
@@ -280,6 +329,7 @@ if (!Permisos['MOBILIARIO']) {
                     });
                     tbody.appendChild(tr);
                 });
+                sselect('.Mob')
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);

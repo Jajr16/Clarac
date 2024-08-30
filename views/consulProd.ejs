@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/javascripts/Productos.js"></script>
 <div class="Fone-item">
     <div class="boxes-containers one-item">
         <div class="title-container">
@@ -6,7 +7,7 @@
         <div class="content-container">
             <form name="crearRespon" id="crearRespon">
                 <div class="FTB">
-                    <select id="mySelect" class="Resp" required>
+                    <select id="mySelect" class="Prod" required>
                         <option disabled selected>Buscar producto...</option>
                     </select>
                 </div>
@@ -51,8 +52,7 @@
                 </div>
                 <div class="DP">
                     <label>Categoría:</label>
-                    <input autocomplete="off" type="text" id="CateP" name="CateP" class="CateP EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select id="CateP" class="CateP EditData" name="CateP" required disabled></select>
                 </div>
                 <div class="DP">
                     <label>Marca:</label>
@@ -61,8 +61,7 @@
                 </div>
                 <div class="DP">
                     <label>Unidad de medida:</label>
-                    <input autocomplete="off" type="text" id="UnidadP" name="UnidadP" class="UnidadP EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select id="UnidadP" class="UnidadP EditData" name="UnidadP" required disabled></select>
                 </div>
                 <div class="DP">
                     <label>Existencia:</label>
@@ -81,4 +80,3 @@
     <i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i>
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/products.css">
-<script type="text/javascript" src="/javascripts/Productos.js"></script>

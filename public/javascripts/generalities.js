@@ -48,6 +48,9 @@ function iconsLogic() {
     if ($('.edit').css('display', 'none')) {
         $('.edit').css('display', 'block')
     }
+    if ($('.trash').css('display', 'none')) {
+        $('.trash').css('display', 'block')
+    }
     if ($('.fa-circle-plus').css('display', 'none')) {
         $('.fa-circle-plus').css('display', 'block')
     }
@@ -56,7 +59,8 @@ function iconsLogic() {
 function editsFunctions(modify, cancel) {
     const inputM = $('.EditData');
     inputM.attr("readonly", false);
-
+    inputM.attr("disabled", false);
+    
     $('.Modify').remove();
     $('.Cancel').remove();
     $('.fa-circle-plus').css('display', 'none')
@@ -66,8 +70,9 @@ function editsFunctions(modify, cancel) {
 
 function addFunctions(add, cancel, mensaje) {
     const inputM = $('.EditData');
-
+    
     inputM.attr("readonly", false);
+    inputM.attr("disabled", false);
     inputM.attr("placeholder", mensaje);
     inputM.val('')
 
@@ -78,6 +83,8 @@ function addFunctions(add, cancel, mensaje) {
 
     const edit = $('.edit');
     edit.css('display', 'none')
+    const trash = $('.trash');
+    trash.css('display', 'none')
 }
 
 function dissapear() {
@@ -85,35 +92,26 @@ function dissapear() {
 
     inputM.attr("placeholder", '')
     inputM.attr("readonly", true)
+    inputM.attr('disabled', true)
     inputM.val('')
     $('.Modify').remove()
     $('.Cancel').remove()
     $('.fa-circle-plus').css('display', 'block')
 
     const edit = $('.edit');
-    edit.css('display', 'block')
+    edit.css('display', 'none')
+    const trash = $('.trash');
+    trash.css('display', 'none')
 }
 
 function empty_table(tabla, n) {
     $('#' + tabla + ' tbody').append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    if ($('.Resp').length) {
-        console.log('Cacaca')
+function sselect(select) {
+    if ($(select).length) {
         new SlimSelect({
-            select: '.Resp'
+            select: select
         });
     }
-    if ($('.Employees').length) {
-        console.log('Cacaca1')
-        new SlimSelect({
-            select: '.Employees'
-        });
-    }
-    if ($('.CateP').length) {
-        new SlimSelect({
-            select: '.CateP'
-        })
-    }
-});
+}

@@ -44,23 +44,32 @@ if (!Permisos['ALMACÉN']) {
 
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
-            const addP = $('.fa-circle-plus')
-            addP.click(function (e) {
-                const inputP = $('.EditData');
 
-                inputP.attr("readonly", false);
-                inputP.attr("placeholder", 'Ingresa los datos del producto');
-                inputP.val('')
+            const addP = $('.fa-circle-plus')
+
+            const selectCat = $('.CateP')
+            const selectUM = $('.UnidadP')
+
+            selectCat.append($('<option>', { disabled: true, selected: true }))
+            selectCat.append($('<option>', { value: 'PAPELERÍA', text: 'PAPELERÍA' }))
+            selectCat.append($('<option>', { value: 'LIMPIEZA', text: 'LIMPIEZA' }))
+            selectCat.append($('<option>', { value: 'FERRETERÍA', text: 'FERRETERÍA' }))
+            
+            selectUM.append($('<option>', { disabled: true, selected: true }))
+            selectUM.append($('<option>', { value: 'UNIDAD', text: 'UNIDAD' }))
+            selectUM.append($('<option>', { value: 'LITROS', text: 'LITROS' }))
+            selectUM.append($('<option>', { value: 'KILOS', text: 'KILOS' }))
+            selectUM.append($('<option>', { value: 'METROS', text: 'METROS' }))
+            
+            addP.click(function (e) {
+
+                selectCat.removeAttr('disabled');
+                selectUM.removeAttr('disabled');
 
                 var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="addProduct(event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
-                $('.Modify').remove();
-                $('.Cancel').remove();
-                $('.buttons').append(add);
-                $('.buttons').append(cancel);
-
-                const edit = $('.editP');
-                edit.css('display', 'none')
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
+                
+                addFunctions(add, cancel, 'Ingresa los datos del producto')
             })
 
         });
@@ -102,6 +111,7 @@ if (!Permisos['ALMACÉN']) {
 
         const trash = $('.trash')
         trash.click(function (e) {
+            console.log('Cacca')
             var CB = $('.CodBarrasP').val()
 
             if (CB !== '') {
@@ -133,54 +143,67 @@ if (!Permisos['ALMACÉN']) {
 
             var Cod_Barras = $('.CodBarrasP').val();
 
-            const inputP = $('.EditData');
-            inputP.attr("readonly", false);
             var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
-            var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
-            $('.Modify').remove();
-            $('.Cancel').remove();
-            $('.fa-circle-plus').css('display', 'none')
-            $('.buttons').append(modify);
-            $('.buttons').append(cancel);
+            var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
+            
+            editsFunctions(modify, cancel)
         });
 
-        fetch('/Productos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username: user })
-        }).then(response => response.json())
-            .then(data => {
-                const tbody = document.querySelector(".data-prod tbody");
+        window.addEventListener("load", function (event) {
+            fetch('/Productos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: user })
+            }).then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector(".data-prod tbody");
+                    const selProd = $('.Prod')
 
-                data.forEach(item => {
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
-            <td>${item.Articulo}</td>
-            <td>${item.Existencia}</td>
-        `;
-                    tr.addEventListener('click', () => {
-                        iconsLogic()
+                    data.forEach(item => {
+                        selProd.append($('<option>', { value: item.Articulo, text: item.Articulo }))
 
-                        $('.CodBarrasP').val(item.Cod_Barras);
-                        $('.CateP').val(item.Categoria);
-                        $('.Pname').val(item.Articulo);
-                        $('.MarcaP').val(item.Marca);
-                        $('.DescP').val(item.Descripcion);
-                        $('.UnidadP').val(item.Unidad);
-                        $('.ExistenciaP').val(item.Existencia);
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = `
+                <td>${item.Articulo}</td>
+                <td>${item.Existencia}</td>
+            `;
 
+                        $('.Prod').change(function () {
+                            iconsLogic()
+                            $('.CodBarrasP').val(item.Cod_Barras);
+                            $('.CateP').val(item.Categoria);
+                            $('.Pname').val(item.Articulo);
+                            $('.MarcaP').val(item.Marca);
+                            $('.DescP').val(item.Descripcion);
+                            $('.UnidadP').val(item.Unidad);
+                            $('.ExistenciaP').val(item.Existencia);
+                        })
+
+                        tr.addEventListener('click', () => {
+                            iconsLogic()
+
+                            $('.CodBarrasP').val(item.Cod_Barras);
+                            $('.CateP').val(item.Categoria);
+                            $('.Pname').val(item.Articulo);
+                            $('.MarcaP').val(item.Marca);
+                            $('.DescP').val(item.Descripcion);
+                            $('.UnidadP').val(item.Unidad);
+                            $('.ExistenciaP').val(item.Existencia);
+
+                        });
+                        if (item.Eliminado !== 1) { }
+
+                        tbody.appendChild(tr);
                     });
-                    if (item.Eliminado !== 1) { }
-                    
-                    tbody.appendChild(tr);
+                    sselect('.Prod')
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-            });
+        })
 
     }
 }

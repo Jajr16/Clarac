@@ -262,6 +262,39 @@ app.post('/delMob', upload.none(), async (req, res) => {
   });
 })
 
+app.post('/renameImage', upload.single('file'), async (req, res) => {
+  try {
+    let filename = customId(req, false)
+    console.log('El filename original es este ', filename)
+
+    if (!filename) {
+      return res.status(400).json({ type: 'error', message: 'Nombre del archivo requerido.' });
+    }
+
+    const filesCollection = mongoose.connection.db.collection('uploads.files');
+    const originalDocument = await filesCollection.findOne({ filename: filename });
+
+    if (originalDocument) {
+
+      let Newfilename = customId(req, true);
+      console.log('El filename nuevo es este', Newfilename);
+
+      await filesCollection.updateOne(
+        { _id: originalDocument._id }, // Filtro para seleccionar el documento original
+        { $set: { filename: Newfilename } } // Actualización para cambiar el nombre del archivo
+      );
+
+      res.json({ type: 'success', message: 'Nombre del archivo actualizado con éxito.' });
+    } else {
+      res.status(404).json({ type: 'error', message: 'Documento no encontrado.' });
+    }
+
+  } catch (err) {
+    console.error('Error al modificar la imagen:', err);
+    res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+  }
+})
+
 app.post('/renew', upload.single('file'), async (req, res) => {
   try {
 
@@ -328,7 +361,7 @@ app.post('/users/upload', upload.single('file'), (req, res) => {
     res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });
     return res.status(400).json({ type: 'error', message: 'No file uploaded' });
   }
-  
+
   addFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

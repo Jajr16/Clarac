@@ -8,21 +8,11 @@ if (!Permisos['RESPONSIVAS']) {
     const resp = $('.Resp')
     const employ = $('.Employees')
 
-    function cargarNombres() {
-        socket.emit('List_empleados', "Empleados");
-        socket.on('ListaNombres', (data) => {
-            ListaNombres(data.Nombres);
-        });
-    }
-
-    function ListaNombres(Nombr) {
-        if (employ) {
-            employ.append($('<option>', { value: Nombr, text: Nombr }))
-        }
-    }
-
     window.addEventListener("load", function (event) {
         if (resp && employ && Permisos['RESPONSIVAS']) {
+            sselect('.Resp')
+            sselect('.Employees')
+
             resp.append($('<option>', { value: 'MOBILIARIO', text: 'MOBILIARIO' }))
             resp.append($('<option>', { value: 'EQUIPOS', text: 'EQUIPOS' }))
         }

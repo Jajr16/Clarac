@@ -261,6 +261,10 @@ if (!Permisos['MOBILIARIO']) {
                 const tbody = document.querySelector(".data-mob tbody");
                 const selMob = $('.Mob')
 
+                if (data.length <= 0) {
+                    empty_table()
+                }
+
                 data.forEach(item => {
                     selMob.append($('<option>', { value: item.Articulo, text: item.Articulo }))
 
@@ -329,7 +333,7 @@ if (!Permisos['MOBILIARIO']) {
                     });
                     tbody.appendChild(tr);
                 });
-                sselect('.Mob')
+                sselect()
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);

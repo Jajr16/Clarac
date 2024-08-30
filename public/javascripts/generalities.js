@@ -114,14 +114,14 @@ function dissapear() {
     trash.css('display', 'none')
 }
 
-function empty_table(tabla, n) {
-    $('#' + tabla + ' tbody').append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
+function empty_table() {
+    $('.info-table tbody').append($('<tr><td colspan="2"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
 }
 
-function sselect(select) {
-    if ($(select).length) {
+function sselect() {
+    if ($('.searchInput').length) {
         new SlimSelect({
-            select: select
+            select: '.searchInput'
         });
     }
 }

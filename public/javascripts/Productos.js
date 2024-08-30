@@ -121,43 +121,54 @@ if (!Permisos['ALMACÉN']) {
                     const tbody = document.querySelector(".data-prod tbody");
                     const selProd = $('.Prod')
 
+                    if (data.length <= 0) {
+                        empty_table()
+                    }
+
                     data.forEach(item => {
-                        selProd.append($('<option>', { value: item.Articulo, text: item.Articulo }))
 
                         let tr = document.createElement('tr');
-                        tr.innerHTML = `
+
+                        if (item.Eliminado !== 1) {
+                            selProd.append($('<option>', { value: item.Articulo, text: item.Articulo }))
+
+
+                            tr.innerHTML = `
                 <td>${item.Articulo}</td>
                 <td>${item.Existencia}</td>
             `;
 
-                        $('.Prod').change(function () {
-                            iconsLogic()
-                            $('.CodBarrasP').val(item.Cod_Barras);
-                            $('.CateP').val(item.Categoria);
-                            $('.Pname').val(item.Articulo);
-                            $('.MarcaP').val(item.Marca);
-                            $('.DescP').val(item.Descripcion);
-                            $('.UnidadP').val(item.Unidad);
-                            $('.ExistenciaP').val(item.Existencia);
-                        })
+                            $('.Prod').change(function () {
+                                iconsLogic()
+                                $('.CodBarrasP').val(item.Cod_Barras);
+                                $('.CateP').val(item.Categoria);
+                                $('.Pname').val(item.Articulo);
+                                $('.MarcaP').val(item.Marca);
+                                $('.DescP').val(item.Descripcion);
+                                $('.UnidadP').val(item.Unidad);
+                                $('.ExistenciaP').val(item.Existencia);
+                            })
 
-                        tr.addEventListener('click', () => {
-                            iconsLogic()
+                            tr.addEventListener('click', () => {
+                                iconsLogic()
 
-                            $('.CodBarrasP').val(item.Cod_Barras);
-                            $('.CateP').val(item.Categoria);
-                            $('.Pname').val(item.Articulo);
-                            $('.MarcaP').val(item.Marca);
-                            $('.DescP').val(item.Descripcion);
-                            $('.UnidadP').val(item.Unidad);
-                            $('.ExistenciaP').val(item.Existencia);
+                                $('.CodBarrasP').val(item.Cod_Barras);
+                                $('.CateP').val(item.Categoria);
+                                $('.Pname').val(item.Articulo);
+                                $('.MarcaP').val(item.Marca);
+                                $('.DescP').val(item.Descripcion);
+                                $('.UnidadP').val(item.Unidad);
+                                $('.ExistenciaP').val(item.Existencia);
 
-                        });
-                        if (item.Eliminado !== 1) { }
+                            });
+                        } else {
+                            tr.style.backgroundColor = "red"
+                            tr.style.color = "#eee"
+                        }
 
                         tbody.appendChild(tr);
                     });
-                    sselect('.Prod')
+                    sselect()
                 })
                 .catch(error => {
                     console.error('Error en la solicitud:', error);
@@ -166,7 +177,6 @@ if (!Permisos['ALMACÉN']) {
 
             const trash = $('.trash')
             trash.click(function (e) {
-                console.log('Cacca')
                 var CB = $('.CodBarrasP').val()
 
                 if (CB !== '') {
@@ -195,7 +205,6 @@ if (!Permisos['ALMACÉN']) {
             const edit = $('.edit');
 
             edit.click(function (e) {
-                console.log('Cacccaac')
                 var Cod_Barras = $('.CodBarrasP').val();
 
                 var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;

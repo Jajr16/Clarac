@@ -46,21 +46,11 @@ if (!Permisos['EQUIPOS']) {
         document.addEventListener('DOMContentLoaded', function () {
             const addP = $('.fa-circle-plus')
             addP.click(function (e) {
-                const inputP = $('.EditData');
-
-                inputP.attr("readonly", false);
-                inputP.attr("placeholder", 'Ingresa los datos del equipo');
-                inputP.val('')
 
                 var add = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="addEquipment(event)" class="Modify">`;
                 var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-                $('.Modify').remove();
-                $('.Cancel').remove();
-                $('.buttons').append(add);
-                $('.buttons').append(cancel);
-
-                const edit = $('.editE');
-                edit.css('display', 'none')
+                
+                addFunctions(add, cancel, 'Ingresa los datos del equipo')
             })
 
         });
@@ -136,15 +126,10 @@ if (!Permisos['EQUIPOS']) {
 
             var Num_Serie = $('.NumSerieE').val();
 
-            const inputE = $('.EditData');
-            inputE.attr("readonly", false);
             var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-            $('.Modify').remove();
-            $('.Cancel').remove();
-            $('.fa-circle-plus').css('display', 'none')
-            $('.buttons').append(modify);
-            $('.buttons').append(cancel);
+            
+            editsFunctions(modify, cancel)
         });
 
         fetch('/Equipos', {
@@ -156,14 +141,21 @@ if (!Permisos['EQUIPOS']) {
         }).then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector(".data-eqp tbody");
+                const selEqp = $('.Eqp')
 
+                if (data.length <= 0) {
+                    empty_table()
+                }
+                
                 data.forEach(item => {
+                    selEqp.append($('<option>', { value: item.Equipo, text: item.Equipo }))
+
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
             <td>${item.Equipo}</td>
             <td>${item.Num_Serie}</td>
         `;
-                    tr.addEventListener('click', () => {
+                    selEqp.change(function () {
                         iconsLogic()
 
                         $('.NumSerieE').val(item.Num_Serie);
@@ -171,11 +163,22 @@ if (!Permisos['EQUIPOS']) {
                         $('.MarcaE').val(item.Marca);
                         $('.ModeloE').val(item.Modelo);
                         $('.UbiE').val(item.Ubi);
-
+                    })
+                    
+                    tr.addEventListener('click', () => {
+                        
+                        $('.NumSerieE').val(item.Num_Serie);
+                        $('.Ename').val(item.Equipo);
+                        $('.MarcaE').val(item.Marca);
+                        $('.ModeloE').val(item.Modelo);
+                        $('.UbiE').val(item.Ubi);
+                        
+                        iconsLogic()
                     });
 
                     tbody.appendChild(tr);
                 });
+                sselect()
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);

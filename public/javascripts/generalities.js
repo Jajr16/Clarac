@@ -40,12 +40,17 @@ function iconsLogic() {
     if ($('.fa-pencil-square-o').css('visibility', 'hidden') && $('.fa-trash').css('visibility', 'hidden')) {
         $('.fa-pencil-square-o').css('visibility', 'visible');
         $('.fa-trash').css('visibility', 'visible');
+
         const inputM = $('.EditData');
+        const inputS = $('.EditSelect');
         inputM.attr("readonly", true);
+        inputS.attr("disabled", true);
         $('.Modify').remove();
         $('.Cancel').remove();
+        console.log('CAcaca1')
     }
     if ($('.edit').css('display', 'none')) {
+        console.log('Caca2')
         $('.edit').css('display', 'block')
     }
     if ($('.trash').css('display', 'none')) {
@@ -58,8 +63,9 @@ function iconsLogic() {
 
 function editsFunctions(modify, cancel) {
     const inputM = $('.EditData');
+    const inputS = $('.EditSelect');
     inputM.attr("readonly", false);
-    inputM.attr("disabled", false);
+    inputS.attr("disabled", false);
     
     $('.Modify').remove();
     $('.Cancel').remove();
@@ -70,11 +76,13 @@ function editsFunctions(modify, cancel) {
 
 function addFunctions(add, cancel, mensaje) {
     const inputM = $('.EditData');
+    const inputS = $('.EditSelect');
     
     inputM.attr("readonly", false);
-    inputM.attr("disabled", false);
+    inputS.attr("disabled", false);
     inputM.attr("placeholder", mensaje);
     inputM.val('')
+    inputS.val('')
 
     $('.Modify').remove();
     $('.Cancel').remove();
@@ -89,11 +97,13 @@ function addFunctions(add, cancel, mensaje) {
 
 function dissapear() {
     const inputM = $('.EditData')
+    const inputS = $('.EditSelect')
 
     inputM.attr("placeholder", '')
     inputM.attr("readonly", true)
-    inputM.attr('disabled', true)
+    inputS.attr('disabled', true)
     inputM.val('')
+    inputS.val('')
     $('.Modify').remove()
     $('.Cancel').remove()
     $('.fa-circle-plus').css('display', 'block')

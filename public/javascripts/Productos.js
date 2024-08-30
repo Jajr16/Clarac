@@ -54,13 +54,13 @@ if (!Permisos['ALMACÉN']) {
             selectCat.append($('<option>', { value: 'PAPELERÍA', text: 'PAPELERÍA' }))
             selectCat.append($('<option>', { value: 'LIMPIEZA', text: 'LIMPIEZA' }))
             selectCat.append($('<option>', { value: 'FERRETERÍA', text: 'FERRETERÍA' }))
-            
+
             selectUM.append($('<option>', { disabled: true, selected: true }))
             selectUM.append($('<option>', { value: 'UNIDAD', text: 'UNIDAD' }))
             selectUM.append($('<option>', { value: 'LITROS', text: 'LITROS' }))
             selectUM.append($('<option>', { value: 'KILOS', text: 'KILOS' }))
             selectUM.append($('<option>', { value: 'METROS', text: 'METROS' }))
-            
+
             addP.click(function (e) {
 
                 selectCat.removeAttr('disabled');
@@ -68,7 +68,7 @@ if (!Permisos['ALMACÉN']) {
 
                 var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="addProduct(event)" class="Modify">`;
                 var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
-                
+
                 addFunctions(add, cancel, 'Ingresa los datos del producto')
             })
 
@@ -108,46 +108,6 @@ if (!Permisos['ALMACÉN']) {
                     document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
         }
-
-        const trash = $('.trash')
-        trash.click(function (e) {
-            console.log('Cacca')
-            var CB = $('.CodBarrasP').val()
-
-            if (CB !== '') {
-                const formData = new FormData()
-                formData.append('Cod_Barras', CB)
-
-                fetch('/del_prod', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
-            }
-        })
-
-        // FUNCIONALIDAD PÁGINA
-        const edit = $('.edit');
-
-        edit.click(function (e) {
-
-            var Cod_Barras = $('.CodBarrasP').val();
-
-            var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
-            var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
-            
-            editsFunctions(modify, cancel)
-        });
 
         window.addEventListener("load", function (event) {
             fetch('/Productos', {
@@ -203,6 +163,46 @@ if (!Permisos['ALMACÉN']) {
                     console.error('Error en la solicitud:', error);
                     document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
+
+            const trash = $('.trash')
+            trash.click(function (e) {
+                console.log('Cacca')
+                var CB = $('.CodBarrasP').val()
+
+                if (CB !== '') {
+                    const formData = new FormData()
+                    formData.append('Cod_Barras', CB)
+
+                    fetch('/del_prod', {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                }
+            })
+
+            // FUNCIONALIDAD PÁGINA
+            const edit = $('.edit');
+
+            edit.click(function (e) {
+                console.log('Cacccaac')
+                var Cod_Barras = $('.CodBarrasP').val();
+
+                var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
+
+                editsFunctions(modify, cancel)
+            });
         })
 
     }

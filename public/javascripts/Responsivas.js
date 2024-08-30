@@ -10,9 +10,8 @@ if (!Permisos['RESPONSIVAS']) {
 
     window.addEventListener("load", function (event) {
         if (resp && employ && Permisos['RESPONSIVAS']) {
-            sselect('.Resp')
-            sselect('.Employees')
-
+            sselect()
+            
             resp.append($('<option>', { value: 'MOBILIARIO', text: 'MOBILIARIO' }))
             resp.append($('<option>', { value: 'EQUIPOS', text: 'EQUIPOS' }))
         }

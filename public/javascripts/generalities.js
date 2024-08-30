@@ -66,7 +66,7 @@ function editsFunctions(modify, cancel) {
     const inputS = $('.EditSelect');
     inputM.attr("readonly", false);
     inputS.attr("disabled", false);
-    
+
     $('.Modify').remove();
     $('.Cancel').remove();
     $('.fa-circle-plus').css('display', 'none')
@@ -77,7 +77,7 @@ function editsFunctions(modify, cancel) {
 function addFunctions(add, cancel, mensaje) {
     const inputM = $('.EditData');
     const inputS = $('.EditSelect');
-    
+
     inputM.attr("readonly", false);
     inputS.attr("disabled", false);
     inputM.attr("placeholder", mensaje);
@@ -119,9 +119,12 @@ function empty_table() {
 }
 
 function sselect() {
-    if ($('.searchInput').length) {
+    let searchs = $('.searchInput').toArray()
+    searchs.forEach(element => {
+
         new SlimSelect({
-            select: '.searchInput'
+            select: element
         });
-    }
+        
+    });
 }

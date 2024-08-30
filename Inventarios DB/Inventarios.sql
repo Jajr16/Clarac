@@ -643,6 +643,8 @@ SELECT mob.*, e.Nom FROM mobiliario mob JOIN empleado e ON mob.Num_emp = e.Num_e
 #############################BUSQUEDAS DE MOBILIARIO################################
 
 select*from mobiliario;
+UPDATE `inventarios`.`mobiliario` SET `Articulo` = 'PRUEBA1' WHERE (`Articulo` = 'PRUEBA1K') and (`Descripcion` = 'PRUEBA1') and (`Num_emp` = '758');
+
 select empleado.Nom, empleado.Área, empleado.Num_emp from empleado;
 select*from usuario;
 select*from empleado;

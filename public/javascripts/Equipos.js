@@ -44,12 +44,28 @@ if (!Permisos['EQUIPOS']) {
 
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
+            const selectEqp = $('.Ename')
+            selectEqp.append($('<option>', { disabled: true, selected: true }))
+            selectEqp.append($('<option>', { value: 'CPU', text: 'CPU' }))
+            selectEqp.append($('<option>', { value: 'IMPRESORA', text: 'IMPRESORA' }))
+            selectEqp.append($('<option>', { value: 'NOBREAK', text: 'NOBREAK' }))
+            selectEqp.append($('<option>', { value: 'REGULADOR', text: 'REGULADOR' }))
+            selectEqp.append($('<option>', { value: 'MULTIFUNCIONAL', text: 'MULTIFUNCIONAL' }))
+            selectEqp.append($('<option>', { value: 'TELÉFONO', text: 'TELÉFONO' }))
+            selectEqp.append($('<option>', { value: 'PIZARRÓN DIGITAL', text: 'PIZARRÓN DIGITAL' }))
+            selectEqp.append($('<option>', { value: 'SERVIDOR', text: 'SERVIDOR' }))
+            selectEqp.append($('<option>', { value: 'SWITCH', text: 'SWITCH' }))
+            selectEqp.append($('<option>', { value: 'GATEWAY', text: 'GATEWAY' }))
+            selectEqp.append($('<option>', { value: 'BOCINA', text: 'BOCINA' }))
+            selectEqp.append($('<option>', { value: 'PROYECTOR', text: 'PROYECTOR' }))
+
+
             const addP = $('.fa-circle-plus')
             addP.click(function (e) {
 
                 var add = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="addEquipment(event)" class="Modify">`;
                 var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-                
+
                 addFunctions(add, cancel, 'Ingresa los datos del equipo')
             })
 
@@ -128,7 +144,7 @@ if (!Permisos['EQUIPOS']) {
 
             var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-            
+
             editsFunctions(modify, cancel)
         });
 
@@ -146,7 +162,7 @@ if (!Permisos['EQUIPOS']) {
                 if (data.length <= 0) {
                     empty_table()
                 }
-                
+
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Equipo, text: item.Equipo }))
 
@@ -164,15 +180,15 @@ if (!Permisos['EQUIPOS']) {
                         $('.ModeloE').val(item.Modelo);
                         $('.UbiE').val(item.Ubi);
                     })
-                    
+
                     tr.addEventListener('click', () => {
-                        
+
                         $('.NumSerieE').val(item.Num_Serie);
                         $('.Ename').val(item.Equipo);
                         $('.MarcaE').val(item.Marca);
                         $('.ModeloE').val(item.Modelo);
                         $('.UbiE').val(item.Ubi);
-                        
+
                         iconsLogic()
                     });
 

@@ -410,3 +410,14 @@ input[type="submit"]:hover {
 .Cancel {
     background-color: rgb(134, 0, 0) !important;
 }
+
+.excel-icon {
+    position: fixed;
+    margin-top: 1rem;
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.body-icons{
+    color: #001781;
+}

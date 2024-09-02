@@ -125,6 +125,26 @@ function sselect() {
         new SlimSelect({
             select: element
         });
-        
+
     });
+}
+
+function Excels(page) {
+    fetch(`/${page}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json())
+        .then(data => {
+            if (data.type === 'success') {
+                showSuccessAlert(data.message)
+            } else {
+                showErrorAlert(data.message)
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+        });
 }

@@ -479,6 +479,15 @@ app.get('/getEmploys', upload.none(), async (req, res) => {
   });
 })
 
+app.get('/ExcelA', upload.none(), async (req, res) => {
+  getExcelA((err, res) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err})
+    }
+    res.json(result)
+  })
+})
+
 app.post('/responsivas', upload.none(), async (req, res) => {
   getResponsives(req, async (err, result) => {
     if (err) {
@@ -574,7 +583,6 @@ app.post('/del_eqp', upload.none(), async (req, res) => {
     res.json(result);
   });
 });
-
 
 // Ruta para el login
 app.post('/login', loginLimiter, (req, res) => {

@@ -41,6 +41,8 @@ const getResponsives = require('./bin/getResponsives')
 
 // * Constantes para crear archivos Excel * //
 const getExcelA = require('./bin/ExcelA')
+const getExcelE = require('./bin/ExcelE')
+const getExcelM = require('./bin/ExcelM')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -484,6 +486,14 @@ app.get('/getEmploys', upload.none(), async (req, res) => {
 
 app.get('/ExcelA', upload.none(), async (req, res) => {
   getExcelA(res)
+})
+
+app.get('/ExcelE', upload.none(), async (req, res) => {
+  getExcelE(res)
+})
+
+app.get('/ExcelM', upload.none(), async (req, res) => {
+  getExcelM(res)
 })
 
 app.post('/responsivas', upload.none(), async (req, res) => {

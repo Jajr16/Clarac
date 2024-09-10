@@ -224,7 +224,6 @@ if (!Permisos['ALMACÉN']) {
             const excel = $('.excel-icon')
 
             if (excel.length > 0) {
-                console.log('Si hay excel')
                 excel.click(function (e) {
                     Excels('ExcelA')
                 })

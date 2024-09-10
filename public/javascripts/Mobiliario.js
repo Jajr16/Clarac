@@ -342,5 +342,12 @@ if (!Permisos['MOBILIARIO']) {
                 showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
             });
 
+        const excel = $('.excel-icon')
+
+        if (excel.length > 0) {
+            excel.click(function (e) {
+                Excels('ExcelM')
+            })
+        }
     }
 }

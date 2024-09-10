@@ -22,24 +22,33 @@ if (!Permisos['ALMACÉN']) {
                 Existencia: document.querySelector('.ExistenciaP').value,
             };
 
-            fetch('/new_prod', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(addData)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'success') {
-                        showSuccessAlertReload(data.message)
-                    } else {
-                        showErrorAlert(data.message)
-                    }
+            if (!checkEmptyFields(addData)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
                 })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                });
+            } else {
+
+                fetch('/new_prod', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addData)
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
         }
 
         // Botón para añadir
@@ -139,15 +148,17 @@ if (!Permisos['ALMACÉN']) {
             `;
 
                             $('.Prod').change(function () {
-                                iconsLogic()
-                                $('.CodBarrasP').val(item.Cod_Barras);
-                                $('.CateP').val(item.Categoria);
-                                $('.Pname').val(item.Articulo);
-                                $('.MarcaP').val(item.Marca);
-                                $('.DescP').val(item.Descripcion);
-                                $('.UnidadP').val(item.Unidad);
-                                $('.ExistenciaP').val(item.Existencia);
-                            })
+                                if ($(this).val() === item.Articulo) {
+                                    iconsLogic();
+                                    $('.CodBarrasP').val(item.Cod_Barras);
+                                    $('.CateP').val(item.Categoria);
+                                    $('.Pname').val(item.Articulo);
+                                    $('.MarcaP').val(item.Marca);
+                                    $('.DescP').val(item.Descripcion);
+                                    $('.UnidadP').val(item.Unidad);
+                                    $('.ExistenciaP').val(item.Existencia);
+                                }
+                            });
 
                             tr.addEventListener('click', () => {
                                 iconsLogic()
@@ -161,9 +172,6 @@ if (!Permisos['ALMACÉN']) {
                                 $('.ExistenciaP').val(item.Existencia);
 
                             });
-                        } else {
-                            tr.style.backgroundColor = "red"
-                            tr.style.color = "#eee"
                         }
 
                         tbody.appendChild(tr);
@@ -212,6 +220,16 @@ if (!Permisos['ALMACÉN']) {
 
                 editsFunctions(modify, cancel)
             });
+
+            const excel = $('.excel-icon')
+
+            if (excel.length > 0) {
+                console.log('Si hay excel')
+                excel.click(function (e) {
+                    Excels('ExcelA')
+                })
+            }
+
         })
 
     }

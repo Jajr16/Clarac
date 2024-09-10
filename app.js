@@ -39,6 +39,9 @@ const delEquip = require('./bin/deleteEquipos');
 const getEmploys = require('./bin/getEmploys')
 const getResponsives = require('./bin/getResponsives')
 
+// * Constantes para crear archivos Excel * //
+const getExcelA = require('./bin/ExcelA')
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
@@ -480,12 +483,7 @@ app.get('/getEmploys', upload.none(), async (req, res) => {
 })
 
 app.get('/ExcelA', upload.none(), async (req, res) => {
-  getExcelA((err, res) => {
-    if (err) {
-      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err})
-    }
-    res.json(result)
-  })
+  getExcelA(res)
 })
 
 app.post('/responsivas', upload.none(), async (req, res) => {

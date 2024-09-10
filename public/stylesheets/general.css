@@ -168,7 +168,7 @@ input[type="submit"] {
     flex-direction: column;
     background-color: #001781;
     color: white;
-    padding: 1rem 0;
+    height: 2rem;
     justify-content: center;
     align-items: center;
     transition: 0.5s;
@@ -412,7 +412,7 @@ input[type="submit"]:hover {
 }
 
 .excel-icon {
-    position: fixed;
+    position: absolute;
     margin-top: 1rem;
     margin-left: 0.5rem;
     font-size: 1.2rem;

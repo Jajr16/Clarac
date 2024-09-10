@@ -22,28 +22,37 @@ if (!Permisos['EQUIPOS']) {
 
             };
 
-            fetch('/new_eqp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(addData)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'success') {
-                        showSuccessAlertReload(data.message)
-                    } else {
-                        showErrorAlert(data.message)
-                    }
+            if (!checkEmptyFields(addData)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
                 })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                });
+            } else {
+                fetch('/new_eqp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addData)
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
         }
 
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
+
             const selectEqp = $('.Ename')
             selectEqp.append($('<option>', { disabled: true, selected: true }))
             selectEqp.append($('<option>', { value: 'CPU', text: 'CPU' }))
@@ -164,7 +173,7 @@ if (!Permisos['EQUIPOS']) {
                 }
 
                 data.forEach(item => {
-                    selEqp.append($('<option>', { value: item.Equipo, text: item.Equipo }))
+                    selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -172,13 +181,14 @@ if (!Permisos['EQUIPOS']) {
             <td>${item.Num_Serie}</td>
         `;
                     selEqp.change(function () {
-                        iconsLogic()
-
-                        $('.NumSerieE').val(item.Num_Serie);
-                        $('.Ename').val(item.Equipo);
-                        $('.MarcaE').val(item.Marca);
-                        $('.ModeloE').val(item.Modelo);
-                        $('.UbiE').val(item.Ubi);
+                        if ($(this).val() === item.Num_Serie) {
+                            iconsLogic()
+                            $('.NumSerieE').val(item.Num_Serie);
+                            $('.Ename').val(item.Equipo);
+                            $('.MarcaE').val(item.Marca);
+                            $('.ModeloE').val(item.Modelo);
+                            $('.UbiE').val(item.Ubi);
+                        }
                     })
 
                     tr.addEventListener('click', () => {

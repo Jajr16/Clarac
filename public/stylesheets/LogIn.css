@@ -48,3 +48,13 @@ input {
  .log img:hover {
     transform: scale(1.2);
 }
+
+.success_login{ 
+    margin-top: 0.5rem!important;
+    padding: 0!important;
+    height: 2rem!important;
+}
+
+.input_Login {
+    width: 100%!important;
+}

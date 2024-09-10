@@ -275,31 +275,33 @@ if (!Permisos['MOBILIARIO']) {
         `;
 
                     $('.Mob').change(function () {
-                        iconsLogic()
+                        if ($(this).val() === item.Articulo) {
+                            iconsLogic()
 
-                        const formData = new FormData();
-                        formData.append('articulo', item.Articulo)
-                        formData.append('descripcion', item.Descripcion)
-                        formData.append('user', user);
+                            const formData = new FormData();
+                            formData.append('articulo', item.Articulo)
+                            formData.append('descripcion', item.Descripcion)
+                            formData.append('user', user);
 
-                        fetch('/users/disp_image', {
-                            method: 'POST',
-                            body: formData
-                        }).then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.blob();
-                        }).then(blob => {
-                            const url = URL.createObjectURL(blob); // Crear URL del blob
-                            document.querySelector('.furniture-image').src = url;
-                            $('.Fname').val(item.Articulo);
-                            $('.UbiM').val(item.Ubicacion);
-                            $('.CantidadM').val(item.Cantidad);
-                            $('.DescM').val(item.Descripcion);
-                        }).catch(error => {
-                            console.error('Error en la solicitud:', error);
-                        });
+                            fetch('/users/disp_image', {
+                                method: 'POST',
+                                body: formData
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.blob();
+                            }).then(blob => {
+                                const url = URL.createObjectURL(blob); // Crear URL del blob
+                                document.querySelector('.furniture-image').src = url;
+                                $('.Fname').val(item.Articulo);
+                                $('.UbiM').val(item.Ubicacion);
+                                $('.CantidadM').val(item.Cantidad);
+                                $('.DescM').val(item.Descripcion);
+                            }).catch(error => {
+                                console.error('Error en la solicitud:', error);
+                            });
+                        }
                     })
 
                     tr.addEventListener('click', () => {

@@ -133,18 +133,39 @@ function Excels(page) {
     fetch(`/${page}`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         }
-    }).then(response => response.json())
-        .then(data => {
-            if (data.type === 'success') {
-                showSuccessAlert(data.message)
+    })
+        .then(response => {
+            if (response.ok) {
+                const filename = response.headers.get('X-Filename') || 'Almacen.xlsx'; // Usar el nombre desde el servidor
+                return response.blob().then(data => ({ data, filename })); // Retornar el Blob y el nombre
             } else {
-                showErrorAlert(data.message)
+                return response.json(); // Si hay un error, manejarlo como JSON
             }
+        })
+        .then(({ data, filename }) => {
+            // Crear un enlace para descargar el archivo
+            const url = window.URL.createObjectURL(data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename; // Usar el nombre recibido o por defecto
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url); // Liberar el objeto URL
         })
         .catch(error => {
             console.error('Error en la solicitud:', error);
             document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
         });
+}
+
+function checkEmptyFields(data) {
+    for (const key in data) {
+        if (data[key] === '' || data[key] === null || data[key] === undefined) {
+            return false;
+        }
+    }
+    return true;
 }

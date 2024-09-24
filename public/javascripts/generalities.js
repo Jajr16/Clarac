@@ -163,7 +163,9 @@ function Excels(page) {
 
 function checkEmptyFields(data) {
     for (const key in data) {
-        if (data[key] === '' || data[key] === null || data[key] === undefined) {
+        if (key === 'AsignCPU') {
+            continue;
+        } else if (data[key] === '' || data[key] === null || data[key] === undefined) {
             return false;
         }
     }

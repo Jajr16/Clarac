@@ -80,11 +80,10 @@ create table PCs(
 );
 
 create table Monitor(
-	Num_Serie VARCHAR(45) not null not null,
-    Monitor varchar(100),
-    Num_Serie_Monitor varchar(45),
-    primary key(Num_Serie),
-    foreign key (Num_Serie) references equipo(Num_Serie)
+	Num_Serie_Monitor VARCHAR(45) not null not null,
+    Num_Serie_CPU varchar(45),
+    primary key(Num_Serie_Monitor),
+    foreign key (Num_Serie_CPU) references equipo(Num_Serie)
     ON DELETE CASCADE
 	ON UPDATE CASCADE
 );
@@ -755,5 +754,21 @@ alter table soli_com add constraint SoliComPK primary key(Cod_Barras_SCom, emp_S
 alter table soli_com add constraint CodBFK foreign key(Cod_Barras_SCom) references almacen(Cod_Barras);
 alter table soli_com add constraint EmpFK foreign key(emp_SCom) references empleado(Num_emp);
 
+select*from equipo;
+select*from monitor;
+select*from pcs;
+select*from teclado;
+select*from mouse;
+select*from accesorio;
+delete from equipo where Num_Serie = 'DWA1';
+delete from monitor where Num_Serie_Monitor = 'DWA1';
+
 update soli_car set delivered_soli = 0, delivered_ware = 0;
-select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept
+select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;
+
+select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Num_Serie_CPU, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie_CPU left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU";
+SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
+
+
+SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Monitor.Num_Serie_Monitor = Equipo.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
+SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio, e.Nom FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie join empleado e on Equipo.Num_emp = e.Num_emp;

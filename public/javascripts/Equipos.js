@@ -7,6 +7,16 @@ if (!Permisos['EQUIPOS']) {
 } else {
     if (pathname == "/users/consulEqp" && (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('1') || Permisos['EQUIPOS'].includes('3'))) {
 
+        const Asignacion = $('.AsignCPU')
+        const Hardware = $('.Hardware')
+        const Software = $('.Software')
+        const Mouse = $('.Mouse')
+        const Teclado = $('.Teclado')
+        const Accesorio = $('.Accesorio')
+        const Components = $('.Components')
+        const Components_CPU = $('.Components_CPU')
+        const div_Asignacion = $('.Asignation')
+
         function addEquipment(e) {
 
             e.preventDefault()
@@ -21,6 +31,40 @@ if (!Permisos['EQUIPOS']) {
                 User: user
 
             };
+
+            if (Asignacion && Asignacion.val().trim() !== '') {
+                addData.Num_Serie_CPU = Asignacion.val()
+            }
+
+            if (Hardware && Hardware.val().trim() !== '') {
+                addData.Hardware = Hardware.val()
+            }
+
+            if (Software && Software.val().trim() !== '') {
+                addData.Software = Software.val()
+            }
+
+            if (Mouse && Mouse.val().trim() !== '') {
+                addData.Mouse = Mouse.val()
+            }
+
+            if (Teclado && Teclado.val().trim() !== '') {
+                addData.Teclado = Teclado.val()
+            }
+
+            if (Accesorio && Accesorio.val().trim() !== '') {
+                addData.Accesorio = Accesorio.val()
+            }
+
+            if (document.querySelector('.Ename').value === 'CPU' && ((Hardware.val().trim() === '') || (Software.val().trim() === ''))) {
+                console.log('CASDASIDJo')
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
+                })
+
+            }
 
             if (!checkEmptyFields(addData)) {
                 Swal.fire({
@@ -53,9 +97,18 @@ if (!Permisos['EQUIPOS']) {
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
 
+            div_Asignacion.css('display', 'none')
+
+            const Extras = $('.Extras')
+            const Extras_CPU = $('.Extras_CPU')
+
+            Components.css('display', 'none')
+            Components_CPU.css('display', 'none')
+
             const selectEqp = $('.Ename')
             selectEqp.append($('<option>', { disabled: true, selected: true }))
             selectEqp.append($('<option>', { value: 'CPU', text: 'CPU' }))
+            selectEqp.append($('<option>', { value: 'MONITOR', text: 'MONITOR' }))
             selectEqp.append($('<option>', { value: 'IMPRESORA', text: 'IMPRESORA' }))
             selectEqp.append($('<option>', { value: 'NOBREAK', text: 'NOBREAK' }))
             selectEqp.append($('<option>', { value: 'REGULADOR', text: 'REGULADOR' }))
@@ -68,6 +121,23 @@ if (!Permisos['EQUIPOS']) {
             selectEqp.append($('<option>', { value: 'BOCINA', text: 'BOCINA' }))
             selectEqp.append($('<option>', { value: 'PROYECTOR', text: 'PROYECTOR' }))
 
+            selectEqp.on('change', function () {
+                if (selectEqp.val() !== 'MONITOR') {
+                    div_Asignacion.slideUp()
+                    Asignacion.attr('required', false)
+                } else {
+                    div_Asignacion.slideDown()
+                    Asignacion.attr('required', true)
+                }
+
+                if (selectEqp.val() !== 'CPU') {
+                    Components.slideUp()
+                    Extras.attr('required', false);
+                } else {
+                    Components.slideDown()
+                    Extras_CPU.attr('required', true);
+                }
+            })
 
             const addP = $('.fa-circle-plus')
             addP.click(function (e) {
@@ -94,6 +164,10 @@ if (!Permisos['EQUIPOS']) {
                 User: user
 
             };
+
+            if (Asignacion.val() !== '' || Asignacion.val() !== null || Asignacion.val() || undefined) {
+                updatedData.Num_Serie_CPU = Asignacion.val()
+            }
 
             fetch('/mod_eqp', {
                 method: 'POST',
@@ -171,15 +245,16 @@ if (!Permisos['EQUIPOS']) {
                 if (data.length <= 0) {
                     empty_table()
                 }
-
+                console.log(data)
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-            <td>${item.Equipo}</td>
-            <td>${item.Num_Serie}</td>
-        `;
+                    <td>${item.Num_Serie}</td>
+                    <td>${item.Equipo}</td>
+                    `;
+
                     selEqp.change(function () {
                         if ($(this).val() === item.Num_Serie) {
                             iconsLogic()
@@ -188,6 +263,48 @@ if (!Permisos['EQUIPOS']) {
                             $('.MarcaE').val(item.Marca);
                             $('.ModeloE').val(item.Modelo);
                             $('.UbiE').val(item.Ubi);
+                            $('.AsignCPU').val('')
+                            $('.Hardware').val('')
+                            $('.Software').val('')
+                            $('.Mouse').val('')
+                            $('.Teclado').val('')
+                            $('.Accesorio').val('')
+
+                            if (item.Num_Serie_CPU) {
+                                $('.AsignCPU').val(item.Num_Serie_CPU)
+                            }
+
+                            if (item.Hardware) {
+                                $('.Hardware').val(item.Hardware)
+                            }
+
+                            if (item.Software) {
+                                $('.Software').val(item.Software)
+                            }
+
+                            if (item.Mouse) {
+                                $('.Mouse').val(item.Mouse)
+                            }
+
+                            if (item.Teclado) {
+                                $('.Teclado').val(item.Teclado)
+                            }
+
+                            if (item.Accesorio) {
+                                $('.Accesorio').val(item.Accesorio)
+                            }
+
+                            if (item.Equipo === 'CPU') {
+                                Components.slideDown()
+                            } else {
+                                Components.slideUp()
+                            }
+
+                            if (item.Equipo === 'MONITOR') {
+                                div_Asignacion.slideDown()
+                            } else {
+                                div_Asignacion.slideUp()
+                            }
                         }
                     })
 
@@ -198,8 +315,50 @@ if (!Permisos['EQUIPOS']) {
                         $('.MarcaE').val(item.Marca);
                         $('.ModeloE').val(item.Modelo);
                         $('.UbiE').val(item.Ubi);
+                        $('.AsignCPU').val('')
+                        $('.Hardware').val('')
+                        $('.Software').val('')
+                        $('.Mouse').val('')
+                        $('.Teclado').val('')
+                        $('.Accesorio').val('')
 
                         iconsLogic()
+
+                        if (item.Num_Serie_CPU) {
+                            $('.AsignCPU').val(item.Num_Serie_CPU)
+                        }
+
+                        if (item.Hardware) {
+                            $('.Hardware').val(item.Hardware)
+                        }
+
+                        if (item.Software) {
+                            $('.Software').val(item.Software)
+                        }
+
+                        if (item.Mouse) {
+                            $('.Mouse').val(item.Mouse)
+                        }
+
+                        if (item.Teclado) {
+                            $('.Teclado').val(item.Teclado)
+                        }
+
+                        if (item.Accesorio) {
+                            $('.Accesorio').val(item.Accesorio)
+                        }
+
+                        if (item.Equipo === 'CPU') {
+                            Components.slideDown()
+                        } else {
+                            Components.slideUp()
+                        }
+
+                        if (item.Equipo === 'MONITOR') {
+                            div_Asignacion.slideDown()
+                        } else {
+                            div_Asignacion.slideUp()
+                        }
                     });
 
                     tbody.appendChild(tr);

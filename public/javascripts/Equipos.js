@@ -57,7 +57,6 @@ if (!Permisos['EQUIPOS']) {
             }
 
             if (document.querySelector('.Ename').value === 'CPU' && ((Hardware.val().trim() === '') || (Software.val().trim() === ''))) {
-                console.log('CASDASIDJo')
                 Swal.fire({
                     icon: "error",
                     title: "Ocurrió un error",
@@ -165,6 +164,30 @@ if (!Permisos['EQUIPOS']) {
 
             };
 
+            if (Asignacion && Asignacion.val().trim() !== '') {
+                updatedData.Num_Serie_CPU = Asignacion.val()
+            }
+
+            if (Hardware && Hardware.val().trim() !== '') {
+                updatedData.Hardware = Hardware.val()
+            }
+
+            if (Software && Software.val().trim() !== '') {
+                updatedData.Software = Software.val()
+            }
+
+            if (Mouse && Mouse.val().trim() !== '') {
+                updatedData.Mouse = Mouse.val()
+            }
+
+            if (Teclado && Teclado.val().trim() !== '') {
+                updatedData.Teclado = Teclado.val()
+            }
+
+            if (Accesorio && Accesorio.val().trim() !== '') {
+                updatedData.Accesorio = Accesorio.val()
+            }
+
             if (Asignacion.val() !== '' || Asignacion.val() !== null || Asignacion.val() || undefined) {
                 updatedData.Num_Serie_CPU = Asignacion.val()
             }
@@ -245,7 +268,7 @@ if (!Permisos['EQUIPOS']) {
                 if (data.length <= 0) {
                     empty_table()
                 }
-                console.log(data)
+
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
 

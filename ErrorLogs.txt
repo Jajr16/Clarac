@@ -5,3 +5,7 @@ Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual th
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 'ajimenez')' at line 1 | Error obtenido el -> 11/08/2024 21:17
 Error: ER_BAD_FIELD_ERROR: Unknown column 'mobiliario.Area' in 'field list' | Error obtenido el -> 09/09/2024 20:34
 Error: ER_DUP_ENTRY: Duplicate entry 'DWA' for key 'equipo.PRIMARY' | Error obtenido el -> 11/09/2024 22:32
+Error: ER_EMPTY_QUERY: Query was empty | Error obtenido el -> 24/09/2024 11:32
+Error: ER_SUBQUERY_NO_1_ROW: Subquery returns more than 1 row | Error obtenido el -> 24/09/2024 11:38
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:10
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:11

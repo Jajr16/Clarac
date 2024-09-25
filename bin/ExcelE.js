@@ -19,15 +19,13 @@ const createWorksheet = (workbook) => {
         { header: 'Teclado', key: 'Teclado', width: 15 },
         { header: 'Mouse', key: 'Mouse', width: 20 },
         { header: 'Accesorio', key: 'Acces', width: 20 },
-        { header: 'No.S.M.', key: 'NSM', width: 12 },
-        { header: 'No.I.M.', key: 'NIM', width: 12 },
         { header: 'Encargado', key: 'Encargado', width: 40 }
     ];
     return worksheet;
 };
 
 const applyHeaderStyle = (worksheet) => {
-    for (let i = 'A'.charCodeAt(0); i <= 'N'.charCodeAt(0); i++) {
+    for (let i = 'A'.charCodeAt(0); i <= 'L'.charCodeAt(0); i++) {
         const cell = String.fromCharCode(i) + '1';
         worksheet.getCell(cell).fill = {
             type: 'pattern',
@@ -41,7 +39,7 @@ const applyHeaderStyle = (worksheet) => {
         };
     }
     worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-    worksheet.autoFilter = 'A:N';
+    worksheet.autoFilter = 'A:L';
 };
 
 const getExcelE = async (res) => {
@@ -52,24 +50,23 @@ const getExcelE = async (res) => {
         db.query(`
             SELECT DISTINCT 
                 Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
-                Empleado.Nom, 
+                empleado.Nom, 
                 IFNULL(pcs.Hardware, "-") Hardware,
                 IFNULL(pcs.Software, "-") Software,
-                IFNULL(monitor.Monitor, "-") Monitor,
-                IFNULL(monitor.Num_Serie_Monitor, "-") NSM,
-                IFNULL(monitor.Num_Inv_Mon, "-") NIM,
+                IFNULL(Monitor.Num_Serie_CPU, "-") Monitor,
                 IFNULL(mouse.Mouse, "-") Mouse,
                 IFNULL(teclado.Teclado, "-") Teclado,
                 IFNULL(accesorio.Accesorio, "-") Accesorio
             FROM Equipo
             LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
-            LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie
+            LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
             LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
-            LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie
-            LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie
-            INNER JOIN Empleado ON Equipo.Num_emp = Empleado.Num_emp;
-        `, async (err, results) => {
+            LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
+            LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie 
+            join empleado on Equipo.Num_emp = empleado.Num_emp;
 
+        `, async function (err, results) {
+            console.log(results)
             if (results.length > 0) {
                 results.forEach(row => {
                     worksheet.addRow({
@@ -81,8 +78,6 @@ const getExcelE = async (res) => {
                         Hardware: row.Hardware,
                         Software: row.Software,
                         Monitor: row.Monitor,
-                        NSM: row.NSM,
-                        NIM: row.NIM,
                         Mouse: row.Mouse,
                         Teclado: row.Teclado,
                         Acces: row.Accesorio,

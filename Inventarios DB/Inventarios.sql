@@ -728,6 +728,155 @@ create trigger ASEPSE before update on soli_car
 	END
 | DELIMITER ;
 
+-- PROCEDURES Y TRANSACTIONS
+-- Para dar de alta los equipos
+DROP PROCEDURE IF EXISTS AgregarEquipos;
+DELIMITER |
+CREATE PROCEDURE AgregarEquipos(
+    IN NS VARCHAR(45), 
+    IN EQP VARCHAR(45),
+    IN MRC VARCHAR(45), 
+    IN MDO VARCHAR(45),
+    IN USU VARCHAR(45),
+    IN UB VARCHAR(50),
+    IN HDW VARCHAR(100),
+    IN SFT VARCHAR(100), 
+    IN NSCPU VARCHAR(45),
+    IN MSE VARCHAR(45), 
+    IN TLD VARCHAR(45), 
+    IN ACS VARCHAR(45))
+BEGIN
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		SHOW ERRORS;
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+		-- INICIAR INSERCIÓN
+		insert into equipo values (NULL,NS,EQP,MRC,MDO,
+        (SELECT empleado.Num_Emp FROM empleado 
+        where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = USU)),UB);
+        -- INICIAR CONDICIONALES
+        IF EQP = 'CPU' THEN
+			IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
+				INSERT INTO pcs VALUES (NS, HDW, SFT);
+            END IF;
+            
+            IF MSE IS NOT NULL THEN
+				INSERT INTO mouse VALUES (NS, MSE);
+            END IF;
+            
+            IF TLD IS NOT NULL THEN
+				INSERT INTO teclado VALUES (NS, TLD);
+            END IF;
+            
+            IF ACS IS NOT NULL THEN
+				INSERT INTO accesorio VALUES (NS, ACS);
+            END IF;
+            
+		END IF;
+        
+        IF EQP = 'MONITOR' THEN
+			IF NSCPU IS NOT NULL THEN
+				INSERT INTO monitor VALUES (NS, NSCPU);
+            END IF;
+        END IF;
+        
+    
+	SELECT 'Success' AS status;
+	COMMIT;
+END |
+DELIMITER  ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE test_error()
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Mensaje de error personalizado al capturar una excepción SQL
+        SHOW ERRORS;
+    END;
+
+    -- Probar lanzando un error (ejemplo: tabla inexistente)
+    SELECT * FROM tabla_inexistente;
+
+END//
+
+DELIMITER ;
+call test_error();
+
+-- Para actualizar los equipos
+-- DROP PROCEDURE IF EXISTS ActualizarEquipos;
+DELIMITER |
+CREATE PROCEDURE ActualizarEquipos(
+    IN NSN VARCHAR(45), 
+    IN Eqp VARCHAR(45),
+    IN MRC VARCHAR(45),
+    IN MDO VARCHAR(45),
+    IN UB VARCHAR(50),
+    IN NSO VARCHAR(45),
+    IN usu VARCHAR(45),
+    IN HDW VARCHAR(100),
+    IN SFT VARCHAR(100), 
+    IN NSCPU VARCHAR(45),
+    IN MSE VARCHAR(45), 
+    IN TLD VARCHAR(45), 
+    IN ACS VARCHAR(45))
+BEGIN
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+	START TRANSACTION;
+    UPDATE equipo SET 
+        Num_Serie = NSN, Equipo = Eqp, Marca = MRC,
+        Modelo = MDO, Ubi = UB 
+    WHERE 
+        Num_Serie = NSO AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usu);
+    
+    SELECT ROW_COUNT() AS Filas_Afectadas_Equipo;
+    
+    IF Eqp = 'CPU' THEN
+        IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
+            UPDATE pcs SET Num_Serie = NSN, Hardware = HDW, Software = SFT WHERE Num_Serie = NSO;
+			SELECT ROW_COUNT() AS Filas_Afectadas_PCS;
+        END IF;
+        
+        IF MSE IS NOT NULL THEN
+            UPDATE Mouse SET Num_Serie = NSN, Mouse = MSE WHERE Num_Serie = NSO;
+            SELECT ROW_COUNT() AS Filas_Afectadas_Mouse;
+        END IF;
+        
+        IF TLD IS NOT NULL THEN
+            UPDATE Teclado SET Num_Serie = NSN, Teclado = TLD WHERE Num_Serie = NSO;
+            SELECT ROW_COUNT() AS Filas_Afectadas_Teclado;
+        END IF;
+        
+        IF ACS IS NOT NULL THEN
+            UPDATE Accesorio SET Num_Serie = NSN, Accesorio = ACS WHERE Num_Serie = NSO;
+			SELECT ROW_COUNT() AS Filas_Afectadas_Accesorio;
+        END IF;
+    END IF;
+    
+    IF Eqp = 'MONITOR' THEN
+        IF NSCPU IS NOT NULL THEN
+            UPDATE monitor SET Num_Serie = NSN, Num_Serie_CPU = NSCPU WHERE Num_Serie = NSO;
+			SELECT ROW_COUNT() AS Filas_Afectadas_Monitor;
+        END IF;
+    END IF;
+	
+    SELECT 'Success' AS status;
+    COMMIT;
+END |
+
+DELIMITER ;
+
 select*from usuario;
 select*from mobiliario;
 select*from soli_car;
@@ -768,7 +917,6 @@ select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car
 
 select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Num_Serie_CPU, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie_CPU left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU";
 SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
-
 
 SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Monitor.Num_Serie_Monitor = Equipo.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
 SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio, e.Nom FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie join empleado e on Equipo.Num_emp = e.Num_emp;

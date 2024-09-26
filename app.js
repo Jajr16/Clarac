@@ -1,8 +1,8 @@
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const session = require('express-session');
 const { body, validationResult } = require('express-validator');
 const createError = require('http-errors');
 const rateLimit = require('express-rate-limit');

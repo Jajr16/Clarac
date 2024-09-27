@@ -66,7 +66,7 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('Ubicacion', ubicacion)
                 formData.append('user', user);
 
-                fetch('/users/check-filename', {
+                fetch('/mobiliario/users/check-filename', {
                     method: 'POST',
                     body: formData  // Enviar el FormData sin especificar el Content-Type
                 })
@@ -74,7 +74,7 @@ if (!Permisos['MOBILIARIO']) {
                     .then(data => {
                         if (data.type === 'success') {
                             formData.append('file', inputFile.files[0]);
-                            return fetch('/users/upload', {
+                            return fetch('/mobiliario/users/upload', {
                                 method: 'POST',
                                 body: formData  // Enviar el FormData sin especificar el Content-Type
                             });
@@ -145,7 +145,7 @@ if (!Permisos['MOBILIARIO']) {
             formData.append('descripcion', oldDesc);
 
             console.log(formData)
-            fetch('/mod_mob', {
+            fetch('/mobiliario/mod_mob', {
                 method: 'POST',
                 body: formData
             }).then(response => response.json())
@@ -155,7 +155,7 @@ if (!Permisos['MOBILIARIO']) {
                         const inputFile = document.getElementById('file');
 
                         if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
-                            fetch('/renameImage', {
+                            fetch('/mobiliario/renameImage', {
                                 method: 'POST',
                                 body: formData
                             }).then(response => response.json())
@@ -174,7 +174,7 @@ if (!Permisos['MOBILIARIO']) {
                         } else {
                             formData.append('file', inputFile.files[0])
 
-                            fetch('/renew', {
+                            fetch('/mobiliario/renew', {
                                 method: 'POST',
                                 body: formData
                             }).then(response => response.json())
@@ -213,7 +213,7 @@ if (!Permisos['MOBILIARIO']) {
             formData.append('user', user)
 
             if (nombre_Articulo !== '' && desc_Articulo !== '') {
-                fetch('/delMob', {
+                fetch('/mobiliario/delMob', {
                     method: 'POST',
                     body: formData
                 })
@@ -250,7 +250,7 @@ if (!Permisos['MOBILIARIO']) {
             imagen.addEventListener('click', ImageFunction);
         });
 
-        fetch('/Mobiliario', {
+        fetch('/mobiliario', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -283,7 +283,7 @@ if (!Permisos['MOBILIARIO']) {
                             formData.append('descripcion', item.Descripcion)
                             formData.append('user', user);
 
-                            fetch('/users/disp_image', {
+                            fetch('/mobiliario/users/disp_image', {
                                 method: 'POST',
                                 body: formData
                             }).then(response => {
@@ -312,7 +312,7 @@ if (!Permisos['MOBILIARIO']) {
                         formData.append('descripcion', item.Descripcion)
                         formData.append('user', user);
 
-                        fetch('/users/disp_image', {
+                        fetch('/mobiliario/users/disp_image', {
                             method: 'POST',
                             body: formData
                         }).then(response => {

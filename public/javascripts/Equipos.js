@@ -72,7 +72,7 @@ if (!Permisos['EQUIPOS']) {
                     text: 'Debes llenar todos los datos para continuar.',
                 })
             } else {
-                fetch('/new_eqp', {
+                fetch('/equipo/new_eqp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -192,7 +192,7 @@ if (!Permisos['EQUIPOS']) {
                 updatedData.Num_Serie_CPU = Asignacion.val()
             }
 
-            fetch('/mod_eqp', {
+            fetch('/equipo/mod_eqp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -223,7 +223,7 @@ if (!Permisos['EQUIPOS']) {
                 formData.append('Num_Serie', NumSerie)
                 formData.append('user', user)
 
-                fetch('/del_eqp', {
+                fetch('/equipo/del_eqp', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.json())
@@ -254,7 +254,7 @@ if (!Permisos['EQUIPOS']) {
             editsFunctions(modify, cancel)
         });
 
-        fetch('/Equipos', {
+        fetch('/equipo', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

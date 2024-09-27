@@ -130,7 +130,7 @@ function sselect() {
 }
 
 function Excels(page) {
-    fetch(`/${page}`, {
+    fetch(`/excels/${page}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

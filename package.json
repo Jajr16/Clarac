@@ -8,14 +8,15 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "exceljs": "^4.4.0",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "express-ejs-layouts": "^2.5.1",
-    "express-rate-limit": "^7.4.0",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^5.5.1",
     "express-session": "^1.18.0",
     "express-validator": "^7.1.0",
     "gridfs-stream": "^1.1.1",
@@ -33,6 +34,7 @@
     "multer-gridfs-storage": "^5.0.2",
     "mysql": "^2.18.1",
     "puppeteer": "^23.0.1",
+    "readable-stream": "^4.5.2",
     "ws": "^8.17.0"
   }
 }

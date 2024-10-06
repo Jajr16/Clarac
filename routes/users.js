@@ -1,18 +1,19 @@
 var express = require('express');
 var router = express.Router();
+const isAuthenticated = require('../middleware/authMiddleware')
 
 /* GET users listing. */
-router.get('/home', function (req, res, next) {
+router.get('/home', isAuthenticated, function (req, res, next) {
   res.render('home', { title: 'CLARAC | Home', layout: 'other_layout' });
 });
 
 // Consulta de mobiliario
-router.get('/consulMob', function (req, res, next) {
+router.get('/consulMob', isAuthenticated, function (req, res, next) {
   res.render('consulMob', { title: 'Consultar Mobiliario', layout: 'other_layout' });
 });
 
 // Consulta de productos
-router.get('/consulProd', function (req, res, next) {
+router.get('/consulProd', isAuthenticated, function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });
 });
 
@@ -22,12 +23,12 @@ router.get('/productos_exist', function (req, res, next) {
 });
 
 // Responsivas
-router.get('/responsivas', function (req, res, next) {
+router.get('/responsivas', isAuthenticated, function (req, res, next) {
   res.render('responsivas', { title: 'Responsivas' });
 });
 
 // Consulta de Equipos
-router.get('/consulEqp', function (req, res, next) {
+router.get('/consulEqp', isAuthenticated, function (req, res, next) {
   res.render('consulEqp', { title: 'Consultar Equipos', layout: 'other_layout' });
 });
 

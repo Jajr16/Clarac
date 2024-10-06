@@ -56,13 +56,10 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                     <tbody>`;
 
     equipos.forEach(equi => {
-        console.log(equi);
-        console.log(equi.Monitor);
         if (equi.Teclado == null) equi.Teclado = '-';
         if (equi.Mouse == null) equi.Mouse = '-';
         if (equi.Accesorio == null) equi.Accesorio = '-';
-        if (equi.Monitor == null) equi.Monitor = '-';
-        if (equi.Num_Serie_Monitor == null) equi.Num_Serie_Monitor = '-';
+        if (equi.Num_Serie_CPU == null) equi.Num_Serie_CPU = '-';
         if (equi.Num_Inv_Mon == null) equi.Num_Inv_Mon = '-';
         htmlContent +=
             `<tr>
@@ -71,12 +68,10 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                         <td>${equi.Equipo}</td>
                         <td>${equi.Marca}</td>
                         <td>${equi.Modelo}</td>
+                        <td>${equi.Num_Serie_CPU}</td>
                         <td>${equi.Teclado}</td>
                         <td>${equi.Mouse}</td>
                         <td>${equi.Accesorio}</td>
-                        <td>${equi.Monitor}</td>
-                        <td>${equi.Num_Serie_Monitor}</td>
-                        <td>${equi.Num_Inv_Mon}</td>
                     </tr>`;
     });
 
@@ -157,12 +152,10 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                             <th>EQUIPO</th>
                             <th>MARCA</th>
                             <th>MODELO</th>
+                            <th>N.S. CPU</th>
                             <th>TECLA</th>
                             <th>MOUSE</th>
                             <th>ACCESORIO</th>
-                            <th>MONITOR</th>
-                            <th>N/S MONITOR</th>
-                            <th>N/I MONITOR</th>
                         </tr>
                     </thead>        
                 </table>         

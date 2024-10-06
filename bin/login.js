@@ -32,7 +32,7 @@ function Login(req, callback) {
                                 }
                                 permisosModulos[row.modulo].push(row.permiso);
                             });
-
+                            console.log('ASdASD')
                             return callback(null, { type: 'success', Usuario: result[0].Usuario, permisosModulos, area: area[0].Área });
                         } else {
                             return callback(null, { type: 'logInError', message: 'No se encontró el área del empleado.' });

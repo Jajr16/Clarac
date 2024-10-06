@@ -22,17 +22,15 @@ if (!Permisos['ALMACÉN']) {
                 Existencia: document.querySelector('.ExistenciaP').value,
             };
 
-            // Verificar si hay algún valor vacío en addData
-            const hasEmptyField = Object.values(addData).some(value => value.trim() === '');
-
-            if (hasEmptyField) {
+            if (!checkEmptyFields(addData)) {
                 Swal.fire({
                     icon: "error",
                     title: "Ocurrió un error",
                     text: 'Debes llenar todos los datos para continuar.',
-                });
+                })
             } else {
-                fetch('/new_prod', {
+
+                fetch('/producto/new_prod', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -57,39 +55,31 @@ if (!Permisos['ALMACÉN']) {
         document.addEventListener('DOMContentLoaded', function () {
 
             const addP = $('.fa-circle-plus')
-            const inputP = $('.EditData');
+
+            const selectCat = $('.CateP')
+            const selectUM = $('.UnidadP')
+
+            selectCat.append($('<option>', { disabled: true, selected: true }))
+            selectCat.append($('<option>', { value: 'PAPELERÍA', text: 'PAPELERÍA' }))
+            selectCat.append($('<option>', { value: 'LIMPIEZA', text: 'LIMPIEZA' }))
+            selectCat.append($('<option>', { value: 'FERRETERÍA', text: 'FERRETERÍA' }))
+
+            selectUM.append($('<option>', { disabled: true, selected: true }))
+            selectUM.append($('<option>', { value: 'UNIDAD', text: 'UNIDAD' }))
+            selectUM.append($('<option>', { value: 'LITROS', text: 'LITROS' }))
+            selectUM.append($('<option>', { value: 'KILOS', text: 'KILOS' }))
+            selectUM.append($('<option>', { value: 'METROS', text: 'METROS' }))
 
             addP.click(function (e) {
 
-                inputP.attr("readonly", false);
-                inputP.attr("disabled", false);
-                inputP.attr("placeholder", 'Ingresa los datos del producto');
-                inputP.val('')
+                selectCat.removeAttr('disabled');
+                selectUM.removeAttr('disabled');
 
                 var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="addProduct(event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
-                $('.Modify').remove();
-                $('.Cancel').remove();
-                $('.buttons').append(add);
-                $('.buttons').append(cancel);
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
 
-                const edit = $('.editP');
-                edit.css('display', 'none')
-            });
-
-            // Función para manejar el botón "Cancelar"
-            window.dissapear = function () {
-                // Volver a deshabilitar el input
-                inputP.attr("disabled", true);
-
-                // Mostrar el botón "fa-circle-plus" de nuevo
-                addP.show();
-
-                // Opcional: ocultar los botones "Guardar" y "Cancelar" y mostrar otros elementos si es necesario.
-                $('.Modify').remove();
-                $('.Cancel').remove();
-                $('.editP').css('display', 'inline'); // Mostrar de nuevo los elementos ocultos
-            };
+                addFunctions(add, cancel, 'Ingresa los datos del producto')
+            })
 
         });
 
@@ -108,7 +98,7 @@ if (!Permisos['ALMACÉN']) {
                 User: user
             };
 
-            fetch('/mod_prod', {
+            fetch('/producto/mod_prod', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -128,63 +118,118 @@ if (!Permisos['ALMACÉN']) {
                 });
         }
 
-        // FUNCIONALIDAD PÁGINA
-        const edit = $('.edit');
+        window.addEventListener("load", function (event) {
+            fetch('/producto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: user })
+            }).then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector(".data-prod tbody");
+                    const selProd = $('.Prod')
 
-        edit.click(function (e) {
+                    if (data.length <= 0) {
+                        empty_table()
+                    }
 
-            var Cod_Barras = $('.CodBarrasP').val();
+                    data.forEach(item => {
 
-            const inputE = $('.EditData');
-            inputE.attr("readonly", false);
-            inputE.attr("disabled", false);
+                        let tr = document.createElement('tr');
 
-            var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
-            var cancel = '<input type="submit" value="Cancelar" id="cancelProd" onclick="dissapear()" name="cancelProd" class="Cancel">';
-            $('.Modify').remove();
-            $('.Cancel').remove();
-            $('.fa-circle-plus').css('display', 'none')
-            $('.buttons').append(modify);
-            $('.buttons').append(cancel);
-        });
+                        if (item.Eliminado !== 1) {
+                            selProd.append($('<option>', { value: item.Articulo, text: item.Articulo }))
 
-        fetch('/Productos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username: user })
-        }).then(response => response.json())
-            .then(data => {
-                const tbody = document.querySelector(".data-prod tbody");
 
-                data.forEach(item => {
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
-            <td>${item.Articulo}</td>
-            <td>${item.Existencia}</td>
-        `;
-                    tr.addEventListener('click', () => {
-                        iconsLogic()
+                            tr.innerHTML = `
+                <td>${item.Articulo}</td>
+                <td>${item.Existencia}</td>
+            `;
 
-                        $('.CodBarrasP').val(item.Cod_Barras);
-                        $('.CateP').val(item.Categoria);
-                        $('.Pname').val(item.Articulo);
-                        $('.MarcaP').val(item.Marca);
-                        $('.DescP').val(item.Descripcion);
-                        $('.UnidadP').val(item.Unidad);
-                        $('.ExistenciaP').val(item.Existencia);
+                            $('.Prod').change(function () {
+                                if ($(this).val() === item.Articulo) {
+                                    iconsLogic();
+                                    $('.CodBarrasP').val(item.Cod_Barras);
+                                    $('.CateP').val(item.Categoria);
+                                    $('.Pname').val(item.Articulo);
+                                    $('.MarcaP').val(item.Marca);
+                                    $('.DescP').val(item.Descripcion);
+                                    $('.UnidadP').val(item.Unidad);
+                                    $('.ExistenciaP').val(item.Existencia);
+                                }
+                            });
 
+                            tr.addEventListener('click', () => {
+                                iconsLogic()
+
+                                $('.CodBarrasP').val(item.Cod_Barras);
+                                $('.CateP').val(item.Categoria);
+                                $('.Pname').val(item.Articulo);
+                                $('.MarcaP').val(item.Marca);
+                                $('.DescP').val(item.Descripcion);
+                                $('.UnidadP').val(item.Unidad);
+                                $('.ExistenciaP').val(item.Existencia);
+
+                            });
+                        }
+
+                        tbody.appendChild(tr);
                     });
-                    if (item.Eliminado !== 1) { }
-                    
-                    tbody.appendChild(tr);
+                    sselect()
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
+
+            const trash = $('.trash')
+            trash.click(function (e) {
+                var CB = $('.CodBarrasP').val()
+
+                if (CB !== '') {
+                    const formData = new FormData()
+                    formData.append('Cod_Barras', CB)
+
+                    fetch('/producto/del_prod', {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                }
             })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+
+            // FUNCIONALIDAD PÁGINA
+            const edit = $('.edit');
+
+            edit.click(function (e) {
+                var Cod_Barras = $('.CodBarrasP').val();
+
+                var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
+
+                editsFunctions(modify, cancel)
             });
+
+            const excel = $('.excel-icon')
+
+            if (excel.length > 0) {
+                excel.click(function (e) {
+                    Excels('ExcelA')
+                })
+            }
+
+        })
 
     }
 }

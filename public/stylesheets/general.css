@@ -135,7 +135,7 @@ header {
 
 label {
     display: block;
-    font-weight: 700;
+    /* font-weight: 700; */
     color: black;
     text-transform: capitalize;
     margin-right: 0.5rem;
@@ -152,6 +152,10 @@ textarea {
     padding-left: 0.5rem;
 }
 
+#mySelect {
+    width: 100%;
+}
+
 :root {
     --displayF: flex;
     --grey: #eee;
@@ -164,7 +168,7 @@ input[type="submit"] {
     flex-direction: column;
     background-color: #001781;
     color: white;
-    padding: 1rem 0;
+    height: 2rem;
     justify-content: center;
     align-items: center;
     transition: 0.5s;
@@ -381,7 +385,7 @@ input[type="submit"]:hover {
 .table-responsive {
     display: block;
     width: 100%;
-    height: 30.5rem;
+    max-height: 20.5rem;
     scrollbar-width: none;
     overflow-x: auto;
     overflow-y: auto;
@@ -390,7 +394,7 @@ input[type="submit"]:hover {
 
 .table-responsive table {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-height: 39rem;
+    max-height: 20.5rem;
 }
 
 .table-responsive thead {
@@ -405,4 +409,23 @@ input[type="submit"]:hover {
 
 .Cancel {
     background-color: rgb(134, 0, 0) !important;
+}
+
+.excel-icon {
+    position: absolute;
+    margin-top: 1rem;
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.body-icons {
+    color: #001781;
+}
+
+.Separated {
+    margin-right: 1rem;
+}
+
+.btn-logout {
+    cursor: pointer;
 }

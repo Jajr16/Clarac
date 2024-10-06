@@ -6,7 +6,7 @@
         <div class="content-container">
             <form name="crearRespon" id="crearRespon">
                 <div class="FTB">
-                    <select id="mySelect" class="Resp" required>
+                    <select id="mySelect" class="Eqp searchInput" required>
                         <option disabled selected>Buscar equipo...</option>
                     </select>
                 </div>
@@ -16,12 +16,13 @@
 </div>
 
 <div class="Columns">
+    <i class="fa-solid fa-file-excel excel-icon body-icons"></i>
     <div class="table-responsive item1">
-        <table class="data-eqp">
+        <table class="data-eqp info-table">
             <thead>
                 <tr>
-                    <th>Equipo</th>
                     <th>Número de serie</th>
+                    <th>Equipo</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,9 +42,7 @@
             <div class="description-equipment">
                 <div class="DE">
                     <label>Equipo:</label>
-                    <select id="Ename" name="Ename" class="Ename EditData" required disabled>
-                        <option value=""></option>
-                    </select>
+                    <select id="Ename" class="Ename EditData EditSelect" name="Ename" required disabled></select>
                 </div>
                 <div class="DE">
                     <label>Número de serie:</label>
@@ -63,6 +62,32 @@
                 <div class="DE">
                     <label>Ubicación:</label>
                     <input autocomplete="off" type="text" id="UbiE" name="UbiE" class="UbiE EditData" required
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE Asignation">
+                    <label hidden>CPU asignada:</label>
+                    <input autocomplete="off" type="text" id="AsignCPU" name="AsignCPU" class="AsignCPU EditData"
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE Components">
+                    <label hidden>Hardware:</label>
+                    <input autocomplete="off" type="text" id="Hardware" name="Hardware" class="Separated Extras_CPU Hardware EditData"
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <label hidden>Software:</label>
+                    <input autocomplete="off" type="text" id="Software" name="Software" class="Software Extras_CPU EditData"
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE Components">
+                    <label hidden>Mouse:</label>
+                    <input autocomplete="off" type="text" id="Mouse" name="Mouse" class="Separated Mouse Extras EditData"
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <label hidden>Teclado:</label>
+                    <input autocomplete="off" type="text" id="Teclado" name="Teclado" class="Teclado Extras EditData"
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE Components">
+                    <label hidden>Accesorio:</label>
+                    <input autocomplete="off" type="text" id="Accesorio" name="Accesorio" class="Accesorio Extras EditData"
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="buttons"></div>

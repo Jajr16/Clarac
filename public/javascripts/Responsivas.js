@@ -8,26 +8,15 @@ if (!Permisos['RESPONSIVAS']) {
     const resp = $('.Resp')
     const employ = $('.Employees')
 
-    function cargarNombres() {
-        socket.emit('List_empleados', "Empleados");
-        socket.on('ListaNombres', (data) => {
-            ListaNombres(data.Nombres);
-        });
-    }
-
-    function ListaNombres(Nombr) {
-        if (employ) {
-            employ.append($('<option>', { value: Nombr, text: Nombr }))
-        }
-    }
-
     window.addEventListener("load", function (event) {
         if (resp && employ && Permisos['RESPONSIVAS']) {
+            sselect()
+            
             resp.append($('<option>', { value: 'MOBILIARIO', text: 'MOBILIARIO' }))
             resp.append($('<option>', { value: 'EQUIPOS', text: 'EQUIPOS' }))
         }
 
-        fetch('/getEmploys', {
+        fetch('/responsiva/getEmploys', {
             method: 'GET'
         })
             .then(response => response.json())
@@ -57,7 +46,7 @@ if (!Permisos['RESPONSIVAS']) {
             formData.append('Responsiva', responsivas.val())
             formData.append('NombreEmp', employees.val())
 
-            fetch('/responsivas', {
+            fetch('/responsiva', {
                 method: 'POST',
                 body: formData
             })
@@ -76,7 +65,7 @@ if (!Permisos['RESPONSIVAS']) {
                         const pdfUrl = URL.createObjectURL(blob);
                         pdfViewer.src = pdfUrl;
 
-                        pdfContainer.style.display = 'flex*';
+                        pdfContainer.style.display = 'flex';
                     });
                 })
                 .catch(error => {

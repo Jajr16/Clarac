@@ -1,32 +1,42 @@
 var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
 var Errores = require('./Error')
+var success = require('./success')
 
 function addEquipo(req, callback) {
     const data = req.body
 
-    db.query('SELECT empleado.Num_Emp FROM empleado where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = ?)', [data.User], function (err, result) {
-        if (err) { Errores(err); return callback(err); } // Se hace un control de errores
+    const Hardware = data.Hardware || null;
+    const Software = data.Software || null;
+    const Num_Serie_CPU = data.Num_Serie_CPU || null;
+    const Mouse = data.Mouse || null;
+    const Teclado = data.Teclado || null;
+    const Accesorio = data.Accesorio || null;
+
+    db.query('CALL AgregarEquipos(?,?,?,?,?,?,?,?,?,?,?,?)', [data.Num_Serie, data.Equipo, data.Marca, data.Modelo, data.User, data.Ubi, Hardware, Software, Num_Serie_CPU, Mouse, Teclado, Accesorio], function (err, result) {
+        if (err) { 
+            if (err.code === 'ER_DUP_ENTRY') { // Manejar error de llave duplicada
+                return callback(null, { type: 'failed', message: 'Ya existe un equipo con ese número de serie.' });
+            } else {
+                Errores(err); // Otros errores
+                return callback(err);
+            }
+        } // Se hace un control de errores
         else {
             if (result.length > 0) {//Si sí hizo una búsqueda
-
-                var num_emp = result[0].Num_Emp; // Obtener el valor de Num_Emp del primer elemento del arreglo result
-
-                db.query('insert into equipo values (NULL,?,?,?,?,?,?)', [data.Num_Serie, data.Equipo, data.Marca, data.Modelo, num_emp, data.Ubi], function (err2, result) {
-                    if (err2) { Errores(err2); return callback(err); } // Se hace un control de errores
-                    else {
-                        if (result) {
-                            return callback(null, { type: 'success', message: 'Equipo dado de alta.' })
-                        } 
-                    }
-                });
-
+                if (success(result) == 'Success'){
+                    return callback(null, { type: 'success', message: 'Equipo dado de alta.' });
+                }else {
+                    Errores(`${result.Code, result.Message}`);
+                    return callback(null, { type: 'failed', message: `El equipo no se pudo dar de alta.` })
+                }
+                
             } else {
                 return callback(null, { type: 'failed', message: 'El equipo no se pudo dar de alta.' })
             }
         }
     });
 
-    
+
 }
 
 module.exports = addEquipo;

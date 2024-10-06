@@ -128,33 +128,6 @@ if (!Permisos['ALMACÉN']) {
                 });
         }
 
-        // Borrar producto
-        const trash = $('.trash')
-        trash.click(function (e) {
-            var CB = $('.CodBarrasP').val()
-
-            if (CB !== '') {
-                const formData = new FormData()
-                formData.append('Cod_Barras', CB)
-
-                fetch('/del_prod', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
-            }
-        })
-
         // FUNCIONALIDAD PÁGINA
         const edit = $('.edit');
 

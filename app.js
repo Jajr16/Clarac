@@ -30,6 +30,10 @@ const addProduct = require('./bin/AddProductos');
 const modProduct = require('./bin/ProductosModify');
 const delProduct = require('./bin/deleteProductos');
 
+// * Constantes para productos existentes * //
+const prodExistConsul = require('./bin/Prod_exist_consul');
+const prodExistAdd = require('./bin/Prod_exist_add');
+
 // * Constantes para equipos * //
 const equipments = require('./bin/Equipos');
 const addEquip = require('./bin/AddEquipos');
@@ -503,6 +507,25 @@ app.post('/del_prod', upload.none(), async (req, res) => {
   });
 });
 
+// *** Rutas para productos existentes *** //
+// Consultas de productos existentes
+app.post('/prodExistConsul', (req, res) => {
+  prodExistConsul(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+// Añadir productos existentes
+app.post('/prodExistAdd', (req, res) => {
+  prodExistAdd(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
 
 // *** Rutas para equipos *** //
 // Consultas de equipos

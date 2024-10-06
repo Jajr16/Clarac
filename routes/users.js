@@ -16,6 +16,11 @@ router.get('/consulProd', function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });
 });
 
+// Productos existentes
+router.get('/productos_exist', function (req, res, next) {
+  res.render('productos_exist', { title: 'Productos existentes', layout: 'other_layout' });
+});
+
 // Responsivas
 router.get('/responsivas', function (req, res, next) {
   res.render('responsivas', { title: 'Responsivas' });

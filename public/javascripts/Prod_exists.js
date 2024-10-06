@@ -8,7 +8,7 @@ if (!Permisos['ALMACÉN']) {
     if (pathname == "/users/productos_exist" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
 
         // Consulta de productos
-        fetch('/prodExistConsul', {
+        fetch('/prod_exists', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -21,18 +21,20 @@ if (!Permisos['ALMACÉN']) {
                 data.forEach(item => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-            <td>${item.Articulo}</td>
-            <td>${item.Cod_Barras}</td>
-            <td>${item.Existencia}</td>
-            <td><i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i></td>
-            <td><i class="fa-solid fa-circle-minus" style="font-size: 25px;"></i></td>
-        `;
-                    tr.addEventListener('click', () => {
-                        iconsLogic()
+                        <td>${item.Articulo}</td>
+                        <td>${item.Cod_Barras}</td>
+                        <td>${item.Existencia}</td>
+                        <td><i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i></td>
+                        <td><i class="fa-solid fa-circle-minus" style="font-size: 25px;"></i></td>`;
 
-                        $('.CodBarrasP').val(item.Cod_Barras);
+                    var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="addProduct(event)" class="Modify">`;
+                    var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
+
+                    addFunctions(add, cancel);
+
+                    tr.addEventListener('click', () => {
+
                         $('.Pname').val(item.Articulo);
-                        $('.ExistenciaP').val(item.Existencia);
 
                     });
 
@@ -44,38 +46,94 @@ if (!Permisos['ALMACÉN']) {
                 document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
             });
 
+        // Funcion para agregar productos existentes
+        function addProductExist(e) {
 
-        // Lógica para incrementar existencia al hacer clic en "fa-circle-plus"
-        document.querySelectorAll('.fa-circle-plus').forEach(plusIcon => {
-            plusIcon.addEventListener('click', function () {
-                // Encuentra la fila del producto correspondiente
-                const row = this.closest('tr');
-                const existenciaCell = row.querySelector('.ExistenciaP');
-                let existencia = parseInt(existenciaCell.textContent);
+            e.preventDefault()
 
-                // Incrementa la existencia
-                existencia += 1;
-                existenciaCell.textContent = existencia;
+            const addData = {
 
-                // Enviar solicitud al servidor (si es necesario) para actualizar la existencia
-                const codigoBarras = row.querySelector('td:nth-child(2)').textContent;
+                Articulo: document.querySelector('.Pname').value,
+                Existencia: document.querySelector('.ExistenciaP').value,
+            };
 
-                fetch('/prodExistAdd', {
+            if (!checkEmptyFields(addData)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
+                })
+            } else {
+
+                fetch('/producto/new_prod', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ codigoBarras: codigoBarras, nuevaExistencia: existencia })
-                })
-                    .then(response => response.json())
-                    .then(result => {
-                        console.log('Existencia actualizada en el servidor:', result);
+                    body: JSON.stringify(addData)
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
                     })
                     .catch(error => {
-                        console.error('Error al actualizar la existencia:', error);
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                     });
+            }
+        }
+
+        // Botón para añadir productos existentes
+        $(document).on('click', '.fa-circle-plus', function (e) {
+            console.log('Botón clickeado'); // Verificar si el evento se dispara
+
+            // Cambiar la visibilidad del elemento '#agregar_prod'
+            const agregar = $('#agregar_prod');
+            agregar.css({
+                'display': 'block',  // Hacerlo visible
+                'visibility': 'visible',
+                'opacity': '1'
             });
+
+            // Cambiar la visibilidad del elemento '#sacar_prod'
+            const sacar = $('#sacar_prod');
+            sacar.css({
+                'display': 'none',  // Hacerlo invisible
+            });
+
         });
 
+        // Botón para sacar productos existentes
+        $(document).on('click', '.fa-circle-minus', function (e) {
+            console.log('Botón clickeado'); // Verificar si el evento se dispara
+
+            // Cambiar la visibilidad del elemento '#sacar_prod'
+            const sacar = $('#sacar_prod');
+            sacar.css({
+                'display': 'block',  // Hacerlo visible
+                'visibility': 'visible',
+                'opacity': '1'
+            });
+
+            // Cambiar la visibilidad del elemento '#agregar_prod'
+            const agregar = $('#agregar_prod');
+            agregar.css({
+                'display': 'none',  // Hacerlo invisible
+            });
+
+        });
+
+        // Definir la función `dissapear` globalmente para que esté disponible cuando se haga clic en el botón Cancelar
+        function dissapear() {
+            const agregar = $('#agregar_prod');
+            const sacar = $('#sacar_prod');
+
+            // Cambiar el display a none para ocultar el contenedor
+            agregar.css('display', 'none');
+            sacar.css('display', 'none');
+        }
     }
 }

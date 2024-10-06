@@ -20,6 +20,7 @@ require('dotenv').config();
 const equipoRoutes = require('./routes/equipos')
 const mobiliarioRoutes = require('./routes/mobiliario')
 const productoRoutes = require('./routes/productos')
+const prodExistsRoutes = require('./routes/prod_exists')
 const responsivasRoutes = require('./routes/responsivas')
 const excelsRoutes = require('./routes/excels')
 
@@ -104,6 +105,7 @@ app.use(authMiddleware);
 app.use('/equipo', equipoRoutes);
 app.use('/mobiliario', mobiliarioRoutes);
 app.use('/producto', productoRoutes);
+app.use('/prod_exists', prodExistsRoutes);
 app.use('/responsiva', responsivasRoutes);
 app.use('/excels', excelsRoutes);
 

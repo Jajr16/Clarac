@@ -1,7 +1,7 @@
 <div class="Fone-item">
     <div class="boxes-containers one-item">
         <div class="title-container">
-            Productos de almacén existentes 
+            Productos de almacén existentes
         </div>
         <div class="content-container">
             <form name="crearRespon" id="crearRespon">
@@ -30,6 +30,79 @@
             <tbody>
             </tbody>
         </table>
+    </div>
+
+    <div class="boxes-containers item2 data" name="agregar_prod" id="agregar_prod" style="display: none">
+        <div class="subtitle-container">
+            Detalles del producto
+        </div>
+        <i class="fa-solid fa-trash trash" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+        <i class="fa fa-pencil-square-o edit" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+
+        <form method="POST" enctype="multipart/form-data" name="AltaExist" id="AltaExist">
+            <div class="description-product">
+                <div class="DP">
+                    <label>Producto</label>
+                    <input type="text" class="Pname" value="" readonly>
+                </div>
+                <div class="DP">
+                    <label>Fecha de Ingreso</label>
+                    <input autocomplete="off" type="date" id="FecActu" name="FecActu" required>
+                </div>
+                <div class="DP">
+                    <label>Cantidad</label>
+                    <input autocomplete="off" type="number" id="CantidadPM" name="CantidadPM" required min="0">
+                </div>
+                <div class="DP">
+                    <label>Proveedor</label>
+                    <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required maxlength="400"
+                        oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DP">
+                    <label>Número de Factura</label>
+                    <input autocomplete="off" type="text" id="NumFactM" name="NumFactM" required maxlength="400"
+                        oninput="mayus(this);" onkeypress="return checkL(event)" readonly>
+                </div>
+                <div class="DP">
+                    <label>Fecha de Factura</label>
+                    <input autocomplete="off" type="date" id="FecFact" name="FecFact">
+                </div>
+                <div class="buttons"></div>
+            </div>
+        </form>
+    </div>
+
+    <div class="boxes-containers item2 data" name="sacar_prod" id="sacar_prod" style="display: none">
+        <div class="subtitle-container">
+            Detalles del producto
+        </div>
+        <i class="fa-solid fa-trash trash" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+        <i class="fa fa-pencil-square-o edit" aria-hidden="true"
+            style="float: right; color: #001781; visibility: hidden;"></i>
+
+        <form method="POST" enctype="multipart/form-data" id="BajaExist" name="BajaExist">
+            <div class="description-product">
+                <div class="DP">
+                    <label>Producto</label>
+                    <input type="text" class="Pname" value="" readonly>
+                </div>
+                <div class="DP">
+                    <label>Cantidad de productos a sacar</label>
+                    <input autocomplete="off" type="number" id="CantidadP" name="CantidadP" required min="1"
+                        oninput="mayus(this)">
+                </div>
+                <div class="DP">
+                    <label>¿Quién requiere este producto?</label>
+                    <select id="NombreEmp" required style="width: 100%;">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="buttons"></div>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -11,3 +11,4 @@ Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual th
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:11
 Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Monitor' in 'field list' | Error obtenido el -> 05/10/2024 17:33
 Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie' in 'on clause' | Error obtenido el -> 05/10/2024 17:45
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie_CPU' in 'field list' | Error obtenido el -> 05/10/2024 18:45

@@ -30,7 +30,7 @@ if (!Permisos['ALMACÉN']) {
                 })
             } else {
 
-                fetch('/new_prod', {
+                fetch('/producto/new_prod', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ if (!Permisos['ALMACÉN']) {
                 User: user
             };
 
-            fetch('/mod_prod', {
+            fetch('/producto/mod_prod', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ if (!Permisos['ALMACÉN']) {
         }
 
         window.addEventListener("load", function (event) {
-            fetch('/Productos', {
+            fetch('/producto', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -191,7 +191,7 @@ if (!Permisos['ALMACÉN']) {
                     const formData = new FormData()
                     formData.append('Cod_Barras', CB)
 
-                    fetch('/del_prod', {
+                    fetch('/producto/del_prod', {
                         method: 'POST',
                         body: formData
                     }).then(response => response.json())

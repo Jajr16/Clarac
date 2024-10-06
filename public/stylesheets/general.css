@@ -425,3 +425,7 @@ input[type="submit"]:hover {
 .Separated {
     margin-right: 1rem;
 }
+
+.btn-logout {
+    cursor: pointer;
+}

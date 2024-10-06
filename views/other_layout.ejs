@@ -3,7 +3,7 @@
 
 <head>
     <title>
-        <%= typeof title !== 'undefined' ? title : 'Clarac' %>
+        <%= typeof title !=='undefined' ? title : 'Clarac' %>
     </title>
     <meta http-equiv="Expires" content="0">
     <meta http-equiv="Last-Modified" content="0">
@@ -22,13 +22,20 @@
     <script src="https://kit.fontawesome.com/9c84429ff8.js" crossorigin="anonymous"></script>
 </head>
 
-<body>
-    <%- include('partials/nav.ejs') %>
-        <%- include('partials/sidebar.ejs') %>
-            <main>
-                <%- body %>
-            </main>
-</body>
-<script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
-<script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
-<script type="text/javascript" src="/javascripts/textVal.js"></script>
+<% if (!user) { %>
+    <script>
+        window.location.href = "/login"; // Redirigir al login si no hay sesión
+    </script>
+    <% } else { %>
+
+        <body>
+            <%- include('partials/nav.ejs') %>
+                <%- include('partials/sidebar.ejs') %>
+                    <main>
+                        <%- body %>
+                    </main>
+        </body>
+        <script src='https://s3.amazonaws.com/popmotion.io/static/dist/popmotion.min.js'></script>
+        <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
+        <script type="text/javascript" src="/javascripts/textVal.js"></script>
+    <% } %>

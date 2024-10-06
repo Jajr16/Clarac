@@ -8,6 +8,7 @@ const addFurnit = require('../bin/AddMobiliario');
 const modFurnit = require('../bin/MobiliarioModify');
 const delFurnit = require('../bin/deleteMobiliario');
 const upload = require('../config/multerConfig'); 
+const isAuthenticated = require('../middleware/authMiddleware')
 
 const customId = require('../utils/customId');
 
@@ -32,7 +33,7 @@ try {
 }
 
 // Rutas de mobiliario
-router.post('/', (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
   furnitures(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -41,7 +42,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.post('/new_mob', (req, res) => {
+router.post('/new_mob', isAuthenticated, (req, res) => {
   addFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -50,7 +51,7 @@ router.post('/new_mob', (req, res) => {
   });
 });
 
-router.post('/mod_mob', upload.none(), (req, res) => {
+router.post('/mod_mob', isAuthenticated, upload.none(), (req, res) => {
   modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -59,7 +60,7 @@ router.post('/mod_mob', upload.none(), (req, res) => {
   });
 });
 
-router.post('/delMob', upload.none(), async (req, res) => {
+router.post('/delMob', isAuthenticated, upload.none(), async (req, res) => {
   delFurnit(req, async (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -82,7 +83,7 @@ router.post('/delMob', upload.none(), async (req, res) => {
   });
 })
 
-router.post('/renameImage', upload.single('file'), async (req, res) => {
+router.post('/renameImage', isAuthenticated, upload.single('file'), async (req, res) => {
   try {
     let filename = customId(req, false)
     console.log('El filename original es este ', filename)
@@ -115,7 +116,7 @@ router.post('/renameImage', upload.single('file'), async (req, res) => {
   }
 })
 
-router.post('/renew', upload.single('file'), async (req, res) => {
+router.post('/renew', isAuthenticated, upload.single('file'), async (req, res) => {
   try {
 
     if (!req.file) {
@@ -152,7 +153,7 @@ router.post('/renew', upload.single('file'), async (req, res) => {
   }
 })
 
-router.post('/users/check-filename', upload.none(), async (req, res) => {
+router.post('/users/check-filename', isAuthenticated, upload.none(), async (req, res) => {
   let filename = customId(req, false)
   console.log('El id es este ', filename)
 
@@ -175,7 +176,7 @@ router.post('/users/check-filename', upload.none(), async (req, res) => {
   }
 });
 
-router.post('/users/upload', upload.single('file'), (req, res) => {
+router.post('/users/upload', isAuthenticated, upload.single('file'), (req, res) => {
   if (!req.file) {
     console.log('No file uploaded');
     res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });
@@ -190,7 +191,7 @@ router.post('/users/upload', upload.single('file'), (req, res) => {
   });
 });
 
-router.get('/users/files', async (req, res) => {
+router.get('/users/files', isAuthenticated, async (req, res) => {
   if (!gfsBucket) {
     console.log('gfsBucket no está inicializado');
     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
@@ -216,7 +217,7 @@ router.get('/users/files', async (req, res) => {
   }
 });
 
-router.post('/users/disp_image', upload.none(), async (req, res) => {
+router.post('/users/disp_image', isAuthenticated, upload.none(), async (req, res) => {
   let filename = customId(req, false)
   console.log('Pues el filename que encontró es', filename)
 
@@ -250,7 +251,7 @@ router.post('/users/disp_image', upload.none(), async (req, res) => {
   }
 });
 
-router.get('/users/image/:id', async (req, res) => {
+router.get('/users/image/:id', isAuthenticated, async (req, res) => {
   if (!gfsBucket) {
     console.log('gfsBucket no está inicializado');
     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });

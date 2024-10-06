@@ -3,11 +3,12 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig');
+const isAuthenticated = require('../middleware/authMiddleware')
 
 const getResponsives = require('../bin/getResponsives')
 const getEmploys = require('../bin/getEmploys')
 
-router.post('/', upload.none(), async (req, res) => {
+router.post('/', isAuthenticated, upload.none(), async (req, res) => {
     getResponsives(req, async (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -26,7 +27,7 @@ router.post('/', upload.none(), async (req, res) => {
     });
 });
 
-router.get('/getEmploys', upload.none(), async (req, res) => {
+router.get('/getEmploys', isAuthenticated, upload.none(), async (req, res) => {
     getEmploys((err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

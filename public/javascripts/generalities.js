@@ -1,3 +1,26 @@
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('btn-logout').addEventListener('click', function (e) {
+        e.preventDefault();
+    
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                alert('Error al cerrar sesión. Por favor, inténtelo de nuevo.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+})
+
 function showErrorAlert(message) {
     Swal.fire({
         icon: "error",
@@ -6,11 +29,13 @@ function showErrorAlert(message) {
     });
 }
 
-function showErrorAlertReload(message) {
+function showErrorAlertReload(message, render) {
     Swal.fire({
         icon: "error",
         title: 'Hubo un error :(',
         text: message,
+    }).then(() => {
+        window.location.href = render;
     });
 }
 

@@ -10,6 +10,10 @@ const multer = require('multer');
 const methodOverride = require('method-override');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
+const MySQLStore = require('express-mysql-session')(session);
+const db = require('./Conexion/BaseDatos')
+const sessionMiddleware = require('./middleware/sessionMiddleware');
+const authMiddleware = require('./middleware/authMiddleware');
 
 require('dotenv').config();
 
@@ -28,10 +32,26 @@ const usersRouter = require('./routes/users');
 const layout = require('express-ejs-layouts');
 
 const app = express();
+app.use(bodyParser.json());
 
 // Set view engine and views directory
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// Configurar express-session
+const sessionStore = new MySQLStore({}, db);
+
+app.use(session({
+  secret: 'secreto',
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24
+  }
+}));
 
 // Middleware setup
 app.use(logger('dev'));
@@ -41,24 +61,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(layout);
 app.use(methodOverride('_method'));
-
-app.use('/equipo', equipoRoutes);
-app.use('/mobiliario', mobiliarioRoutes);
-app.use('/producto', productoRoutes);
-app.use('/responsiva', responsivasRoutes);
-app.use('/excels', excelsRoutes);
-
-// Configurar express-session
-app.use(session({
-  secret: 'secreto',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24
-  }
-}));
+app.use(sessionMiddleware);
 
 // Configurar limitador de intentos de inicio de sesión
 const loginLimiter = rateLimit({
@@ -75,14 +78,53 @@ app.use('/users', usersRouter);
 app.post('/login', loginLimiter, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    req.session.errorMessage = 'Por favor, complete todos los campos requeridos.'; // Mensaje de error específico
+    return res.redirect('/login');
   }
 
   login(req, (err, result) => {
     if (err) {
-      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+      console.err(err)
+      console.log(err)
+      req.session.errorMessage = 'Error en el servidor. Inténtelo de nuevo más tarde.'; // Mensaje de error específico
+      return res.redirect('/');
     }
-    res.json(result);
+    if (result.type === 'success') {
+      // Autenticación exitosa
+      req.session.userId = req.body.username;
+      return res.json(result);
+    } else {
+      // Error de autenticación
+      return res.status(401).json(result); 
+    }
+  });
+});
+
+app.use(authMiddleware);
+app.use('/equipo', equipoRoutes);
+app.use('/mobiliario', mobiliarioRoutes);
+app.use('/producto', productoRoutes);
+app.use('/responsiva', responsivasRoutes);
+app.use('/excels', excelsRoutes);
+
+app.get('/', (req, res) => {
+  if (req.session && req.session.userId) {
+    res.render('home', { title: 'CLARAC | Home', layout: 'other_layout' });
+  } else {
+    console.log(req.session)
+    const errorMessage = req.session.errorMessage;
+    req.session.errorMessage = null;
+    res.render('/', { title: 'CLARAC | LogIn', layout: false, errorMessage });
+  }
+});
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send('Error al cerrar sesión');
+    }
+    res.clearCookie('connect.sid');
+    res.sendStatus(200);
   });
 });
 

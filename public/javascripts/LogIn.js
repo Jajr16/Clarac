@@ -14,6 +14,7 @@ form.addEventListener('submit', (e) => {
     })
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             if (data.type === 'success') {
                 // Usuario autenticado correctamente
                 localStorage.setItem('user', data.Usuario);
@@ -34,6 +35,10 @@ form.addEventListener('submit', (e) => {
         })
         .catch(error => {
             console.error('Error en la solicitud:', error);
-            showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+            Swal.fire({
+                icon: "error",
+                title: 'Hubo un error :(',
+                text: 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.'
+            })
         });
 })

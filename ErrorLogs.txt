@@ -9,3 +9,5 @@ Error: ER_EMPTY_QUERY: Query was empty | Error obtenido el -> 24/09/2024 11:32
 Error: ER_SUBQUERY_NO_1_ROW: Subquery returns more than 1 row | Error obtenido el -> 24/09/2024 11:38
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:10
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:11
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Monitor' in 'field list' | Error obtenido el -> 05/10/2024 17:33
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie' in 'on clause' | Error obtenido el -> 05/10/2024 17:45

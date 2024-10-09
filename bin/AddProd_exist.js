@@ -30,7 +30,7 @@ function prodExistAdd(req, callback) {
                         if (result1.length > 0) {
 
                             // Enviar mensaje al cliente si la factura ya está registrada para este producto
-                            return callback(null, { type: 'Add_ProdExist_Ans', message: 'Factura registrada anteriormente para este producto.' });
+                            return callback(null, { type: 'RespDelProdExists', message: 'Factura registrada anteriormente para este producto.' });
                         
                         } else {
 
@@ -47,7 +47,7 @@ function prodExistAdd(req, callback) {
                                     if (result2) {
 
                                         // Actualizar la existencia de productos
-                                        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [data.Existencia, data.Cod_Barras], function (err3, result3) {
+                                        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.dataOldExis) + parseInt(data.Existencia)), data.Cod_Barras], function (err3, result3) {
 
                                             if (err3) {
 
@@ -58,11 +58,11 @@ function prodExistAdd(req, callback) {
                                                 
                                                 if (result3.affectedRows > 0) { // Si se encontró un producto para actualizar
 
-                                                    return callback(null, { type: 'Add_ProdExist_Ans', message: 'Existencia de producto actualizada con éxito.' });
+                                                    return callback(null, { type: 'RespDelProdExists', message: 'Existencia de producto actualizada con éxito.' });
 
                                                 } else {
 
-                                                    return callback(null, { type: 'Add_ProdExist_Ans', message: 'No se pudo actualizar la existencia del producto.' });
+                                                    return callback(null, { type: 'RespDelProdExists', message: 'No se pudo actualizar la existencia del producto.' });
                                                     
                                                 }
                                             }
@@ -70,7 +70,7 @@ function prodExistAdd(req, callback) {
 
                                     } else {
 
-                                        return callback(null, { type: 'Add_ProdExist_Ans', message: 'No se pudo agregar la factura del producto.' });
+                                        return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura del producto. (1)' });
                                     
                                     }
                                 }
@@ -93,11 +93,11 @@ function prodExistAdd(req, callback) {
 
                         if (result1) {
 
-                            db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Cantidad, data.FecAct], function (err2, result2) {
+                            db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Existencia, data.FecAct], function (err2, result2) {
 
                                 if (result2) {
 
-                                    db.query('update almacen set Existencia = ? where Cod_Barras = ?', [data.Existencia, data.Cod_Barras], function (err3, result3) {
+                                    db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.dataOldExis) + parseInt(data.Existencia)), data.Cod_Barras], function (err3, result3) {
 
                                         if (err2) {
 
@@ -108,24 +108,24 @@ function prodExistAdd(req, callback) {
 
                                             if (result3.affectedRows > 0) {
 
-                                                return callback(null, { type: 'Add_ProdExist_Ans', message: 'Existencia de producto actualizada con éxito.' });
+                                                return callback(null, { type: 'RespDelProdExists', message: 'Existencia de producto actualizada con éxito.' });
 
                                             } else {
 
-                                                return callback(null, { type: 'Add_ProdExist_Ans', message: 'No se pudo actualizar la existencia del producto.' });
+                                                return callback(null, { type: 'RespDelProdExists', message: 'No se pudo actualizar la existencia del producto.' });
 
                                             }
                                         }
                                     });
                                 } else {
 
-                                    return callback(null, { type: 'Add_ProdExist_Ans', message: 'No se pudo agregar la factura del producto.' });
+                                    return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura del producto. (2)' });
                                 }
                             });
 
                         } else {
 
-                            return callback(null, { type: 'Add_ProdExist_Ans', message: 'No se pudo agregar la factura.' });
+                            return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura.' });
 
                         }
                     }

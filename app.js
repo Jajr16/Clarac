@@ -105,7 +105,7 @@ app.use(authMiddleware);
 app.use('/equipo', equipoRoutes);
 app.use('/mobiliario', mobiliarioRoutes);
 app.use('/producto', productoRoutes);
-app.use('/prod_exists', prodExistsRoutes);
+app.use('/productos_existentes', prodExistsRoutes);
 app.use('/responsiva', responsivasRoutes);
 app.use('/excels', excelsRoutes);
 

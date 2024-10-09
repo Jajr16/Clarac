@@ -48,21 +48,25 @@
                     <input type="text" class="Pname" value="" readonly>
                 </div>
                 <div class="DP">
+                    <label>Código de barras</label>
+                    <input type="text" class="CodBarrasP" value="" readonly>
+                </div>
+                <div class="DP">
                     <label>Fecha de Ingreso</label>
                     <input autocomplete="off" type="date" id="FecActu" name="FecActu" required>
                 </div>
                 <div class="DP">
                     <label>Cantidad</label>
-                    <input autocomplete="off" type="number" id="CantidadPM" name="CantidadPM" required min="0">
+                    <input autocomplete="off" type="number" id="CantidadPE" name="CantidadPE" class="CantidadPE" required min="0">
                 </div>
                 <div class="DP">
                     <label>Proveedor</label>
-                    <input autocomplete="off" type="text" id="ProveedorM" name="ProveedorM" required maxlength="400"
+                    <input autocomplete="off" type="text" id="ProveedorPE" name="ProveedorPE" class="EditData" required maxlength="400"
                         oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Número de Factura</label>
-                    <input autocomplete="off" type="text" id="NumFactM" name="NumFactM" required maxlength="400"
+                    <input autocomplete="off" type="text" id="NumFactPE" name="NumFactPE" class="EditData" required maxlength="400"
                         oninput="mayus(this);" onkeypress="return checkL(event)" readonly>
                 </div>
                 <div class="DP">

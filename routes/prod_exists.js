@@ -5,8 +5,6 @@ const prodExistConsul = require('../bin/Prod_exist_consul');
 const prodExistAdd = require('../bin/AddProd_exist');
 const isAuthenticated = require('../middleware/authMiddleware')
 
-const upload = require('../config/multerConfig'); 
-
 router.post('/', isAuthenticated, (req, res) => {
     prodExistConsul(req, (err, result) => {
         if (err) {
@@ -16,7 +14,7 @@ router.post('/', isAuthenticated, (req, res) => {
     });
 });
 
-router.post('/Add_prod_exist', isAuthenticated, upload.none(), async (req, res) => {
+router.post('/add', isAuthenticated, async (req, res) => {
     prodExistAdd(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

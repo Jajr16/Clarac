@@ -4,135 +4,136 @@ var Errores = require('./Error')
 function prodExistAdd(req, callback) {
 
     const data = req.body;
+    console.log(data)
 
-    // Verificar si la factura ya existe en la base de datos
-    db.query('select*from facturas_almacen where Num_Fact = ?', [data.NumFactura], function (err, result) {
+    // // Verificar si la factura ya existe en la base de datos
+    // db.query('select*from facturas_almacen where Num_Fact = ?', [data.NumFactura], function (err, result) {
 
-        if (err) {
+    //     if (err) {
 
-            Errores(err);
-            return callback(err);
+    //         Errores(err);
+    //         return callback(err);
 
-        } else {
+    //     } else {
 
-            if (result.length > 0) { // Si se encontró algo
+    //         if (result.length > 0) { // Si se encontró algo
 
-                // Verificar si la relación entre producto y factura ya existe
-                db.query('select*from Factus_Productos where Nfactura = ? and Cod_Barras = ?', [data.NumFactura, data.Cod_Barras], function (err1, result1) {
+    //             // Verificar si la relación entre producto y factura ya existe
+    //             db.query('select*from Factus_Productos where Nfactura = ? and Cod_Barras = ?', [data.NumFactura, data.Cod_Barras], function (err1, result1) {
                     
-                    if (err1) {
+    //                 if (err1) {
 
-                        Errores(err1);
-                        return callback(err1);
+    //                     Errores(err1);
+    //                     return callback(err1);
 
-                    } else {
+    //                 } else {
 
-                        if (result1.length > 0) {
+    //                     if (result1.length > 0) {
 
-                            // Enviar mensaje al cliente si la factura ya está registrada para este producto
-                            return callback(null, { type: 'RespDelProdExists', message: 'Factura registrada anteriormente para este producto.' });
+    //                         // Enviar mensaje al cliente si la factura ya está registrada para este producto
+    //                         return callback(null, { type: 'RespDelProdExists', message: 'Factura registrada anteriormente para este producto.' });
                         
-                        } else {
+    //                     } else {
 
-                            // Agregar la relación entre producto y factura
-                            db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Existencia, data.FecAct], function (err2, result2) {
+    //                         // Agregar la relación entre producto y factura
+    //                         db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Existencia, data.FecAct], function (err2, result2) {
 
-                                if (err2) {
+    //                             if (err2) {
 
-                                    Errores(err2);
-                                    return callback(err2);
+    //                                 Errores(err2);
+    //                                 return callback(err2);
 
-                                } else {
+    //                             } else {
 
-                                    if (result2) {
+    //                                 if (result2) {
 
-                                        // Actualizar la existencia de productos
-                                        db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.dataOldExis) + parseInt(data.Existencia)), data.Cod_Barras], function (err3, result3) {
+    //                                     // Actualizar la existencia de productos
+    //                                     db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.dataOldExis) + parseInt(data.Existencia)), data.Cod_Barras], function (err3, result3) {
 
-                                            if (err3) {
+    //                                         if (err3) {
 
-                                                Errores(err3);
-                                                return callback(err3);
+    //                                             Errores(err3);
+    //                                             return callback(err3);
 
-                                            } else {
+    //                                         } else {
                                                 
-                                                if (result3.affectedRows > 0) { // Si se encontró un producto para actualizar
+    //                                             if (result3.affectedRows > 0) { // Si se encontró un producto para actualizar
 
-                                                    return callback(null, { type: 'RespDelProdExists', message: 'Existencia de producto actualizada con éxito.' });
+    //                                                 return callback(null, { type: 'RespDelProdExists', message: 'Existencia de producto actualizada con éxito.' });
 
-                                                } else {
+    //                                             } else {
 
-                                                    return callback(null, { type: 'RespDelProdExists', message: 'No se pudo actualizar la existencia del producto.' });
+    //                                                 return callback(null, { type: 'RespDelProdExists', message: 'No se pudo actualizar la existencia del producto.' });
                                                     
-                                                }
-                                            }
-                                        });
+    //                                             }
+    //                                         }
+    //                                     });
 
-                                    } else {
+    //                                 } else {
 
-                                        return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura del producto. (1)' });
+    //                                     return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura del producto. (1)' });
                                     
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+    //                                 }
+    //                             }
+    //                         });
+    //                     }
+    //                 }
+    //             });
 
-            } else {
+    //         } else {
 
-                // Agregar una nueva factura y la relación entre producto y factura
-                db.query('insert into facturas_almacen values (?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err1, result1) {
+    //             // Agregar una nueva factura y la relación entre producto y factura
+    //             db.query('insert into facturas_almacen values (?,?,?)', [data.NumFactura, data.FechaFac, data.Proveedor], function (err1, result1) {
                     
-                    if (err1) {
+    //                 if (err1) {
 
-                        Errores(err1);
-                        return callback(err1);
+    //                     Errores(err1);
+    //                     return callback(err1);
 
-                    } else {
+    //                 } else {
 
-                        if (result1) {
+    //                     if (result1) {
 
-                            db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Existencia, data.FecAct], function (err2, result2) {
+    //                         db.query('insert into Factus_Productos values (?,?,?,?)', [data.Cod_Barras, data.NumFactura, data.Existencia, data.FecAct], function (err2, result2) {
 
-                                if (result2) {
+    //                             if (result2) {
 
-                                    db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.dataOldExis) + parseInt(data.Existencia)), data.Cod_Barras], function (err3, result3) {
+    //                                 db.query('update almacen set Existencia = ? where Cod_Barras = ?', [(parseInt(data.dataOldExis) + parseInt(data.Existencia)), data.Cod_Barras], function (err3, result3) {
 
-                                        if (err2) {
+    //                                     if (err2) {
 
-                                            Errores(err3);
-                                            return callback(err3);
+    //                                         Errores(err3);
+    //                                         return callback(err3);
 
-                                        } else {
+    //                                     } else {
 
-                                            if (result3.affectedRows > 0) {
+    //                                         if (result3.affectedRows > 0) {
 
-                                                return callback(null, { type: 'RespDelProdExists', message: 'Existencia de producto actualizada con éxito.' });
+    //                                             return callback(null, { type: 'RespDelProdExists', message: 'Existencia de producto actualizada con éxito.' });
 
-                                            } else {
+    //                                         } else {
 
-                                                return callback(null, { type: 'RespDelProdExists', message: 'No se pudo actualizar la existencia del producto.' });
+    //                                             return callback(null, { type: 'RespDelProdExists', message: 'No se pudo actualizar la existencia del producto.' });
 
-                                            }
-                                        }
-                                    });
-                                } else {
+    //                                         }
+    //                                     }
+    //                                 });
+    //                             } else {
 
-                                    return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura del producto. (2)' });
-                                }
-                            });
+    //                                 return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura del producto. (2)' });
+    //                             }
+    //                         });
 
-                        } else {
+    //                     } else {
 
-                            return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura.' });
+    //                         return callback(null, { type: 'RespDelProdExists', message: 'No se pudo agregar la factura.' });
 
-                        }
-                    }
-                });
-            }
-        }
-    });
+    //                     }
+    //                 }
+    //             });
+    //         }
+    //     }
+    // });
 }
 
 module.exports = prodExistAdd;

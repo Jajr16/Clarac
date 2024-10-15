@@ -7,8 +7,117 @@ if (!Permisos['ALMACÉN']) {
 } else {
     if (pathname == "/users/productos_exist" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
 
+        function agregarPE(e) {
+            e.preventDefault()
+            let productos = []
+            $('.description-product .DP').each(
+                function () {
+                    let producto = $(this).find('label').attr('article');
+                    let cantidad = $(this).find('input[type="number"]').val()
+
+                    if (producto && cantidad) {
+                        productos.push({
+                            producto: producto,
+                            cantidad: cantidad
+                        });
+                    } else {
+                        showErrorAlert('Debes de llenar todos los campos antes de enviar el formulario.')
+                    }
+                }
+            )
+
+            if (productos.length > 0) {
+                fetch('/prod_exts/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productos)
+                }).then(response => response.json())
+                    .then(data => {
+
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            } else {
+                showErrorAlert('No hay productos para enviar.');
+            }
+
+
+        }
+
+        function CRUDButtons() {
+            $('.meter').click((e) => {
+                addBody(`
+                    <div class="buttons">
+                        <input type="submit" value="Guardar" id="modyEqp" onclick="agregarPE(event)" name="modyEqp" class="Modify">
+                        <input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel()" name="cancelEqp" class="Cancel">
+                    </div>
+                    `, e)
+            })
+
+            $('.sacar').click((e) => {
+                addBody(`
+                    <div class="DP">
+                        <label>Producto</label>
+                        <input type="text" class="Pname" value="" readonly>
+                    </div>
+                    <div class="DP">
+                        <label>Código de barras</label>
+                        <input type="text" class="CodBarrasP" value="" readonly>
+                    </div>
+                    <div class="DP">
+                        <label>Fecha de Ingreso</label>
+                        <input autocomplete="off" type="date" id="FecActu" name="FecActu" required>
+                    </div>
+                    <div class="DP">
+                        <label>Cantidad</label>
+                        <input autocomplete="off" type="number" id="CantidadPE" name="CantidadPE" class="CantidadPE" required min="0">
+                    </div>
+                    <div class="DP">
+                        <label>Proveedor</label>
+                        <input autocomplete="off" type="text" id="ProveedorPE" name="ProveedorPE" class="EditData" required maxlength="400"
+                            oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    </div>
+                    <div class="DP">
+                        <label>Número de Factura</label>
+                        <input autocomplete="off" type="text" id="NumFactPE" name="NumFactPE" class="EditData" required maxlength="400"
+                            oninput="mayus(this);" onkeypress="return checkL(event)" readonly>
+                    </div>
+                    <div class="DP">
+                        <label>Fecha de Factura</label>
+                        <input autocomplete="off" type="date" id="FecFact" name="FecFact">
+                    </div>
+                    <div class="buttons">
+                        <input type="submit" value="Guardar" id="modyEqp" name="modyEqp" class="Modify">
+                        <input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel()" name="cancelEqp" class="Cancel">
+                    </div>
+                    `, e)
+            })
+        }
+
+        function cancel() {
+            $('.description-product').html(`
+                <div class="actions two-boxes" style="height: 60%;">
+                    <center>
+                        <button class="options meter FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar productos al stock</button>
+                        <button class="options sacar FTB"><i class="fa-solid fa-circle-minus body-icons" style="font-size: 25px;"></i>Sacar productos del stock</button>
+                    </center>
+                </div>`)
+            CRUDButtons()
+        }
+
+        window.addEventListener('load', function (event) {
+            sselect()
+
+            CRUDButtons()
+        })
+
+
         // Consulta de productos
-        fetch('/productos_existentes', {
+        fetch('/prod_exts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -21,17 +130,19 @@ if (!Permisos['ALMACÉN']) {
                 data.forEach(item => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${item.Articulo}</td>
-                        <td>${item.Cod_Barras}</td>
-                        <td>${item.Existencia}</td>
-                        <td><i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i></td>
-                        <td><i class="fa-solid fa-circle-minus" style="font-size: 25px;"></i></td>`;
+                    <td>${item.Cod_Barras}</td>
+                    <td>${item.Articulo}</td>
+                        <td>${item.Existencia}</td>`;
 
                     tr.addEventListener('click', () => {
-
-                        $('.Pname').val(item.Articulo);
-                        $('.CodBarrasP').val(item.Cod_Barras);
-
+                        if ($(`.description-product .DP label:contains('${item.Articulo}')`).length === 0) {
+                            $(` 
+                                <div class="DP">
+                                    <label article="${item.Cod_Barras}">${item.Articulo}</label>
+                                    <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidadPE" name="CantidadPE" class="CantidadPE" required min="0">
+                                </div>
+                            `).insertBefore('.buttons');
+                        }
                     });
 
                     tbody.appendChild(tr);
@@ -42,112 +153,5 @@ if (!Permisos['ALMACÉN']) {
                 document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
             });
 
-        // Funcion para agregar productos existentes
-        function prodExistAdd(oldExistencia, e) {
-
-            e.preventDefault()
-
-            const addData = {
-
-                Articulo: document.querySelector('.Pname').value,
-                Cod_Barras: document.querySelector('.CodBarrasP').value,
-                FecAct: document.querySelector('#FecActu').value,
-                Existencia: document.querySelector('#CantidadPE').value,
-                Proveedor: document.querySelector('#ProveedorPE').value,
-                NumFactura: document.querySelector('#NumFactPE').value,
-                FechaFac: document.querySelector('#FecFact').value,
-                dataOldExis: oldExistencia,
-
-            };
-
-            if (!checkEmptyFields(addData)) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Ocurrió un error",
-                    text: 'Debes llenar todos los datos para continuar.',
-                })
-            } else {
-
-                fetch('/productos_existentes/Add_prod_exist', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(addData)
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'RespDelProdExists') {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
-            }
-        }
-
-        // Botón para añadir productos existentes
-        $(document).on('click', '.fa-circle-plus', function (e) {
-            console.log('Botón clickeado'); // Verificar si el evento se dispara
-
-            // Cambiar la visibilidad del elemento '#agregar_prod'
-            const agregar = $('#agregar_prod');
-            agregar.css({
-                'display': 'block',  // Hacerlo visible
-                'visibility': 'visible',
-                'opacity': '1'
-            });
-
-            // Cambiar la visibilidad del elemento '#sacar_prod'
-            const sacar = $('#sacar_prod');
-            sacar.css({
-                'display': 'none',  // Hacerlo invisible
-            });
-
-            var Existencia = $('.CantidadPE').val();
-
-            var add = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="prodExistAdd('${Existencia}', event)" class="Modify">`;
-            var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
-
-            addFunctions(add, cancel);
-
-        });
-
-        // Botón para sacar productos existentes
-        $(document).on('click', '.fa-circle-minus', function (e) {
-            console.log('Botón clickeado'); // Verificar si el evento se dispara
-
-            // Cambiar la visibilidad del elemento '#sacar_prod'
-            const sacar = $('#sacar_prod');
-            sacar.css({
-                'display': 'block',  // Hacerlo visible
-                'visibility': 'visible',
-                'opacity': '1'
-            });
-
-            // Cambiar la visibilidad del elemento '#agregar_prod'
-            const agregar = $('#agregar_prod');
-            agregar.css({
-                'display': 'none',  // Hacerlo invisible
-            });
-
-            var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
-
-            addFunctions(cancel);
-
-        });
-
-        // Definir la función `dissapear` globalmente para que esté disponible cuando se haga clic en el botón Cancelar
-        function dissapear() {
-            const agregar = $('#agregar_prod');
-            const sacar = $('#sacar_prod');
-
-            // Cambiar el display a none para ocultar el contenedor
-            agregar.css('display', 'none');
-            sacar.css('display', 'none');
-        }
     }
 }

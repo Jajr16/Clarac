@@ -196,3 +196,8 @@ function checkEmptyFields(data) {
     }
     return true;
 }
+
+function addBody(Text, e){
+    e.preventDefault()
+    $('.description-product').html(Text)
+}

@@ -352,7 +352,27 @@ input[type="submit"]:hover {
     border-bottom: 1px #000000 solid;
     font-weight: bold;
     font-size: 1rem;
-    text-align: left;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.subsubtitle-container {
+    border-bottom: 1px #000000 solid;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.subsubtitleespecial-container {
+    /* border-top: 1px #000000 solid; */
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-align: center;
     padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
@@ -371,6 +391,40 @@ input[type="submit"]:hover {
     flex-direction: column;
     width: 70%;
     padding: 0 1rem;
+}
+
+.two-boxes-registro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+.two-boxes-registro  .FTB {
+    display: inline-flex;
+    align-items: center;
+    /* justify-content: center; */
+    text-align: center;
+    flex-direction: column;
+    padding: 10px;
+    width: 200px;
+    height: 100px;
+    box-sizing: border-box;
+}
+
+/* .two-boxes-registro .FTB {
+    font-size: 14px; 
+} */
+
+
+.two-boxes-registro .FTB i {
+    margin-bottom: 10px; /* Espacio entre ícono y texto */
+    font-size: 24px; /* Ajuste del tamaño del ícono */
+}
+
+.two-boxes-registro .meter, .two-boxes-registro .sacar {
+    width: 45%; /* Ambos botones ocupan el mismo ancho */
 }
 
 .item1 {

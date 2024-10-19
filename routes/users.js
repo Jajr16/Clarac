@@ -12,6 +12,11 @@ router.get('/consulMob', isAuthenticated, function (req, res, next) {
   res.render('consulMob', { title: 'Consultar Mobiliario', layout: 'other_layout' });
 });
 
+// Registros
+router.get('/registros', isAuthenticated, function (req, res, next) {
+  res.render('registros', { title: 'Registros', layout: 'other_layout' });
+});
+
 // Consulta de productos
 router.get('/consulProd', isAuthenticated, function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });

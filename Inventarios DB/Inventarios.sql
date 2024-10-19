@@ -162,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Facturas_Almacen` (
   `Num_Fact` varchar(10) NOT NULL,
   `Ffact` DATE NULL,
   `Proveedor` varchar(45),
+   `FIngreso` date not null,
   PRIMARY KEY (`Num_Fact`))
 ENGINE = InnoDB;
 
@@ -169,6 +170,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Almacen`
 -- -----------------------------------------------------
+drop table almacen;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Almacen` (
   `Cod_Barras` NVARCHAR(45) NOT NULL,
   `Categoria` VARCHAR(45) NULL,
@@ -176,14 +178,13 @@ CREATE TABLE IF NOT EXISTS `Inventarios`.`Almacen` (
   `Marca` VARCHAR(100) NULL,
   `Descripcion` VARCHAR(400) NULL,
   `Unidad` VARCHAR(45) NULL,
-  `Existencia` INT NULL,
   `eliminado` tinyint(1) not null default 0,
   PRIMARY KEY (`Cod_Barras`))
 ENGINE = InnoDB;
-
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Salida_Almacen`
 -- -----------------------------------------------------
+drop table salida_almacen;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Salida_Almacen` (
   `N_Reporte` INT NOT NULL AUTO_INCREMENT,
   `Solicitante` INT NOT NULL,
@@ -215,6 +216,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Inventarios`.`Peticion`
 -- -----------------------------------------------------
+drop table Peticion;
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Peticion` (
   `Num_Pet` INT NOT NULL AUTO_INCREMENT,
   `User` VARCHAR(45) NULL,
@@ -428,10 +430,10 @@ create table factus_Productos(
 Cod_Barras nvarchar(45) not null,
 Nfactura nvarchar(10) not null,
 Cantidad int not null,
-FIngreso date not null,
  constraint cPFPS primary key(Cod_Barras, Nfactura)
 );
 
+drop table salidas_productos;
 create table Salidas_Productos(
 Cod_BarrasS nvarchar(45) not null,
 FSalida datetime,
@@ -460,94 +462,7 @@ update empleado set Num_emp = 2 where Num_emp = 758;
 update empleado set Num_Jefe = 663;
 update almacen set eliminado = 0 where eliminado = 1;
 
--- DELETES
-delete from factus_productos where FIngreso = "2023-04-28";
-delete from facturas_almacen where Ffact = "2023-05-07";
-delete from almacen where eliminado = 0;
-delete from almacen where eliminado = 1;
-delete from salidas_productos where Cod_BarrasS = 'JDFK35J2';
-delete from salidas_productos where FSalida = '2023-05-15';
-delete from almacen where Cod_Barras = "684F4GFR8";
-delete from empleado where Num_emp > 840;
-delete from usuario where Num_emp = 107;
-delete from equipo;
--- almacen.Cod_Barras, almacen.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Proveedor, almacen.NFact
-#select*from usuario where User = "armando" and Pass = "clarac";
-
-#select *from almacen order by eliminado;
-#select almacen.Cod_Barras, factus_productos.FIngreso, almacen.Categoria, almacen.Articulo, almacen.Marca, almacen.Descripcion, almacen.Unidad, almacen.Existencia, facturas_almacen.Proveedor, facturas_almacen.Num_Fact, facturas_almacen.Ffact, almacen.eliminado from factus_productos inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras inner join facturas_almacen on factus_productos.Nfactura = facturas_almacen.Num_Fact  order by almacen.eliminado;
-
-#select almacen.Articulo, factus_productos.Nfactura, factus_productos.Cantidad, factus_productos.FIngreso, facturas_almacen.Ffact, facturas_almacen.Proveedor from factus_productos inner join facturas_almacen on facturas_almacen.Num_Fact = factus_productos.Nfactura inner join almacen on factus_productos.Cod_Barras = almacen.Cod_Barras where factus_productos.Cod_Barras = 's';
-#select*from almacen where Cod_Barras = 'd' and eliminado = 1;
-#update almacen set eliminado = 1 where Cod_Barras = 'd';
-#select*from usuario where Usuario = 'a' and Pass = '123';
-
-#select sum(Cantidad) as suma from factus_productos where Cod_Barras = "s";
-#update almacen set Existencia = ((select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = 'c') - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = 'c')) where Cod_Barras = 'c';
-#select  sum(factus_productos.Cantidad) - sum(salidas_productos.Cantidad_Salida) from factus_productos inner join salidas_productos on factus_productos.Cod_Barras = salidas_productos.Cod_BarrasS where factus_productos.Cod_Barras = 'c';
-#select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = 'JDFK35J2';
-#select sum(factus_productos.Cantidad) - sum(salidas_productos.Cantidad_Salida) from salidas_productos where factus_productos.Cod_Barras = salidas_productos.Cod_BarrasS;
-
-#UPDATE tabla1
-#    -> INNER JOIN tabla2 ON tabla1.sala = tabla2.sala
-#    -> SET tabla1.asientos_disponibles = tabla1.asientos_disponibles - tabla2.asientos_ocupados;
-
-#select num_emp from empleado where concat(Nom, " ", AP, " ", AM) = "Armando Jiménez Rivera";
-#select Num_emp from Empleado where Nom = "Armando" and AP = "Jiménez" and AM = "Rivera";
-
-#drop trigger Token;
-#DELIMITER |
-#create trigger Token before insert on Usuario 
-#	for each row begin
-#		update usuario set token = (select tokens.token from tokens inner join empleado on tokens.area = empleado.Área where empleado.Num_Emp = 758);
-#    END
-#| DELIMITER ;
-
 ####################################TRIGGERS###################################
-DELIMITER |
-create trigger Actualizar_Existencias after update on factus_productos
-  FOR EACH ROW BEGIN
-  if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_Barras) P) = 1) then
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
-  else
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_Barras) where Cod_Barras = old.Cod_Barras;
-  end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_ExistenciasInsert after insert on factus_productos
-  FOR EACH ROW BEGIN
-	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_Barras) P) = 1) then
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
-		else
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_Barras) where Cod_Barras = new.Cod_Barras;
-	end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_Existencias2 after update on salidas_productos
-  FOR EACH ROW BEGIN
-	if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) P) = 1) then
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
-  else
-	update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = old.Cod_BarrasS) where Cod_Barras = old.Cod_BarrasS;
-  end if; 
-  END
-| DELIMITER ;
-
-DELIMITER |
-create trigger Actualizar_ExistenciasInsercion2 after insert on salidas_productos
-	FOR EACH ROW BEGIN
-		if ((select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) P) = 1) then
-            update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) - (select sum(salidas_productos.Cantidad_Salida) from salidas_productos where Cod_BarrasS = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
-        else
-			update almacen set Existencia = (select sum(factus_productos.Cantidad) from factus_productos where Cod_Barras = new.Cod_BarrasS) where Cod_Barras = new.Cod_BarrasS;
-        end if; 
-	END
-| DELIMITER ;
-
 -- BUSQUEDAS
 select count(suma) from (select sum(salidas_productos.Cantidad_Salida) as suma from salidas_productos where Cod_BarrasS = 'c') P;
 -- Busquedas almacen
@@ -710,14 +625,18 @@ CREATE TABLE soli_car (
     sended tinyint(1),
     delivered_soli tinyint(1),
     cerrada BOOLEAN -- Si la solicitud ya fue cerrada
-    -- FOREIGN KEY (emp_SC) REFERENCES otra_tabla_emp_SC(emp_SC), -- Reemplazar "otra_tabla_emp_SC" con el nombre de la tabla de usuario o empleado y la columna correspondiente
-    -- FOREIGN KEY (dir_LLSC) REFERENCES otra_tabla_dir_LLSC(dir_LLSC) -- Reemplazar "otra_tabla_dir_LLSC" con el nombre de la tabla donde se encuentre el director y la columna correspondiente
 );
 
--- Modify table soli_car
-alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
-alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
-alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
+
+CREATE TABLE soli_com (
+    Cod_Barras_SCom VARCHAR(45),
+    emp_SCom int,
+    request_date_SCom datetime,
+    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
+    recibida tinyint(1), -- Si ya se recibió el pedido
+    almacenada tinyint(1), -- Si el pedido ya fue almacenado
+    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
+);
 
 DELIMITER |
 create trigger ASEPSE before update on soli_car
@@ -727,6 +646,26 @@ create trigger ASEPSE before update on soli_car
 		end if;
 	END
 | DELIMITER ;
+
+drop trigger EPE;
+DELIMITER | 
+CREATE TRIGGER EPE BEFORE INSERT ON salidas_productos
+	FOR EACH ROW BEGIN
+    
+    DECLARE current_stock INT;
+    -- Consultar la cantidad actual en el almacén
+    SELECT COALESCE(fp.total_entrada, 0) - COALESCE(sp.total_salida, 0)
+    as Existencia INTO current_stock FROM almacen a LEFT JOIN (SELECT Cod_Barras, SUM(Cantidad)
+    as total_entrada FROM factus_productos GROUP BY Cod_Barras) fp ON a.Cod_Barras = fp.Cod_Barras
+	LEFT JOIN (SELECT Cod_BarrasS, SUM(Cantidad_Salida) as total_salida FROM salidas_productos
+    GROUP BY Cod_BarrasS) sp ON a.Cod_Barras = sp.Cod_BarrasS where Cod_BarrasS = new.Cod_BarrasS;
+    
+    IF NEW.Cantidad_Salida > current_stock THEN
+        SIGNAL SQLSTATE '45000' 
+		SET MESSAGE_TEXT = 'No hay suficiente existencia para realizar la salida';
+	END IF;
+    END
+| DELIMITER;
 
 -- PROCEDURES Y TRANSACTIONS
 -- Para dar de alta los equipos
@@ -877,48 +816,139 @@ END |
 
 DELIMITER ;
 
-select*from usuario;
-select*from mobiliario;
-select*from soli_car;
-select*from soli_com;
-select*from almacen;
-select*from facturas_almacen;
+DROP PROCEDURE IF EXISTS AgregarProdExistentes;
+DELIMITER | 
+CREATE PROCEDURE AgregarProdExistentes(
+	IN NFP VARCHAR(10),
+    IN CDBP VARCHAR(45),
+    IN CANT INT,
+    IN FFACT DATE,
+    IN PROVDR VARCHAR(45)
+)
+BEGIN
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Declarar variables para capturar el error
+        DECLARE error_message TEXT DEFAULT 'Unknown error';
+        DECLARE error_code INT DEFAULT 0;
+        
+        -- Obtener el código de error y el mensaje de error
+        GET DIAGNOSTICS CONDITION 1 
+            error_code = RETURNED_SQLSTATE, 
+            error_message = MESSAGE_TEXT;
+        
+        -- Imprimir el error (puede ser almacenado en una tabla de logs)
+        SELECT CONCAT('Error Code: ', error_code, ', Message: ', error_message) AS Error;
+        
+        -- Rollback de la transacción
+        ROLLBACK;
+    END;
+
+	START TRANSACTION;
+    
+	IF NOT EXISTS (SELECT 1 FROM facturas_almacen WHERE Num_Fact = NFP) THEN
+		INSERT INTO facturas_almacen VALUES (NFP, FFACT, PROVDR, CURDATE());
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM factus_productos WHERE Cod_Barras = CDBP AND Nfactura = NFP) THEN
+		INSERT INTO factus_productos VALUES (CDBP, NFP, CANT);
+        SELECT 'Success' AS status;
+	ELSE
+		SELECT 'error' as status, 'La factura ingresada ya había sido registrada.' as message;
+    END IF;
+    COMMIT;
+END |
+DELIMITER ;
+
+drop procedure consulPE;
+DELIMITER | 
+CREATE PROCEDURE consulPE()
+BEGIN
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+	START TRANSACTION;
+	SELECT 
+    a.Cod_Barras as CB, 
+    a.Articulo as Arti, 
+    COALESCE(fp.total_entrada, 0) - COALESCE(sp.total_salida, 0) as Existencia
+	FROM 
+		almacen a
+	LEFT JOIN (
+		-- Subconsulta para sumar las cantidades de entradas
+		SELECT Cod_Barras, SUM(Cantidad) as total_entrada
+		FROM factus_productos
+		GROUP BY Cod_Barras
+	) fp ON a.Cod_Barras = fp.Cod_Barras
+	LEFT JOIN (
+		-- Subconsulta para sumar las cantidades de salidas
+		SELECT Cod_BarrasS, SUM(Cantidad_Salida) as total_salida
+		FROM salidas_productos
+		GROUP BY Cod_BarrasS
+	) sp ON a.Cod_Barras = sp.Cod_BarrasS;
+    COMMIT;
+END |
+DELIMITER ;
+
+drop procedure extractPE;
+DELIMITER | 
+CREATE PROCEDURE extractPE(
+    IN CBSP VARCHAR(45),
+    IN NES VARCHAR(45),
+    IN CNTS INT
+)
+BEGIN
+    DECLARE error_message TEXT DEFAULT 'Unknown error';
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Capturar el mensaje de error
+        GET DIAGNOSTICS CONDITION 1 
+            error_message = MESSAGE_TEXT;
+            
+        -- Verificar si el error fue causado por el TRIGGER
+        IF error_message = 'No hay suficiente existencia para realizar la salida' THEN
+            -- Enviar el mensaje específico del TRIGGER
+            SELECT 'error' AS status, error_message AS message;
+        ELSE
+            -- Enviar un mensaje genérico de error
+            SELECT 'error' AS status, 'Error al procesar la solicitud' AS message;
+        END IF;
+        
+        -- Rollback de la transacción
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+        -- Intentar la inserción
+        INSERT INTO salidas_productos VALUES (CBSP, NOW(), (SELECT Num_emp FROM empleado WHERE Nom = NES), CNTS);
+        
+        -- Si se realiza la inserción, enviar un mensaje de éxito
+        SELECT 'Success' AS status, 'Producto sacado con éxito' AS message;
+    COMMIT;
+END |
+DELIMITER ;
+
+
+select*from salidas_productos;
 select*from factus_productos;
-select*from almacen;
-select*from equipo;
-select*from permisos;
-
-delete from equipo where N_Inventario = 11;
-
-CREATE TABLE soli_com (
-    Cod_Barras_SCom VARCHAR(45),
-    emp_SCom int,
-    request_date_SCom datetime,
-    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
-    recibida tinyint(1), -- Si ya se recibió el pedido
-    almacenada tinyint(1), -- Si el pedido ya fue almacenado
-    cerrada BOOLEAN -- Si la solicitud ya fue cerrada
-);
+select*from facturas_almacen;
 
 -- Modify table soli_com
 alter table soli_com add constraint SoliComPK primary key(Cod_Barras_SCom, emp_SCom, request_date_SCom);
 alter table soli_com add constraint CodBFK foreign key(Cod_Barras_SCom) references almacen(Cod_Barras);
 alter table soli_com add constraint EmpFK foreign key(emp_SCom) references empleado(Num_emp);
 
-select*from equipo;
-select*from monitor;
-select*from pcs;
-select*from teclado;
-select*from mouse;
-select*from accesorio;
-delete from equipo where Num_Serie = 'DWA1';
-delete from monitor where Num_Serie_Monitor = 'DWA1';
+-- Modify table soli_car
+alter table soli_car add constraint PKSC primary key(Cod_Barras_SC, emp_SC, request_date);
+alter table soli_car add constraint FKSC_CB foreign key(Cod_Barras_SC) references almacen(Cod_Barras);
+alter table soli_car add constraint FKSC_EM foreign key(emp_SC) references empleado(Num_emp);
 
-update soli_car set delivered_soli = 0, delivered_ware = 0;
 select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;
-
 select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Num_Serie_CPU, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie_CPU left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU";
-SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
-
 SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Monitor.Num_Serie_Monitor = Equipo.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
 SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio, e.Nom FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie join empleado e on Equipo.Num_emp = e.Num_emp;

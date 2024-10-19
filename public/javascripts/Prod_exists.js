@@ -7,10 +7,27 @@ if (!Permisos['ALMACÉN']) {
 } else {
     if (pathname == "/users/productos_exist" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
 
-        function agregarPE(e) {
-            e.preventDefault()
+        function colortable() {
+            const tbody = document.querySelector(".data-prod tbody");
+
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.addEventListener('click', () => {
+                    const codBarras = tr.querySelector('td').textContent;
+                    const selector = `.description-product .DP label[article='${codBarras}']`;
+
+                    if ($(selector).length === 0) {
+                        tr.style.backgroundColor = '';
+                    } else {
+                        tr.style.backgroundColor = '#b0c9ff';
+                    }
+                });
+            });
+        }
+
+        function obtenerP () {
             let productos = []
-            $('.description-product .DP').each(
+
+            $('.description-product .prod-count').each(
                 function () {
                     let producto = $(this).find('label').attr('article');
                     let cantidad = $(this).find('input[type="number"]').val()
@@ -25,6 +42,46 @@ if (!Permisos['ALMACÉN']) {
                     }
                 }
             )
+            return productos
+        }
+
+        function sacarPE(e) {
+            e.preventDefault()
+
+            let productos = obtenerP()
+            let encargado = $('.Employees').val()
+
+            if (productos.length > 0) {
+                fetch('/prod_exts/extract', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({encargado, productos})
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.type == "Success") {
+                        showSuccessAlertReload(data.message)
+                    }else {
+                        showErrorAlert(data.message)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
+            }
+            
+        }
+
+        function agregarPE(e) {
+            e.preventDefault()
+
+            let factura = $('.NumFactPE').val()
+            let Dfactura = $('.FecFact').val()
+            let Proveedor = $('.ProveedorPE').val()
+
+            let productos = obtenerP()
 
             if (productos.length > 0) {
                 fetch('/prod_exts/add', {
@@ -32,10 +89,14 @@ if (!Permisos['ALMACÉN']) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(productos)
+                    body: JSON.stringify({ factura, Dfactura, Proveedor, productos })
                 }).then(response => response.json())
                     .then(data => {
-
+                        if (data.type == "success") {
+                            showSuccessAlertReload(data.message)
+                        }else {
+                            showErrorAlertReload(data.message, '/users/productos_exist')
+                        }
                     })
                     .catch(error => {
                         console.error('Error en la solicitud:', error);
@@ -51,54 +112,73 @@ if (!Permisos['ALMACÉN']) {
         function CRUDButtons() {
             $('.meter').click((e) => {
                 addBody(`
-                    <div class="buttons">
+                    <div class="global_data">
+                        <div class="DP">
+                            <label>Fecha de Factura</label>
+                            <input autocomplete="off" type="date" id="FecFact" name="FecFact" class="FecFact" required>
+                        </div>
+                        <div class="DP">
+                            <input autocomplete="off" placeholder="Número de factura" type="text" id="NumFactPE" name="NumFactPE" class="EditData NumFactPE" required maxlength="400"
+                                oninput="mayus(this);" onkeypress="return checkA(event)">
+                            <input autocomplete="off" placeholder="Proveedor" type="text" id="ProveedorPE" name="ProveedorPE" class="EditData ProveedorPE" required maxlength="400"
+                                oninput="mayus(this);" onkeypress="return checkA(event)">
+                        </div>
+                    </div>
+                    <div class="DP buttons">
                         <input type="submit" value="Guardar" id="modyEqp" onclick="agregarPE(event)" name="modyEqp" class="Modify">
                         <input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
                     `, e)
+
+                colortable();
             })
 
             $('.sacar').click((e) => {
                 addBody(`
-                    <div class="DP">
-                        <label>Producto</label>
-                        <input type="text" class="Pname" value="" readonly>
+                    <div class="global_data">
+                        <div class="DP">
+                            <label>Solicitante:</label>
+                            <select id="mySelect" class="Employees searchInput" required>
+                                <option disabled selected>Seleccionar empleado...</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="DP">
-                        <label>Código de barras</label>
-                        <input type="text" class="CodBarrasP" value="" readonly>
-                    </div>
-                    <div class="DP">
-                        <label>Fecha de Ingreso</label>
-                        <input autocomplete="off" type="date" id="FecActu" name="FecActu" required>
-                    </div>
-                    <div class="DP">
-                        <label>Cantidad</label>
-                        <input autocomplete="off" type="number" id="CantidadPE" name="CantidadPE" class="CantidadPE" required min="0">
-                    </div>
-                    <div class="DP">
-                        <label>Proveedor</label>
-                        <input autocomplete="off" type="text" id="ProveedorPE" name="ProveedorPE" class="EditData" required maxlength="400"
-                            oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
-                    </div>
-                    <div class="DP">
-                        <label>Número de Factura</label>
-                        <input autocomplete="off" type="text" id="NumFactPE" name="NumFactPE" class="EditData" required maxlength="400"
-                            oninput="mayus(this);" onkeypress="return checkL(event)" readonly>
-                    </div>
-                    <div class="DP">
-                        <label>Fecha de Factura</label>
-                        <input autocomplete="off" type="date" id="FecFact" name="FecFact">
-                    </div>
-                    <div class="buttons">
-                        <input type="submit" value="Guardar" id="modyEqp" name="modyEqp" class="Modify">
+                    <div class="DP buttons">
+                        <input type="submit" value="Guardar" id="modyEqp" onclick="sacarPE(event)" name="modyEqp" class="Modify">
                         <input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
                     `, e)
+
+                colortable();
+
+                const employ = $('.Employees')
+
+                fetch('../responsiva/getEmploys', {
+                    method: 'GET'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(item => {
+                            employ.append($('<option>', { value: item.employee, text: item.employee }))
+                        })
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                    });
+
+                new SlimSelect({
+                    select: employ[0]
+                });
             })
         }
 
         function cancel() {
+            const tbody = document.querySelector(".data-prod tbody");
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.style.backgroundColor = '';
+            });
+
             $('.description-product').html(`
                 <div class="actions two-boxes" style="height: 60%;">
                     <center>
@@ -121,8 +201,7 @@ if (!Permisos['ALMACÉN']) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username: user })
+            }
         }).then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector(".data-prod tbody");
@@ -135,13 +214,17 @@ if (!Permisos['ALMACÉN']) {
                         <td>${item.Existencia}</td>`;
 
                     tr.addEventListener('click', () => {
-                        if ($(`.description-product .DP label:contains('${item.Articulo}')`).length === 0) {
-                            $(` 
-                                <div class="DP">
-                                    <label article="${item.Cod_Barras}">${item.Articulo}</label>
-                                    <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidadPE" name="CantidadPE" class="CantidadPE" required min="0">
+                        const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
+
+                        if ($(selector).length === 0) {
+                            $(`
+                                <div class="DP prod-count">
+                                <label article="${item.Cod_Barras}">${item.Articulo}</label>
+                                <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidaDFE" name="CantidaDFE" class="CantidaDFE" required min="0">
                                 </div>
-                            `).insertBefore('.buttons');
+                                `).insertBefore('.buttons');
+                        } else {
+                            $(selector).closest('.prod-count').remove();
                         }
                     });
 

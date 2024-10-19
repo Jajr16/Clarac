@@ -429,3 +429,15 @@ input[type="submit"]:hover {
 .btn-logout {
     cursor: pointer;
 }
+
+.DF {
+    display: var(--displayF);
+}
+
+.DF label {
+    display: flex;
+    width: 12rem;
+    align-items: center;
+    width: auto;
+    margin-right: 1rem;
+}

@@ -25,7 +25,6 @@ function consulprod(req, callback) {
                         Marca: item.Marca,
                         Descripcion: item.Descripcion,
                         Unidad: item.Unidad,
-                        Existencia: item.Existencia,
                         Eliminado: item.eliminado
                     }));
                     return callback(null, dataToSend);
@@ -44,7 +43,6 @@ function consulprod(req, callback) {
                         Marca: item.Marca,
                         Descripcion: item.Descripcion,
                         Unidad: item.Unidad,
-                        Existencia: item.Existencia,
                         Eliminado: item.eliminado
                     }));
                     return callback(null, dataToSend);

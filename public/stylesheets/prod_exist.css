@@ -48,6 +48,10 @@
     justify-content: space-between;
 }
 
+.DP > input[type='text']:first-of-type {
+    margin-right: 1rem;
+}
+
 .DP label {
     display: flex;
     width: 12rem;
@@ -136,15 +140,6 @@
     background-color: rgb(134, 0, 0) !important;
 }
 
-.buttons {
-    display: flex;
-    margin-bottom: 0 !important;
-}
-
-.buttons input {
-    margin-top: 0;
-}
-
 .agregarP {
     width: 50%;
 }
@@ -168,4 +163,8 @@
 
 .options:hover {
     transform: scale(1.05);
+}
+
+.searchInput, .ss-single-selected {
+    margin-bottom: 0!important;
 }

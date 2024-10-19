@@ -12,3 +12,22 @@ Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual th
 Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Monitor' in 'field list' | Error obtenido el -> 05/10/2024 17:33
 Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie' in 'on clause' | Error obtenido el -> 05/10/2024 17:45
 Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie_CPU' in 'field list' | Error obtenido el -> 05/10/2024 18:45
+Error: ER_BAD_NULL_ERROR: Column 'Num_Fact' cannot be null | Error obtenido el -> 15/10/2024 11:39
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.AgregarProdExistentes does not exist | Error obtenido el -> 17/10/2024 13:12
+Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: '' for column 'FINGRESO' at row 1 | Error obtenido el -> 18/10/2024 13:30
+Error: ER_DATA_TOO_LONG: Data too long for column 'NFP' at row 1 | Error obtenido el -> 18/10/2024 13:40
+Error: ER_DUP_ENTRY: Duplicate entry 'A' for key 'almacen.PRIMARY' | Error obtenido el -> 18/10/2024 15:33
+Error: Error al insertar el producto. | Error obtenido el -> 18/10/2024 17:23
+Error: Error al insertar el producto. | Error obtenido el -> 18/10/2024 17:23
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:29
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:30
+Error: ER_SP_WRONG_NO_OF_ARGS: Incorrect number of arguments for PROCEDURE inventarios.AgregarProdExistentes; expected 5, got 6 | Error obtenido el -> 18/10/2024 17:30
+Error: ER_SP_WRONG_NO_OF_ARGS: Incorrect number of arguments for PROCEDURE inventarios.AgregarProdExistentes; expected 5, got 6 | Error obtenido el -> 18/10/2024 17:30
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:48
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:48
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 20:8
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:44
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:46
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:50
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:51
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:53

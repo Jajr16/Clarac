@@ -19,7 +19,6 @@ if (!Permisos['ALMACÉN']) {
                 Marca: document.querySelector('.MarcaP').value,
                 Descripcion: document.querySelector('.DescP').value,
                 Unidad: document.querySelector('.UnidadP').value,
-                Existencia: document.querySelector('.ExistenciaP').value,
             };
 
             if (!checkEmptyFields(addData)) {
@@ -93,7 +92,6 @@ if (!Permisos['ALMACÉN']) {
                 Marca: document.querySelector('.MarcaP').value,
                 Descripcion: document.querySelector('.DescP').value,
                 Unidad: document.querySelector('.UnidadP').value,
-                Existencia: document.querySelector('.ExistenciaP').value,
                 dataOldCB: oldCodBarras,
                 User: user
             };
@@ -143,8 +141,8 @@ if (!Permisos['ALMACÉN']) {
 
 
                             tr.innerHTML = `
-                <td>${item.Articulo}</td>
-                <td>${item.Existencia}</td>
+                            <td>${item.Cod_Barras}</td>
+                            <td>${item.Articulo}</td>
             `;
 
                             $('.Prod').change(function () {
@@ -156,7 +154,6 @@ if (!Permisos['ALMACÉN']) {
                                     $('.MarcaP').val(item.Marca);
                                     $('.DescP').val(item.Descripcion);
                                     $('.UnidadP').val(item.Unidad);
-                                    $('.ExistenciaP').val(item.Existencia);
                                 }
                             });
 
@@ -169,8 +166,6 @@ if (!Permisos['ALMACÉN']) {
                                 $('.MarcaP').val(item.Marca);
                                 $('.DescP').val(item.Descripcion);
                                 $('.UnidadP').val(item.Unidad);
-                                $('.ExistenciaP').val(item.Existencia);
-
                             });
                         }
 

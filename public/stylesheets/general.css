@@ -404,7 +404,7 @@ input[type="submit"]:hover {
 .two-boxes-registro  .FTB {
     display: inline-flex;
     align-items: center;
-    /* justify-content: center; */
+    justify-content: center;
     text-align: center;
     flex-direction: column;
     padding: 10px;

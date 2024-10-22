@@ -404,7 +404,7 @@ input[type="submit"]:hover {
 .two-boxes-registro  .FTB {
     display: inline-flex;
     align-items: center;
-    /* justify-content: center; */
+    justify-content: center;
     text-align: center;
     flex-direction: column;
     padding: 10px;
@@ -421,10 +421,6 @@ input[type="submit"]:hover {
 .two-boxes-registro .FTB i {
     margin-bottom: 10px; /* Espacio entre ícono y texto */
     font-size: 24px; /* Ajuste del tamaño del ícono */
-}
-
-.two-boxes-registro .meter, .two-boxes-registro .sacar {
-    width: 45%; /* Ambos botones ocupan el mismo ancho */
 }
 
 .item1 {

@@ -41,7 +41,7 @@ function validateForm(event) {
 }
 
 // Añadir evento de validación al formulario
-document.getElementById("mainForm").addEventListener("submit", validateForm);
+// document.getElementById("mainForm").addEventListener("submit", validateForm);
 
 function toggleContentAndValidation() {
     var checkbox = document.getElementById("flag");
@@ -67,63 +67,124 @@ function toggleContentAndValidation() {
     }
 }
 
-if (!Permisos['ALMACÉN']) {
-    location.href = "index";
-} else {
-    if (pathname == "/users/registros" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
+function obtenerEmpleados() {
+    return new Promise((resolve, reject) => {
+        fetch('/registro/getEmpleados', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la red');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Datos recibidos:", data);
 
-        // function agregarPE(e) {
-        //     e.preventDefault()
-        //     let productos = []
-        //     $('.description-product .DP').each(
-        //         function () {
-        //             let producto = $(this).find('label').attr('article');
-        //             let cantidad = $(this).find('input[type="number"]').val()
+            const selectElement = document.getElementById('empleados');
 
-        //             if (producto && cantidad) {
-        //                 productos.push({
-        //                     producto: producto,
-        //                     cantidad: cantidad
-        //                 });
-        //             } else {
-        //                 showErrorAlert('Debes de llenar todos los campos antes de enviar el formulario.')
-        //             }
-        //         }
-        //     )
+            // Limpiar las opciones existentes
+            selectElement.innerHTML = '<option value="">Empleado Asignado</option>';
 
-        //     if (productos.length > 0) {
-        //         fetch('/prod_exts/add', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify(productos)
-        //         }).then(response => response.json())
-        //             .then(data => {
+            // Verificar si los datos están en el formato correcto
+            if (Array.isArray(data)) {
+                data.forEach(empleado => {
+                    const option = document.createElement('option');
+                    option.value = empleado;
+                    option.textContent = empleado;
+                    selectElement.appendChild(option);
+                });
+            } else {
+                console.error("Datos recibidos no son un array:", data);
+            }
 
-        //             })
-        //             .catch(error => {
-        //                 console.error('Error en la solicitud:', error);
-        //                 document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-        //             });
-        //     } else {
-        //         showErrorAlert('No hay productos para enviar.');
-        //     }
+            resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+            reject(error);
+        });
+    });
+}
+if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUARIOS'].includes('1') && Permisos['EMPLEADOS'].includes('1') && pathname == "/users/registros") {    
+    console.log("3")
+    // Escucha el evento submit y detecta qué botón fue presionado
+    function addRegistro(e) {
+        e.preventDefault();
+    
+        const inputType = e.target.getAttribute('id'); // Identifica qué input fue presionado
+    
+        let addData = {};
+    
+        if (inputType === 'registrarEmpleado') {
+            // Obtener los datos necesarios para registrar un empleado
+            addData = {
+                Nom: document.querySelector('.Nom').value,
+                Area: document.querySelector('.Area').value,
+                Jefe: document.querySelector('.Jefe').value,
+                User: user
+            };
+        } else if (inputType === 'registrarUsuario') {
+            // Obtener los datos necesarios para registrar un usuario
+            addData = {
+                Empleado: document.querySelector('.Empleado').value,
+                Usuario: document.querySelector('.Usuario').value,
+                Password: document.querySelector('.Password').value,
+                User: user
+            };
+        }
+    
+        if (!checkEmptyFields(addData)) {
+            Swal.fire({
+                icon: "error",
+                title: "Ocurrió un error",
+                text: 'Debes llenar todos los datos para continuar.',
+            });
+        } else {
+            const url = (inputType === 'registrarEmpleado') ? '/registro/new_reg_emp' : '/registro/new_reg_usu';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(addData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.type === 'success') {
+                    showSuccessAlertReload(data.message);
+                } else {
+                    showErrorAlert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+            });
+        }
+    }        
 
-
-        // }
-
-        function CRUDButtons() {
+    function CRUDButtons() {
+        $('.description-product').html(`
+            <div class="actions two-boxes-registro" style="height: 60%;">
+                <center>
+                    <button class="options meter FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Empleado</button>
+                    <button class="options sacar FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Usuario</button>
+                    </center>
+            </div>`)
             $('.meter').click((e) => {
                 addBody(`
                     <div class="DP">
                             <label>Empleado</label>
-                            <input type="text" class="Pname" name="a" value="" placeholder="Nombre Empleado" required>
+                            <input type="text" class="Pname Nom" id="Nom" name="Nom" value="" placeholder="Nombre Empleado" required>
                         </div>
                         <div class="DP">
                             <label>Area</label>
-                            <select id="Fname" name="Fname" class="empleado-campo" required >
-                                <option value=""></option>
+                            <select id="Area" name="Area" class="empleado-campo searchInput Area" required >
+                                <option value="">Área</option>
                                 <option>ADMINISTRACION</option>
                                 <option>PREESCOLAR</option>
                                 <option>PRIMARIA</option>
@@ -135,34 +196,34 @@ if (!Permisos['ALMACÉN']) {
                         </div>
                         <div class="DP">
                             <label>Jefe</label>
-                            <select id="Fname" name="Fname" class="empleado-campo" required>
-                                <option></option>
+                            <select id="Jefe" name="Jefe" class="empleado-campo searchInput Jefe" required>
+                                <option>Jefe</option>
                                 <option> Navarro Jimenez Martha Lidia</option>
                             </select>
                     </div>
+                    
                     <div class="buttons">
-                        <input type="submit" value="Guardar" id="" name="" class="">
+                        <input type="submit" value="Guardar "id="registrarEmpleado" value="Registrar Empleado" onclick="addRegistro(event)">
                         <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
-                    `, e)
-            })
-
+                    `, e);
+                    sselect();
+            });
             $('.sacar').click((e) => {
                 addBody(`
                     <div class="DP">
-                        <label>Empleado Asignado</label>
-                        <select id="Fname" name="Fname" class="Fname EditData" aria-placeholder="Buscar empleado" required>
-                            <option></option>
-                            <option>test</option>
+                        <label for="empleados" >Empleado Asignado</label>
+                        <select id="empleados" name="Fname" class="searchInput Empleado"  required>
+                            <option value="">Empleado Asignado</option>
                         </select>
                     </div>
                     <div class="DP">
                         <label>Nombre Usuario</label>
-                        <input type="text" class="" name="a" placeholder="Nombre Usuario" required>
+                        <input type="text" class="test Usuario" name="a" placeholder="Nombre Usuario" required>
                     </div>
                     <div class="DP">
                         <label>Contraseña Nueva</label>
-                        <input type="password" class="" name="s" placeholder="Contraseña Nueva" required>
+                        <input type="password" class="testing Password" name="s" placeholder="Contraseña Nueva" required>
                     </div>
                     <div class="subtitle-container">
                         Asignar Módulos
@@ -286,66 +347,344 @@ if (!Permisos['ALMACÉN']) {
                         </div>
                     </div>
                     <div class="buttons">
-                        <input type="submit" value="Guardar" id="" name="" class="">
+                        <input type="submit" value="Guardar "id="registrarUsuario" value="Registrar Usuario" onclick="addRegistro(event)">
                         <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
-                    `, e)
+                    `, e);
+                    obtenerEmpleados().then(() => {
+                        // Llamar a sselect después de llenar el select con empleados
+                        sselect();
+                    });
+                });
+    }
+
+    function cancel() {
+        $('.description-product').html(`
+            <div class="actions two-boxes-registro" style="height: 60%;">
+                <center>
+                    <button class="options meter registro FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Empleado </button>
+                    <button class="options sacar FTB"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Usuarios</button>
+                    </center>
+            </div>`)
+        CRUDButtons();
+    }
+
+    window.addEventListener('load', function (event) {
+        CRUDButtons();
+    });
+    
+}
+// solo empleados
+else if (Permisos && Permisos['EMPLEADOS'] && Permisos['EMPLEADOS'].includes('1') && pathname == "/users/registros") {     
+    console.log("1")   
+    function addEmpleado(e){
+        e.preventDefault();
+
+        const addData = {
+            Nom: document.querySelector('.Nom').value,
+            Area: document.querySelector('.Area').value,
+            Jefe: document.querySelector('.Jefe').value,
+            User: user
+        };
+        console.log("Datos enviados:", addData);
+        if (!checkEmptyFields(addData)) {
+            Swal.fire({
+                icon: "error",
+                title: "Ocurrió un error",
+                text: 'Debes llenar todos los datos para continuar.',
             })
+        } else {
+            fetch('/registro/new_reg_emp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(addData)
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.type === 'success') {
+                        showSuccessAlertReload(data.message)
+                    } else {
+                        showErrorAlert(data.message)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
+        }            
+    }
+
+    function CRUDButtons() {
+        $('.description-product').html(`
+            <div class="actions two-boxes-registro" style="height: 60%;">
+                <center>
+                    <button class="options meter FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Empleado</button>
+                </center>
+            </div>`)
+        $('.meter').click((e) => {
+            addBody(`
+                <div class="DP">
+                        <label>Empleado</label>
+                        <input type="text" class="Pname Nom" id="Nom" name="Nom" value="" placeholder="Nombre Empleado" required>
+                    </div>
+                    <div class="DP">
+                        <label>Area</label>
+                        <select id="Area" name="Area" class="empleado-campo searchInput Area" required >
+                            <option value="">Área</option>
+                            <option>ADMINISTRACION</option>
+                            <option>PREESCOLAR</option>
+                            <option>PRIMARIA</option>
+                            <option>SECUNDARIA</option>
+                            <option>PREPARATORIA</option>
+                            <option>SERVICIOS GENERALES</option>
+                            <option>SISTEMAS</option>
+                        </select>
+                    </div>
+                    <div class="DP">
+                        <label>Jefe</label>
+                        <select id="Jefe" name="Jefe" class="empleado-campo searchInput Jefe" required>
+                            <option>Jefe</option>
+                            <option> Navarro Jimenez Martha Lidia</option>
+                        </select>
+                </div>
+                
+                <div class="buttons">
+                    <input type="submit" value="Guardar" id="" onclick="addEmpleado(event)" name="" class="">
+                    <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
+                </div>
+                `, e);
+                sselect();
+        });
+    }
+    function cancel() {
+        $('.description-product').html(`
+            <div class="actions two-boxes-registro" style="height: 60%;">
+                <center>
+                    <button class="options meter FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Empleado</button>
+                </center>
+            </div>`)
+        CRUDButtons()
+    }
+
+    window.addEventListener('load', function (event) {
+        CRUDButtons()
+    })
+    
+
+    }
+
+// solo usuarios
+else if (Permisos && Permisos['USUARIOS'] && Permisos['USUARIOS'].includes('1') && pathname == "/users/registros") {
+    console.log("2")
+        function addUsuario(e){
+            e.preventDefault();
+
+            const addData = {
+                Empleado: document.querySelector('.Empleado').value,
+                Usuario: document.querySelector('.Usuario').value,
+                Password: document.querySelector('.Password').value,
+            };
+
+            if (!checkEmptyFields(addData)) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ocurrió un error",
+                    text: 'Debes llenar todos los datos para continuar.',
+                })
+            } else {
+                fetch('/registro/new_reg_usu', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addData)
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'success') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }            
+        }
+        function CRUDButtons() {
+            $('.description-product').html(`
+                <div class="actions two-boxes-registro" style="height: 60%;">
+                    <center>
+                        <button class="options sacar FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Usuario</button>
+                    </center>
+                </div>`)
+            $('.sacar').click((e) => {
+                addBody(`
+                    <div class="DP">
+                        <label for="empleados" >Empleado Asignado</label>
+                        <select id="empleados" name="Fname" class="searchInput Empleado"  required>
+                            <option value="">Empleado Asignado</option>
+                        </select>
+                    </div>
+                    <div class="DP">
+                        <label>Nombre Usuario</label>
+                        <input type="text" class="test Usuario" name="a" placeholder="Nombre Usuario" required>
+                    </div>
+                    <div class="DP">
+                        <label>Contraseña Nueva</label>
+                        <input type="password" class="testing Password" name="s" placeholder="Contraseña Nueva" required>
+                    </div>
+                    <div class="subtitle-container">
+                        Asignar Módulos
+                    </div>
+                    <div class="module-section">
+                        <div class="module-category">
+                            <div class="subsubtitle-container">Almacén</div>
+                            <div class="DPU">
+                                <label for="addalmacen">Altas</label>
+                                <input type="checkbox" id="addalmacen" name="addalmacen">
+                            </div>
+                            <div class="DPU">
+                                <label for="delalmacen">Bajas</label>
+                                <input type="checkbox" id="delalmacen" name="delalmacen">
+                            </div>
+                            <div class="DPU">
+                                <label for="modalmacen">Cambios</label>
+                                <input type="checkbox" id="modalmacen" name="modalmacen">
+                            </div>
+                            <div class="DPU">
+                                <label for="conalmacen">Consultas</label>
+                                <input type="checkbox" id="conalmacen" name="conalmacen">
+                            </div>
+                        </div>
+                        <div class="module-category">
+                            <div class="subsubtitle-container">Mobiliario</div>
+                            <div class="DPU">
+                                <label for="addmobiliario">Altas</label>
+                                <input type="checkbox" id="addmobiliario" name="addmobiliario">
+                            </div>
+                            <div class="DPU">
+                                <label for="delmobiliario">Bajas</label>
+                                <input type="checkbox" id="delmobiliario" name="delmobiliario">
+                            </div>
+                            <div class="DPU">
+                                <label for="modmobiliario">Cambios</label>
+                                <input type="checkbox" id="modmobiliario" name="modmobiliario">
+                            </div>
+                            <div class="DPU">
+                                <label for="conmobiliario">Consultas</label>
+                                <input type="checkbox" id="conmobiliario" name="conmobiliario">
+                            </div>
+                        </div>
+                        <div class="module-category">
+                            <div class="subsubtitle-container">Equipos</div>
+                            <div class="DPU">
+                                <label for="addequipos">Altas</label>
+                                <input type="checkbox" id="addequipos" name="addequipos">
+                            </div>
+                            <div class="DPU">
+                                <label for="delequipos">Bajas</label>
+                                <input type="checkbox" id="delequipos" name="delequipos">
+                            </div>
+                            <div class="DPU"> 
+                                <label for="modequipos">Cambios</label>
+                                <input type="checkbox" id="modequipos" name="modequipos">
+                            </div>
+                            <div class="DPU"> 
+                                <label for="conequipos">Consultas</label>
+                                <input type="checkbox" id="conequipos" name="conequipos">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="module-section">
+                        <div class="module-category">
+                            <div class="subsubtitle-container">Usuarios</div>
+                            <div class="DPU">
+                                <label for="addusuario">Altas</label>
+                                <input type="checkbox" id="addusuario" name="addusuario">
+                            </div>
+                            <div class="DPU">
+                                <label for="delusuario">Bajas</label>
+                                <input type="checkbox" id="delusuario" name="delusuario">
+                            </div>
+                            <div class="DPU"> 
+                                <label for="modusuario">Cambios</label>
+                                <input type="checkbox" id="modusuario" name="modusuario">
+                            </div>
+                            <div class="DPU">   
+                                <label for="conusuario">Consultas</label>
+                                <input type="checkbox" id="conusuario" name="conusuario">
+                            </div>
+                        </div>
+                        <div class="module-category">
+                            <div class="subsubtitle-container">Empleados</div>
+                            <div class="DPU">
+                                <label for="addempleado">Altas</label>
+                                <input type="checkbox" id="addempleado" name="addempleado">
+                            </div>
+                            <div class="DPU">
+                                <label for="delempleado">Bajas</label>
+                                <input type="checkbox" id="delempleado" name="delempleado">
+                            </div>
+                            <div class="DPU"> 
+                                <label for="modempleado">Cambios</label>
+                                <input type="checkbox" id="modempleado" name="modempleado">
+                            </div>
+                            <div class="DPU">   
+                                <label for="conempleado">Consultas</label>
+                                <input type="checkbox" id="conempleado" name="conempleado">
+                            </div>
+                        </div>
+                        <div class="module-category">
+                            <div class="subsubtitle-container">Responsivas</div>
+                            <div class="DPU">
+                                <label for="addresponsiva">Agregar</label>
+                                <input type="checkbox" id="addresponsiva" name="addresponsiva">
+                            </div>
+                            <div class="DPU hidden">
+                                <label for="b">Bajas</label>
+                                <input type="checkbox" id="b" name="">
+                            </div>
+                            <div class="DPU hidden"> 
+                                <label for="c">Cambios</label>
+                                <input type="checkbox" id="c" name="">
+                            </div>
+                            <div class="DPU hidden">   
+                                <label for="d">Consultas</label>
+                                <input type="checkbox" id="d" name="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <input type="submit" value="Guardar" id="" onclick="addUsuario(event)" name="" class="">
+                        <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
+                    </div>
+                    `, e);
+                    obtenerEmpleados().then(() => {
+                        // Llamar a sselect después de llenar el select con empleados
+                        sselect();
+                    });
+                });
         }
 
         function cancel() {
             $('.description-product').html(`
                 <div class="actions two-boxes-registro" style="height: 60%;">
                     <center>
-                        <button class="options meter FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Usuarios</button>
-                        <button class="options sacar FTB"><i class="fa-solid fa-circle-minus body-icons" style="font-size: 25px;"></i>Agregar Empleado</button>
+                        <button class="options sacar FTB"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Usuarios</button>
                     </center>
                 </div>`)
             CRUDButtons()
         }
 
         window.addEventListener('load', function (event) {
-            sselect()
-
             CRUDButtons()
         })
+        
 
-
-        // // Consulta de productos
-        // fetch('/prod_exts', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({ username: user })
-        // }).then(response => response.json())
-        //     .then(data => {
-        //         const tbody = document.querySelector(".data-prod tbody");
-
-        //         data.forEach(item => {
-        //             let tr = document.createElement('tr');
-        //             tr.innerHTML = `
-        //             <td>${item.Cod_Barras}</td>
-        //             <td>${item.Articulo}</td>
-        //                 <td>${item.Existencia}</td>`;
-
-        //             tr.addEventListener('click', () => {
-        //                 if ($(`.description-product .DP label:contains('${item.Articulo}')`).length === 0) {
-        //                     $(` 
-        //                         <div class="DP">
-        //                             <label article="${item.Cod_Barras}">${item.Articulo}</label>
-        //                             <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidadPE" name="CantidadPE" class="CantidadPE" required min="0">
-        //                         </div>
-        //                     `).insertBefore('.buttons');
-        //                 }
-        //             });
-
-        //             tbody.appendChild(tr);
-        //         });
-        //     })
-        //     .catch(error => {
-        //         console.error('Error en la solicitud:', error);
-        //         document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-        //     });
-        }
-    }
+    }    
+else{
+    location.href = "index";
+}

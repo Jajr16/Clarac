@@ -31,3 +31,8 @@ Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:
 Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:50
 Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:51
 Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:53
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 20/10/2024 13:53
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 20/10/2024 15:33
+undefined | Error obtenido el -> 21/10/2024 0:23
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 21/10/2024 0:27
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 22/10/2024 9:21

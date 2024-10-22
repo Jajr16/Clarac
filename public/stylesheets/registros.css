@@ -1,4 +1,4 @@
-/* CSS PANTALLA PRODUCTOS EXISTENTES */
+/* CSS PANTALLA REGISTROS */
 
 .sidebar {
     top: 0;
@@ -73,11 +73,18 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1rem;
+    width: 100%; /* Ajusta el ancho según el espacio disponible */
+    max-width: 500px;
 }
 
 .DP label {
     width: 20%; /* Asignamos un ancho fijo a la etiqueta */
     text-align: left;
+}
+
+.DP select {
+    width: 100%; /* Ajusta el ancho según el espacio disponible */
+    max-width: 500px; /* Limita el tamaño máximo del select si es necesario */
 }
 
 button,
@@ -154,7 +161,7 @@ textarea {
 
 .mini-menu li:hover {
     margin: 0;
-    background-color: #001781;
+    background-color: #031e59;
     color: white;
 }
 
@@ -263,4 +270,13 @@ textarea {
     flex-grow: 1;   
     place-self: center;
     justify-self: center;
+}
+
+.searchInput, .ss-single-selected {
+    margin-bottom: 0!important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0A8EBC;
+    border-radius: 10px;
 }

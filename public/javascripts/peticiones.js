@@ -1,5 +1,3 @@
-const { application } = require("express");
-
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var pathname = window.location.pathname;
 var user = localStorage.getItem('user');
@@ -57,8 +55,8 @@ if (!Permisos['ALMACÉN']) {
 
                         const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
                         const button = '.description-product .buttons'
-                        tr.addEventListener('click', () => {
 
+                        tr.addEventListener('click', () => {
                             if ($(selector).length === 0) {
                                 if ($(button).length === 0){
                                     $(`.description-product`).append(`
@@ -77,6 +75,10 @@ if (!Permisos['ALMACÉN']) {
                             } else {
                                 $(selector).closest('.prod-count').remove();
                             }
+
+                            if ($('.description-product .prod-count').length === 0) {
+                                $(button).remove();
+                            }
                         });
 
                         $('.Prod').change(function () {
@@ -91,6 +93,9 @@ if (!Permisos['ALMACÉN']) {
                                 } else {
                                     $(selector).closest('.prod-count').remove();
                                 }
+                            }
+                            if ($('.description-product .prod-count').length === 0) {
+                                $(button).remove();
                             }
                         });
 

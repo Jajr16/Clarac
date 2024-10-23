@@ -310,14 +310,14 @@ insert into permisos values
 (2,"ajimenez","EQUIPOS"),#Bajas
 (3,"ajimenez","EQUIPOS"),#Cambios
 (4,"ajimenez","EQUIPOS"),#Consultas
-(1,"ajimenez","USUARIOS"),#Altas
-(2,"ajimenez","USUARIOS"),#Bajas
-(3,"ajimenez","USUARIOS"),#Cambios
-(4,"ajimenez","USUARIOS"),#Consultas
 (1,"ajimenez","EMPLEADOS"),#Altas
 (2,"ajimenez","EMPLEADOS"),#Bajas
 (3,"ajimenez","EMPLEADOS"),#Cambios
 (4,"ajimenez","EMPLEADOS"),#Consultas
+(1,"ajimenez","USUARIOS"),#Altas
+(2,"ajimenez","USUARIOS"),#Bajas
+(3,"ajimenez","USUARIOS"),#Cambios
+(4,"ajimenez","USUARIOS"),#Consultas
 (1,"ajimenez","RESPONSIVAS"),#Altas
 (2,"ajimenez","RESPONSIVAS"),#Bajas
 (3,"ajimenez","RESPONSIVAS"),#Cambios
@@ -960,3 +960,108 @@ SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
 
 SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Monitor.Num_Serie_Monitor = Equipo.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
 SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio, e.Nom FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie join empleado e on Equipo.Num_emp = e.Num_emp;
+
+
+DROP PROCEDURE IF EXISTS AgregarEmpleados;
+DELIMITER //
+
+CREATE PROCEDURE AgregarEmpleados(
+    IN Num_emp VARCHAR(45), 
+    IN Nom VARCHAR(45),
+    IN Area VARCHAR(45), 
+    IN Num_Jefe VARCHAR(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al insertar el empleado' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    -- Realizar la inserción
+    INSERT INTO empleado (Num_emp, Nom, Área, Num_Jefe) VALUES (NULL, Nom, Area, Num_Jefe);
+
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
+
+    -- Confirmar los cambios
+    COMMIT;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS AgregarUsuarios;
+DELIMITER //
+
+CREATE PROCEDURE AgregarUsuarios(
+    IN NomUsuario VARCHAR(45), 
+    IN Usuario VARCHAR(45),
+    IN Pass VARCHAR(45)) 
+BEGIN
+    DECLARE NumEmp INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al insertar el usuario' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    -- Buscar el número de empleado basado en el nombre
+    SELECT Num_emp INTO NumEmp FROM empleado WHERE Nom = NomUsuario;
+
+    -- Verificar si el número de empleado es NULL (no encontrado)
+    IF NumEmp IS NULL THEN
+        -- Si no existe el empleado, devolver un error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: El empleado no existe' AS status;
+    ELSE
+        -- Insertar el nuevo usuario en la tabla 'usuario'
+        INSERT INTO usuario (Num_Emp, Usuario, Pass)
+        VALUES (NumEmp, Usuario, Pass);
+
+        -- Confirmar los cambios si todo fue exitoso
+        COMMIT;
+        SELECT 'Success' AS status;
+    END IF;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS AgregarPermisos;
+DELIMITER //
+
+CREATE PROCEDURE AgregarPermisos(
+    IN permiso VARCHAR(45), 
+    IN usuario VARCHAR(45),
+    IN modulo VARCHAR(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al insertar el permiso' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    -- Insertar el permiso en la tabla de permisos
+    INSERT INTO permisos (permiso, usuario, modulo) 
+    VALUES (permiso, usuario, modulo);
+
+    -- Confirmar los cambios
+    COMMIT;
+
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
+END //
+
+DELIMITER ;
+CALL AgregarPermisos('1', 'ajimenez', 'EMPLEADOS');

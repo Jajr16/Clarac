@@ -7,44 +7,6 @@ if (!Permisos['ALMACÉN']) {
 } else {
     if (pathname == "/users/productos_exist" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
 
-        function colortable() {
-            const tbody = document.querySelector(".data-prod tbody");
-
-            tbody.querySelectorAll('tr').forEach(tr => {
-                tr.addEventListener('click', () => {
-                    const codBarras = tr.querySelector('td').textContent;
-                    const selector = `.description-product .DP label[article='${codBarras}']`;
-
-                    if ($(selector).length === 0) {
-                        tr.style.backgroundColor = '';
-                    } else {
-                        tr.style.backgroundColor = '#b0c9ff';
-                    }
-                });
-            });
-        }
-
-        function obtenerP () {
-            let productos = []
-
-            $('.description-product .prod-count').each(
-                function () {
-                    let producto = $(this).find('label').attr('article');
-                    let cantidad = $(this).find('input[type="number"]').val()
-
-                    if (producto && cantidad) {
-                        productos.push({
-                            producto: producto,
-                            cantidad: cantidad
-                        });
-                    } else {
-                        showErrorAlert('Debes de llenar todos los campos antes de enviar el formulario.')
-                    }
-                }
-            )
-            return productos
-        }
-
         function sacarPE(e) {
             e.preventDefault()
 
@@ -57,21 +19,21 @@ if (!Permisos['ALMACÉN']) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({encargado, productos})
+                    body: JSON.stringify({ encargado, productos })
                 }).then(response => response.json())
-                .then(data => {
-                    if (data.type == "Success") {
-                        showSuccessAlertReload(data.message)
-                    }else {
-                        showErrorAlert(data.message)
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                });
+                    .then(data => {
+                        if (data.type == "Success") {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
             }
-            
+
         }
 
         function agregarPE(e) {
@@ -94,7 +56,7 @@ if (!Permisos['ALMACÉN']) {
                     .then(data => {
                         if (data.type == "success") {
                             showSuccessAlertReload(data.message)
-                        }else {
+                        } else {
                             showErrorAlertReload(data.message, '/users/productos_exist')
                         }
                     })

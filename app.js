@@ -24,6 +24,7 @@ const prodExistsRoutes = require('./routes/prod_exists')
 const responsivasRoutes = require('./routes/responsivas')
 const excelsRoutes = require('./routes/excels')
 const registrosRoutes = require('./routes/registros')
+const peticiones = require('./routes/peticiones')
 
 // Constante del login
 const login = require('./bin/login');
@@ -110,6 +111,7 @@ app.use('/prod_exts', prodExistsRoutes);
 app.use('/responsiva', responsivasRoutes);
 app.use('/excels', excelsRoutes);
 app.use('/registro', registrosRoutes);
+app.use('/pet', peticiones);
 
 app.get('/', (req, res) => {
   if (req.session && req.session.userId) {

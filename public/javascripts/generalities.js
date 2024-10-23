@@ -201,3 +201,41 @@ function addBody(Text, e){
     e.preventDefault()
     $('.description-product').html(Text)
 }
+
+function colortable() {
+    const tbody = document.querySelector(".data-prod tbody");
+
+    tbody.querySelectorAll('tr').forEach(tr => {
+        tr.addEventListener('click', () => {
+            const codBarras = tr.querySelector('td').textContent;
+            const selector = `.description-product .DP label[article='${codBarras}']`;
+
+            if ($(selector).length === 0) {
+                tr.style.backgroundColor = '';
+            } else {
+                tr.style.backgroundColor = '#b0c9ff';
+            }
+        });
+    });
+}
+
+function obtenerP () {
+    let productos = []
+
+    $('.description-product .prod-count').each(
+        function () {
+            let producto = $(this).find('label').attr('article');
+            let cantidad = $(this).find('input[type="number"]').val()
+
+            if (producto && cantidad) {
+                productos.push({
+                    producto: producto,
+                    cantidad: cantidad
+                });
+            } else {
+                showErrorAlert('Debes de llenar todos los campos antes de enviar el formulario.')
+            }
+        }
+    )
+    return productos
+}

@@ -278,15 +278,24 @@ area nvarchar(45) not null
 
 drop table permisos;
 create table permisos(
-permiso enum("1","2","3","4") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
+permiso enum("1","2","3","4", "5") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
 modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES") not null,
 primary key(permiso, usuario, modulo),
 foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
 
+-- Para añadir permiso
+ALTER TABLE permisos MODIFY permiso ENUM('1', '2', '3', '4', '5') NOT NULL;
+
 select*from peticion;
 select*from permisos;
+select*from mobiliario;
+select*from empleado;
+select*from Usuario;
+
+-- Insertar permiso para el usuario que se requiera
+INSERT INTO permisos (permiso, usuario, modulo) VALUES (6, "Moises", "MOBILIARIO"); # Super-administrador para MOBILIARIO
 
 insert into permisos values
 (1,"ajimenez","ALMACÉN"),#Altas
@@ -404,6 +413,7 @@ insert into permisos values
 (2,"Moises","MOBILIARIO"),#Bajas
 (3,"Moises","MOBILIARIO"),#Cambios
 (4,"Moises","MOBILIARIO"),#Consultas
+(5,"Moises","MOBILIARIO"), #administrador
 (1,"Moises","EQUIPOS"),#Altas
 (2,"Moises","EQUIPOS"),#Bajas
 (3,"Moises","EQUIPOS"),#Cambios
@@ -421,6 +431,33 @@ insert into permisos values
 (3,"Moises","RESPONSIVAS"),#Cambios
 (4,"Moises","RESPONSIVAS"),#Consultas
 (1,"Moises","PETICIONES");#Consultas
+
+insert into permisos values
+(1,"Prueba","ALMACÉN"),#Altas
+(2,"Prueba","ALMACÉN"),#Bajas
+(3,"Prueba","ALMACÉN"),#Cambios
+(4,"Prueba","ALMACÉN"),#Consultas
+(1,"Prueba","MOBILIARIO"),#Altas
+(2,"Prueba","MOBILIARIO"),#Bajas
+(3,"Prueba","MOBILIARIO"),#Cambios
+(4,"Prueba","MOBILIARIO"),#Consultas
+(1,"Prueba","EQUIPOS"),#Altas
+(2,"Prueba","EQUIPOS"),#Bajas
+(3,"Prueba","EQUIPOS"),#Cambios
+(4,"Prueba","EQUIPOS"),#Consultas
+(1,"Prueba","USUARIOS"),#Altas
+(2,"Prueba","USUARIOS"),#Bajas
+(3,"Prueba","USUARIOS"),#Cambios
+(4,"Prueba","USUARIOS"),#Consultas
+(1,"Prueba","EMPLEADOS"),#Altas
+(2,"Prueba","EMPLEADOS"),#Bajas
+(3,"Prueba","EMPLEADOS"),#Cambios
+(4,"Prueba","EMPLEADOS"),#Consultas
+(1,"Prueba","RESPONSIVAS"),#Altas
+(2,"Prueba","RESPONSIVAS"),#Bajas
+(3,"Prueba","RESPONSIVAS"),#Cambios
+(4,"Prueba","RESPONSIVAS"),#Consultas
+(1,"Prueba","PETICIONES");#Consultas
 
 delete from permisos where usuario = "armando";
 
@@ -440,6 +477,7 @@ Cantidad_Salida int,
 constraint CPSP primary key(Cod_BarrasS, FSalida, Num_EmpS)
 );
 select*from empleado;
+select*from usuario;
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
 flush privileges;

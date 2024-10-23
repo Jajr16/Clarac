@@ -5,7 +5,7 @@ var user = localStorage.getItem('user');
 if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
-    if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3'))) {
+    if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3') || Permisos['MOBILIARIO'].includes('5'))) {
 
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.querySelector('.fileInput');
@@ -43,8 +43,65 @@ if (!Permisos['MOBILIARIO']) {
             const inputFile = document.getElementById('file');
             const articulo = document.querySelector('.Fname').value;
             const descripcion = document.querySelector('.DescM').value;
-            const cantidad = document.querySelector('.CantidadM').value
-            const ubicacion = document.querySelector('.UbiM').value
+            const cantidad = document.querySelector('.CantidadM').value;
+            const ubicacion = document.querySelector('.UbiM').value;
+
+            // Verificamos si el permiso es '5'
+            if (Permisos['MOBILIARIO'].includes('5')) {
+
+                const encargado = document.querySelector('.actionSelect').value;
+
+                if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '' || encargado === '') {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Debes llenar todos los datos para continuar.',
+                    })
+                } else if (!inputFile.files || !inputFile.files[0]) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Sube una imagen del mobiliario para poder continuar.',
+                    })
+                } else {
+                    const formData = new FormData();
+                    formData.append('articulo', articulo)
+                    formData.append('descripcion', descripcion)
+                    formData.append('Cantidad', cantidad)
+                    formData.append('Ubicacion', ubicacion)
+                    formData.append('nom', encargado);
+
+                    fetch('/mobiliario/users/check-filename', {
+                        method: 'POST',
+                        body: formData  // Enviar el FormData sin especificar el Content-Type
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                formData.append('file', inputFile.files[0]);
+                                return fetch('/mobiliario/users/upload', {
+                                    method: 'POST',
+                                    body: formData  // Enviar el FormData sin especificar el Content-Type
+                                });
+                            } else {
+                                console.log('Todo mal');
+                                showErrorAlert(data.message);
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message);
+                            } else {
+                                showErrorAlert(data.message);
+                            }
+                        }).catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                        })
+                }
+
+            }
 
             if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '') {
                 Swal.fire({
@@ -102,29 +159,81 @@ if (!Permisos['MOBILIARIO']) {
             inputFile.click();
         }
 
-        // IMAGEN
+        // Añadir mobiliario
         document.addEventListener('DOMContentLoaded', function () {
-            
-            const addF = $('.fa-circle-plus')
+
+            const addF = $('.fa-circle-plus');
             const inputP = $('.EditData');
 
             addF.click(function (e) {
-                const image = $('.furniture-image')
+                const image = $('.furniture-image');
 
-                image.css('cursor', 'pointer')
-                image.attr('src', "/images/add-image.png")
+                image.css('cursor', 'pointer');
+                image.attr('src', "/images/add-image.png");
 
+                // Verificamos si el permiso es '5'
+                if (Permisos['MOBILIARIO'].includes('5')) {
+                    // Seleccionamos el div donde queremos añadir el select y label
+                    const buttonsDiv = document.querySelector('.empleado');
+
+                    // Verificamos si ya existe el label y select para evitar duplicados
+                    if (!document.querySelector('#actionSelect') && !document.querySelector('label[for="actionSelect"]')) {
+                        // Definimos el HTML del label y select
+                        const selectHTML = `
+                    <label for="actionSelect">Selecciona un empleado:</label>
+                    <select id="actionSelect" name="actionSelect" class="actionSelect">
+                        <option value="">Cargando empleados...</option> 
+                    </select>`;
+
+                        // Añadimos el label y select dentro del div de botones
+                        buttonsDiv.insertAdjacentHTML('beforeend', selectHTML);
+
+                        // Referencia al select que acabamos de añadir
+                        const employSelect = document.querySelector('#actionSelect');
+
+                        // Hacer el fetch para obtener la lista de empleados
+                        fetch('/responsiva/getEmploys', {
+                            method: 'GET'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                // Limpiamos el select antes de agregar las nuevas opciones
+                                employSelect.innerHTML = '<option value="">Selecciona un empleado</option>';
+
+                                // Añadimos los empleados como opciones al select
+                                data.forEach(item => {
+                                    const option = document.createElement('option');
+                                    option.value = item.employee;
+                                    option.textContent = item.employee;
+                                    employSelect.appendChild(option);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error en la solicitud:', error);
+                                showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
+                            });
+
+                        // Evento para manejar el cambio de opción en el select
+                        employSelect.addEventListener('change', function (e) {
+                            const selectedOption = e.target.value;
+                            console.log('Empleado seleccionado:', selectedOption);
+                            // Aquí puedes agregar la lógica según la opción seleccionada
+                        });
+                    }
+                }
+
+                // Habilitar inputs
                 inputP.attr("disabled", false);
 
+                // Agregar botones de Guardar y Cancelar
                 var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
                 var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
 
-                addFunctions(add, cancel, 'Ingresa los datos del mobiliario')
+                addFunctions(add, cancel, 'Ingresa los datos del mobiliario');
 
+                // Hacer que la imagen sea clickeable
                 const imagen = document.getElementsByClassName('furniture-image')[0];
-
                 imagen.addEventListener('click', ImageFunction);
-                
             });
 
             // Función para manejar el botón "Cancelar"
@@ -135,12 +244,23 @@ if (!Permisos['MOBILIARIO']) {
                 // Mostrar el botón "fa-circle-plus" de nuevo
                 addF.show();
 
-                // Opcional: ocultar los botones "Guardar" y "Cancelar" y mostrar otros elementos si es necesario.
+                // Eliminar los botones "Guardar" y "Cancelar"
                 $('.Modify').remove();
                 $('.Cancel').remove();
-                $('.editE').css('display', 'inline'); // Mostrar de nuevo los elementos ocultos
-            };
 
+                // Eliminar el select y su label si existen
+                const select = document.querySelector('#actionSelect');
+                const label = document.querySelector('label[for="actionSelect"]');
+                if (select) {
+                    select.remove();
+                }
+                if (label) {
+                    label.remove();
+                }
+
+                // Mostrar otros elementos ocultos, si es necesario
+                $('.editE').css('display', 'inline');
+            };
         });
 
         function dissapearImage() {

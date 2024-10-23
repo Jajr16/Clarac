@@ -35,7 +35,7 @@
         <i class="fa fa-pencil-square-o edit" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" class="formulario" enctype="multipart/form-data">
             <div class="named-furniture">
                 <input type="file" id="file" name="file" class="fileInput" accept="image/*" style="display: none;"><img
                     src="/images/add-image.png" class="furniture-image">
@@ -60,6 +60,7 @@
                     <textarea class="furniture-description DescM EditData" id="DescM" name="DescM"
                         oninput="mayus(this);" onkeypress="return checkA(event)" required readonly></textarea>
                 </div>
+                <div class="empleado"></div>
                 <div class="buttons"></div>
             </div>
         </form>

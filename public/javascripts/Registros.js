@@ -67,6 +67,33 @@ function toggleContentAndValidation() {
     }
 }
 
+function RegistrarPermisos() {
+    // Inicializar addData como un objeto que contenga un array de permisos/módulos
+    addData = {
+        Empleado: document.querySelector('.Empleado').value,
+        Usuario: document.querySelector('.Usuario').value,
+        Password: document.querySelector('.Password').value,
+        User: user,
+        Permisos: []  // Aquí almacenamos todos los permisos y módulos
+    };
+
+    // Recolectar permisos de todos los módulos
+    const modulos = ['Almacen', 'Mobiliario', 'Equipos', 'Usuarios', 'Empleados', 'Responsivas'];
+    
+    modulos.forEach(modulo => {
+        const checkboxes = document.querySelectorAll(`#${modulo} input[type="checkbox"]`);
+        checkboxes.forEach(permiso => {
+            if (permiso.checked) {
+                addData.Permisos.push({
+                    Modulo: modulo.toUpperCase(),
+                    Permiso: permiso.value
+                });
+            }
+        });
+    });
+}
+
+
 function obtenerEmpleados() {
     return new Promise((resolve, reject) => {
         fetch('/registro/getEmpleados', {
@@ -82,7 +109,7 @@ function obtenerEmpleados() {
             return response.json();
         })
         .then(data => {
-            console.log("Datos recibidos:", data);
+            // console.log("Datos recibidos:", data);
 
             const selectElement = document.getElementById('empleados');
 
@@ -110,33 +137,18 @@ function obtenerEmpleados() {
     });
 }
 if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUARIOS'].includes('1') && Permisos['EMPLEADOS'].includes('1') && pathname == "/users/registros") {    
-    console.log("3")
-    // Escucha el evento submit y detecta qué botón fue presionado
-    function addRegistro(e) {
+    console.log("Ambos permisos activos")
+
+    function addEmpleado(e) {
         e.preventDefault();
-    
-        const inputType = e.target.getAttribute('id'); // Identifica qué input fue presionado
-    
-        let addData = {};
-    
-        if (inputType === 'registrarEmpleado') {
-            // Obtener los datos necesarios para registrar un empleado
-            addData = {
-                Nom: document.querySelector('.Nom').value,
-                Area: document.querySelector('.Area').value,
-                Jefe: document.querySelector('.Jefe').value,
-                User: user
-            };
-        } else if (inputType === 'registrarUsuario') {
-            // Obtener los datos necesarios para registrar un usuario
-            addData = {
-                Empleado: document.querySelector('.Empleado').value,
-                Usuario: document.querySelector('.Usuario').value,
-                Password: document.querySelector('.Password').value,
-                User: user
-            };
-        }
-    
+
+        const addData = {
+            Nom: document.querySelector('.Nom').value,
+            Area: document.querySelector('.Area').value,
+            Jefe: document.querySelector('.Jefe').value,
+            User: user
+        };
+        console.log("Datos enviados:", addData);
         if (!checkEmptyFields(addData)) {
             Swal.fire({
                 icon: "error",
@@ -144,28 +156,59 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                 text: 'Debes llenar todos los datos para continuar.',
             });
         } else {
-            const url = (inputType === 'registrarEmpleado') ? '/registro/new_reg_emp' : '/registro/new_reg_usu';
-            fetch(url, {
+            fetch('/registro/new_reg_emp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(addData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.type === 'success') {
-                    showSuccessAlertReload(data.message);
-                } else {
-                    showErrorAlert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-            });
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.type === 'success') {
+                        showSuccessAlertReload(data.message);
+                    } else {
+                        showErrorAlert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
         }
-    }        
+    }
+
+    function addUsuario(e) {
+        e.preventDefault();
+
+        RegistrarPermisos();
+
+        if (!checkEmptyFields(addData)) {
+            Swal.fire({
+                icon: "error",
+                title: "Ocurrió un error",
+                text: 'Debes llenar todos los datos para continuar.',
+            });
+        } else {
+            fetch('/registro/new_reg_usu', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(addData)
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.type === 'success') {
+                        showSuccessAlertReload(data.message);
+                    } else {
+                        showErrorAlert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
+        }
+    }   
 
     function CRUDButtons() {
         $('.description-product').html(`
@@ -203,7 +246,7 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                     </div>
                     
                     <div class="buttons">
-                        <input type="submit" value="Guardar "id="registrarEmpleado" value="Registrar Empleado" onclick="addRegistro(event)">
+                        <input type="submit" value="Guardar "id="registrarEmpleado" value="Registrar Empleado" onclick="addEmpleado(event)">
                         <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
                     `, e);
@@ -229,108 +272,108 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                         Asignar Módulos
                     </div>
                     <div class="module-section">
-                        <div class="module-category">
+                        <div class="module-category" id="Almacen">
                             <div class="subsubtitle-container">Almacén</div>
                             <div class="DPU">
                                 <label for="addalmacen">Altas</label>
-                                <input type="checkbox" id="addalmacen" name="addalmacen">
+                                <input type="checkbox" id="addalmacen" name="addalmacen" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delalmacen">Bajas</label>
-                                <input type="checkbox" id="delalmacen" name="delalmacen">
+                                <input type="checkbox" id="delalmacen" name="delalmacen" value="2">
                             </div>
                             <div class="DPU">
                                 <label for="modalmacen">Cambios</label>
-                                <input type="checkbox" id="modalmacen" name="modalmacen">
+                                <input type="checkbox" id="modalmacen" name="modalmacen" value="3">
                             </div>
                             <div class="DPU">
                                 <label for="conalmacen">Consultas</label>
-                                <input type="checkbox" id="conalmacen" name="conalmacen">
+                                <input type="checkbox" id="conalmacen" name="conalmacen" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Mobiliario">
                             <div class="subsubtitle-container">Mobiliario</div>
                             <div class="DPU">
                                 <label for="addmobiliario">Altas</label>
-                                <input type="checkbox" id="addmobiliario" name="addmobiliario">
+                                <input type="checkbox" id="addmobiliario" name="addmobiliario" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delmobiliario">Bajas</label>
-                                <input type="checkbox" id="delmobiliario" name="delmobiliario">
+                                <input type="checkbox" id="delmobiliario" name="delmobiliario" value="2">
                             </div>
                             <div class="DPU">
                                 <label for="modmobiliario">Cambios</label>
-                                <input type="checkbox" id="modmobiliario" name="modmobiliario">
+                                <input type="checkbox" id="modmobiliario" name="modmobiliario" value="3">
                             </div>
                             <div class="DPU">
                                 <label for="conmobiliario">Consultas</label>
-                                <input type="checkbox" id="conmobiliario" name="conmobiliario">
+                                <input type="checkbox" id="conmobiliario" name="conmobiliario" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Equipos">
                             <div class="subsubtitle-container">Equipos</div>
                             <div class="DPU">
                                 <label for="addequipos">Altas</label>
-                                <input type="checkbox" id="addequipos" name="addequipos">
+                                <input type="checkbox" id="addequipos" name="addequipos" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delequipos">Bajas</label>
-                                <input type="checkbox" id="delequipos" name="delequipos">
+                                <input type="checkbox" id="delequipos" name="delequipos" value="2">
                             </div>
                             <div class="DPU"> 
                                 <label for="modequipos">Cambios</label>
-                                <input type="checkbox" id="modequipos" name="modequipos">
+                                <input type="checkbox" id="modequipos" name="modequipos" value="3">
                             </div>
                             <div class="DPU"> 
                                 <label for="conequipos">Consultas</label>
-                                <input type="checkbox" id="conequipos" name="conequipos">
+                                <input type="checkbox" id="conequipos" name="conequipos" value="4">
                             </div>
                         </div>
                     </div>
                     <div class="module-section">
-                        <div class="module-category">
+                        <div class="module-category" id="Usuarios">
                             <div class="subsubtitle-container">Usuarios</div>
                             <div class="DPU">
                                 <label for="addusuario">Altas</label>
-                                <input type="checkbox" id="addusuario" name="addusuario">
+                                <input type="checkbox" id="addusuario" name="addusuario" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delusuario">Bajas</label>
-                                <input type="checkbox" id="delusuario" name="delusuario">
+                                <input type="checkbox" id="delusuario" name="delusuario" value="2">
                             </div>
                             <div class="DPU"> 
                                 <label for="modusuario">Cambios</label>
-                                <input type="checkbox" id="modusuario" name="modusuario">
+                                <input type="checkbox" id="modusuario" name="modusuario" value="3">
                             </div>
                             <div class="DPU">   
                                 <label for="conusuario">Consultas</label>
-                                <input type="checkbox" id="conusuario" name="conusuario">
+                                <input type="checkbox" id="conusuario" name="conusuario" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Empleados">
                             <div class="subsubtitle-container">Empleados</div>
                             <div class="DPU">
                                 <label for="addempleado">Altas</label>
-                                <input type="checkbox" id="addempleado" name="addempleado">
+                                <input type="checkbox" id="addempleado" name="addempleado" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delempleado">Bajas</label>
-                                <input type="checkbox" id="delempleado" name="delempleado">
+                                <input type="checkbox" id="delempleado" name="delempleado" value="2">
                             </div>
                             <div class="DPU"> 
                                 <label for="modempleado">Cambios</label>
-                                <input type="checkbox" id="modempleado" name="modempleado">
+                                <input type="checkbox" id="modempleado" name="modempleado" value="3">
                             </div>
                             <div class="DPU">   
                                 <label for="conempleado">Consultas</label>
-                                <input type="checkbox" id="conempleado" name="conempleado">
+                                <input type="checkbox" id="conempleado" name="conempleado" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Responsivas">
                             <div class="subsubtitle-container">Responsivas</div>
                             <div class="DPU">
                                 <label for="addresponsiva">Agregar</label>
-                                <input type="checkbox" id="addresponsiva" name="addresponsiva">
+                                <input type="checkbox" id="addresponsiva" name="addresponsiva" value="1">
                             </div>
                             <div class="DPU hidden">
                                 <label for="b">Bajas</label>
@@ -347,7 +390,7 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                         </div>
                     </div>
                     <div class="buttons">
-                        <input type="submit" value="Guardar "id="registrarUsuario" value="Registrar Usuario" onclick="addRegistro(event)">
+                        <input type="submit" value="Guardar" id="" onclick="addUsuario(event)" name="" class="">
                         <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
                     `, e);
@@ -480,11 +523,7 @@ else if (Permisos && Permisos['USUARIOS'] && Permisos['USUARIOS'].includes('1') 
         function addUsuario(e){
             e.preventDefault();
 
-            const addData = {
-                Empleado: document.querySelector('.Empleado').value,
-                Usuario: document.querySelector('.Usuario').value,
-                Password: document.querySelector('.Password').value,
-            };
+            RegistrarPermisos();
 
             if (!checkEmptyFields(addData)) {
                 Swal.fire({
@@ -540,108 +579,108 @@ else if (Permisos && Permisos['USUARIOS'] && Permisos['USUARIOS'].includes('1') 
                         Asignar Módulos
                     </div>
                     <div class="module-section">
-                        <div class="module-category">
+                        <div class="module-category" id="Almacen">
                             <div class="subsubtitle-container">Almacén</div>
                             <div class="DPU">
                                 <label for="addalmacen">Altas</label>
-                                <input type="checkbox" id="addalmacen" name="addalmacen">
+                                <input type="checkbox" id="addalmacen" name="addalmacen" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delalmacen">Bajas</label>
-                                <input type="checkbox" id="delalmacen" name="delalmacen">
+                                <input type="checkbox" id="delalmacen" name="delalmacen" value="2">
                             </div>
                             <div class="DPU">
                                 <label for="modalmacen">Cambios</label>
-                                <input type="checkbox" id="modalmacen" name="modalmacen">
+                                <input type="checkbox" id="modalmacen" name="modalmacen" value="3">
                             </div>
                             <div class="DPU">
                                 <label for="conalmacen">Consultas</label>
-                                <input type="checkbox" id="conalmacen" name="conalmacen">
+                                <input type="checkbox" id="conalmacen" name="conalmacen" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Mobiliario">
                             <div class="subsubtitle-container">Mobiliario</div>
                             <div class="DPU">
                                 <label for="addmobiliario">Altas</label>
-                                <input type="checkbox" id="addmobiliario" name="addmobiliario">
+                                <input type="checkbox" id="addmobiliario" name="addmobiliario" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delmobiliario">Bajas</label>
-                                <input type="checkbox" id="delmobiliario" name="delmobiliario">
+                                <input type="checkbox" id="delmobiliario" name="delmobiliario" value="2">
                             </div>
                             <div class="DPU">
                                 <label for="modmobiliario">Cambios</label>
-                                <input type="checkbox" id="modmobiliario" name="modmobiliario">
+                                <input type="checkbox" id="modmobiliario" name="modmobiliario" value="3">
                             </div>
                             <div class="DPU">
                                 <label for="conmobiliario">Consultas</label>
-                                <input type="checkbox" id="conmobiliario" name="conmobiliario">
+                                <input type="checkbox" id="conmobiliario" name="conmobiliario" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Equipos">
                             <div class="subsubtitle-container">Equipos</div>
                             <div class="DPU">
                                 <label for="addequipos">Altas</label>
-                                <input type="checkbox" id="addequipos" name="addequipos">
+                                <input type="checkbox" id="addequipos" name="addequipos" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delequipos">Bajas</label>
-                                <input type="checkbox" id="delequipos" name="delequipos">
+                                <input type="checkbox" id="delequipos" name="delequipos" value="2">
                             </div>
                             <div class="DPU"> 
                                 <label for="modequipos">Cambios</label>
-                                <input type="checkbox" id="modequipos" name="modequipos">
+                                <input type="checkbox" id="modequipos" name="modequipos" value="3">
                             </div>
                             <div class="DPU"> 
                                 <label for="conequipos">Consultas</label>
-                                <input type="checkbox" id="conequipos" name="conequipos">
+                                <input type="checkbox" id="conequipos" name="conequipos" value="4">
                             </div>
                         </div>
                     </div>
                     <div class="module-section">
-                        <div class="module-category">
+                        <div class="module-category" id="Usuarios">
                             <div class="subsubtitle-container">Usuarios</div>
                             <div class="DPU">
                                 <label for="addusuario">Altas</label>
-                                <input type="checkbox" id="addusuario" name="addusuario">
+                                <input type="checkbox" id="addusuario" name="addusuario" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delusuario">Bajas</label>
-                                <input type="checkbox" id="delusuario" name="delusuario">
+                                <input type="checkbox" id="delusuario" name="delusuario" value="2">
                             </div>
                             <div class="DPU"> 
                                 <label for="modusuario">Cambios</label>
-                                <input type="checkbox" id="modusuario" name="modusuario">
+                                <input type="checkbox" id="modusuario" name="modusuario" value="3">
                             </div>
                             <div class="DPU">   
                                 <label for="conusuario">Consultas</label>
-                                <input type="checkbox" id="conusuario" name="conusuario">
+                                <input type="checkbox" id="conusuario" name="conusuario" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Empleados">
                             <div class="subsubtitle-container">Empleados</div>
                             <div class="DPU">
                                 <label for="addempleado">Altas</label>
-                                <input type="checkbox" id="addempleado" name="addempleado">
+                                <input type="checkbox" id="addempleado" name="addempleado" value="1">
                             </div>
                             <div class="DPU">
                                 <label for="delempleado">Bajas</label>
-                                <input type="checkbox" id="delempleado" name="delempleado">
+                                <input type="checkbox" id="delempleado" name="delempleado" value="2">
                             </div>
                             <div class="DPU"> 
                                 <label for="modempleado">Cambios</label>
-                                <input type="checkbox" id="modempleado" name="modempleado">
+                                <input type="checkbox" id="modempleado" name="modempleado" value="3">
                             </div>
                             <div class="DPU">   
                                 <label for="conempleado">Consultas</label>
-                                <input type="checkbox" id="conempleado" name="conempleado">
+                                <input type="checkbox" id="conempleado" name="conempleado" value="4">
                             </div>
                         </div>
-                        <div class="module-category">
+                        <div class="module-category" id="Responsivas">
                             <div class="subsubtitle-container">Responsivas</div>
                             <div class="DPU">
                                 <label for="addresponsiva">Agregar</label>
-                                <input type="checkbox" id="addresponsiva" name="addresponsiva">
+                                <input type="checkbox" id="addresponsiva" name="addresponsiva" value="1">
                             </div>
                             <div class="DPU hidden">
                                 <label for="b">Bajas</label>

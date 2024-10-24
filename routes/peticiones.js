@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const petAdd = require('../bin/AddProd_exist');
+const petAdd = require('../bin/AddPet');
 const isAuthenticated = require('../middleware/authMiddleware')
 
 router.post('/addPet', isAuthenticated, async (req, res) => {

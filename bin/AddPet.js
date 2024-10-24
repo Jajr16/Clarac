@@ -1,16 +1,17 @@
 const db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
 const Errores = require('./Error');
 
-async function prodExistAdd(req, callback) {
+async function petAdd(req, callback) {
     const data = req.body;
-
+    console.log(data)
+    
     try {
         // Recorrer cada producto en el arreglo 'productos'
         for (const item of data.productos) {
             // Ejecutar el procedimiento almacenado para cada producto
             await new Promise((resolve, reject) => {
                 db.query(
-                    `CALL AgregarProdExistentes(?,?,?,?,?)`,
+                    `CALL AgregarPeticiones(?,?,?,?,?)`,
                     [data.factura, item.producto, item.cantidad, data.Dfactura, data.Proveedor],
                     (err2, result) => {
                         if (err2) {
@@ -50,4 +51,4 @@ async function prodExistAdd(req, callback) {
     }
 }
 
-module.exports = prodExistAdd;
+module.exports = petAdd;

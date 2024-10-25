@@ -825,7 +825,7 @@ BEGIN
     
 	SELECT 'Success' AS status;
 	COMMIT;
-END |
+END //
 DELIMITER  ;
 
 
@@ -1063,5 +1063,53 @@ BEGIN
     SELECT 'Success' AS status;
 END //
 
+
+DROP PROCEDURE IF EXISTS AgregarUEMob;
+DELIMITER //
+
+CREATE PROCEDURE AgregarUEMob(
+	IN arti varchar(100),
+    IN descrip varchar(400),
+    IN usuar varchar(45), 
+    IN encargado varchar(45),
+    IN ubi varchar(400),
+    IN Cant int)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al añadir usuario o empleado' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+	
+    IF encargado IS NOT NULL THEN
+		-- Insertar el mobiliario en la tabla de mobiliario
+		INSERT INTO mobiliario VALUES (NULL, arti, descrip, (
+			SELECT Num_emp from empleado where Nom = encargado
+        ), ubi, Cant, (select Área from empleado where Num_emp = (SELECT Num_emp from empleado where Nom = encargado)));
+        
+    ELSE
+        -- Insertar el mobiliario en la tabla de mobiliario
+		INSERT INTO mobiliario VALUES (NULL, arti, descrip, (
+			SELECT Num_emp from usuario where Usuario = usuar
+        ), ubi, Cant, (select Área from empleado where Num_emp = (SELECT Num_emp from usuario where Usuario = usuar)));
+
+    END IF;
+
+    -- Confirmar los cambios
+    COMMIT;
+
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
+END //
+
 DELIMITER ;
 CALL AgregarPermisos('1', 'ajimenez', 'EMPLEADOS');
+
+CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', NULL,'Si', 1);
+
+SELECT*FROM mobiliario;
+select*from equipo;

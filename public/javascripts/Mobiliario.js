@@ -46,63 +46,6 @@ if (!Permisos['MOBILIARIO']) {
             const cantidad = document.querySelector('.CantidadM').value;
             const ubicacion = document.querySelector('.UbiM').value;
 
-            // Verificamos si el permiso es '5'
-            if (Permisos['MOBILIARIO'].includes('5')) {
-
-                const encargado = document.querySelector('.actionSelect').value;
-
-                if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '' || encargado === '') {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Ocurrió un error",
-                        text: 'Debes llenar todos los datos para continuar.',
-                    })
-                } else if (!inputFile.files || !inputFile.files[0]) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Ocurrió un error",
-                        text: 'Sube una imagen del mobiliario para poder continuar.',
-                    })
-                } else {
-                    const formData = new FormData();
-                    formData.append('articulo', articulo)
-                    formData.append('descripcion', descripcion)
-                    formData.append('Cantidad', cantidad)
-                    formData.append('Ubicacion', ubicacion)
-                    formData.append('nom', encargado);
-
-                    fetch('/mobiliario/users/check-filename', {
-                        method: 'POST',
-                        body: formData  // Enviar el FormData sin especificar el Content-Type
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'success') {
-                                formData.append('file', inputFile.files[0]);
-                                return fetch('/mobiliario/users/upload', {
-                                    method: 'POST',
-                                    body: formData  // Enviar el FormData sin especificar el Content-Type
-                                });
-                            } else {
-                                console.log('Todo mal');
-                                showErrorAlert(data.message);
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'success') {
-                                showSuccessAlertReload(data.message);
-                            } else {
-                                showErrorAlert(data.message);
-                            }
-                        }).catch(error => {
-                            console.error('Error en la solicitud:', error);
-                            // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                        })
-                }
-
-            }
-
             if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '') {
                 Swal.fire({
                     icon: "error",
@@ -116,12 +59,28 @@ if (!Permisos['MOBILIARIO']) {
                     text: 'Sube una imagen del mobiliario para poder continuar.',
                 })
             } else {
+
                 const formData = new FormData();
-                formData.append('articulo', articulo)
-                formData.append('descripcion', descripcion)
-                formData.append('Cantidad', cantidad)
-                formData.append('Ubicacion', ubicacion)
-                formData.append('user', user);
+                formData.append('articulo', articulo);
+                formData.append('descripcion', descripcion);
+                formData.append('Cantidad', cantidad);
+                formData.append('Ubicacion', ubicacion);
+                
+
+                // Verificamos si el permiso es '5'
+                if (Permisos['MOBILIARIO'].includes('5')) {
+
+                    const encargado = document.querySelector('.actionSelect').value;
+
+                    formData.append('encargado', encargado);
+                    formData.append('user', null);
+
+                } else {
+
+                    formData.append('encargado', null);
+                    formData.append('user', user);
+
+                }
 
                 fetch('/mobiliario/users/check-filename', {
                     method: 'POST',

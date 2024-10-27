@@ -7,7 +7,7 @@ const furnitures = require('../bin/Mobiliario');
 const addFurnit = require('../bin/AddMobiliario');
 const modFurnit = require('../bin/MobiliarioModify');
 const delFurnit = require('../bin/deleteMobiliario');
-const upload = require('../config/multerConfig'); 
+const upload = require('../config/multerConfig');
 const isAuthenticated = require('../middleware/authMiddleware')
 
 const customId = require('../utils/customId');
@@ -18,7 +18,7 @@ let gfsBucket = null;
 try {
   const conn = mongoose.createConnection(url);
   mongoose.connect(url);
-  
+
   conn.once('open', () => {
     gfsBucket = new GridFSBucket(conn.db, { bucketName: 'uploads' });
     console.log('Conexión a MongoDB establecida y GridFSBucket inicializado.');
@@ -27,7 +27,7 @@ try {
   conn.on('error', (err) => {
     console.error('Error de conexión a MongoDB:', err);
   });
-  
+
 } catch (error) {
   console.error('Error conectando a MongoDB:', error);
 }

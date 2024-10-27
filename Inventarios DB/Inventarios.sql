@@ -1062,7 +1062,7 @@ BEGIN
     -- Confirmar si la inserción fue exitosa
     SELECT 'Success' AS status;
 END //
-
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS AgregarUEMob;
 DELIMITER //
@@ -1109,7 +1109,8 @@ END //
 DELIMITER ;
 CALL AgregarPermisos('1', 'ajimenez', 'EMPLEADOS');
 
-CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', NULL,'Si', 1);
+CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', 'JIMENEZ RIVERA ARMANDO','Si', 1);
+delete from mobiliario;
 
 SELECT*FROM mobiliario;
 select*from equipo;

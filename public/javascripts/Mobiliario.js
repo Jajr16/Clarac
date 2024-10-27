@@ -73,11 +73,9 @@ if (!Permisos['MOBILIARIO']) {
                     const encargado = document.querySelector('.actionSelect').value;
 
                     formData.append('encargado', encargado);
-                    formData.append('user', null);
 
                 } else {
 
-                    formData.append('encargado', null);
                     formData.append('user', user);
 
                 }
@@ -361,6 +359,7 @@ if (!Permisos['MOBILIARIO']) {
             body: JSON.stringify({ username: user })
         }).then(response => response.json())
             .then(data => {
+                console.log(data)
                 const tbody = document.querySelector(".data-mob tbody");
                 const selMob = $('.Mob')
 

@@ -1,6 +1,7 @@
 const fs = require('fs');
 var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
 var Errores = require('./Error')
+var success = require('./success')
 
 function guardarArchivoJSON(data) {
     try {
@@ -23,27 +24,27 @@ function cargarArchivoJSON() {
 
 function addFurniture(req, callback) {
     const data = req.body
-    console.log(data)
-    console.log(data.articulo)
-    console.log(data.user)
-    console.log(data.encargado)
     
     const usuario = data.user || null;
     const encargado = data.encargado || null;
     
-    console.log(usuario)
-    console.log(encargado)
-
-    db.query('CALL AgregarUEMob(?,?,?,?,?,?)', [data.Articulo, data.Descripcion, encargado, usuario, data.Ubicacion, data.Cantidad], function (err, result) {
+    db.query('CALL AgregarUEMob(?,?,?,?,?,?)', [data.articulo, data.descripcion, usuario, encargado, data.Ubicacion, data.Cantidad], function (err, result) {
         if (err) { Errores(err); return callback(err); } // Se hace un control de errores
         else {
             if (result) {
-                let articulos = cargarArchivoJSON();
+                if (success(result) == 'Success'){
+                    console.log(result)
+                    let articulos = cargarArchivoJSON();
+    
+                    articulos.push({ "ARTICULO": data.Articulo });
+    
+                    guardarArchivoJSON(articulos);
 
-                articulos.push({ "ARTICULO": data.Articulo });
-
-                guardarArchivoJSON(articulos);
-                return callback(null, { type: 'success', message: 'Mobiliario dado de alta.' })
+                    return callback(null, { type: 'success', message: 'Empleado dado de alta.' });
+                }else {
+                    Errores(`${result.Code, result.Message}`);
+                    return callback(null, { type: 'failed', message: `El Empleado no se pudo dar de alta.` })
+                }
             }
         }
     });

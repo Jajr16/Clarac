@@ -1,5 +1,3 @@
-const { application } = require("express");
-
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var pathname = window.location.pathname;
 var user = localStorage.getItem('user');
@@ -8,9 +6,9 @@ if (!Permisos['ALMACÉN']) {
     location.href = "index";
 } else {
     if (pathname == "/users/peticiones" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
-        function agregarPet(e){
-            e.preventDefault() 
-            
+        function agregarPet(e) {
+            e.preventDefault()
+
             let productos = obtenerP()
 
             fetch('/pet/addPet', {
@@ -18,17 +16,145 @@ if (!Permisos['ALMACÉN']) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({user, productos})
+                body: JSON.stringify({ user, productos })
             }).then(response => response.json())
                 .then(data => {
-                    if (data.type == "Success") {
+                    if (data.type == "success" || data.type == "Success") {
                         showSuccessAlertReload(data.message)
-                    }else {
+                    } else {
                         showErrorAlert(data.message)
                     }
                 })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
         }
-        
+
+        function cancel(e) {
+            e.preventDefault()
+            $('.Cancel').remove()
+            $('.description-product').html(`
+                <div class="actions two-boxes" style="height: 60%;">
+                    <center>
+                        <button class="options status FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Estatus de peticiones</button>
+                        <button class="options peti FTB"><i class="fa-solid fa-circle-minus body-icons" style="font-size: 25px;"></i>Solicitar productos</button>
+                    </center>
+                </div>`)
+            CRUDButtons()
+
+            const tbody = document.querySelector(".data-prod tbody");
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.style.backgroundColor = '';
+            });
+
+            $('.description-product').removeClass('table-responsive-box')
+        }
+
+        function CRUDButtons() {
+            $('.status').click((e) => {
+                e.preventDefault()
+                fetch('/pet/status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user })
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type == "success" || data.type == "Success") {
+                            $('.description-product').html(`
+                                <table class="data-prod info-table peti-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Estatus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>        
+                            `)
+
+                            const tbody = document.querySelector(".peti-table tbody");
+                            data.dataToSend.forEach(item => {
+                                let tr = document.createElement('tr');
+
+                                tr.innerHTML = `
+                                    <td>${item.Arti}</td>
+                                    <td>${item.Cantidad}</td>
+                                    <td>${item.Enviado}</td>
+                                `
+
+                                tr.addEventListener('click', () => {
+                                    Swal.fire({
+                                        title: '¿Ya recibiste este producto?',
+                                        text: 'Confirma la operación en caso de ya haber recibido el producto que pediste.',
+                                        icon: "warning",
+                                        cancelButtonText: "Cancelar",
+                                        confirmButtonText: `Si, ya recibí el artículo: ${item.Arti}`,
+                                        showCancelButton: true,
+                                        confirmButtonColor: "#001781",
+                                        cancelButtonColor: 'rgb(134, 0, 0)'
+                                    }).then(() => {
+                                        fetch('/pet/Solicitante', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ user, Cod_Barras: item.Cod_Barras, fecha: item.fecha })
+                                        })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.type == "success" || data.type == "Success") {
+                                                    showSuccessAlertReload(data.message)
+                                                } else if (data.type == 'failed'){
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: 'Ups!!!.',
+                                                        text: data.message,
+                                                    });
+                                                } else {
+                                                    showErrorAlert(data.message)
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error en la solicitud:', error);
+                                                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                                            });
+                                    })
+                                })
+
+                                tbody.appendChild(tr)
+                            });
+                            $('.description-product').addClass('table-responsive-box')
+                            $('<input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel(event)" style="width: 100%;" name="cancelEqp" class="Cancel">')
+                                .insertAfter(`
+                                .description-product
+                            `)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+
+                colortable();
+            })
+
+            $('.peti').click((e) => {
+                e.preventDefault()
+                addBody(`
+                    <div class="DP buttons">
+                        <input type="submit" value="Guardar" id="modyEqp" onclick="agregarPet(event)" name="modyEqp" class="Modify">
+                        <input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel(event)" name="cancelEqp" class="Cancel">
+                    </div>
+                    `, e)
+
+                colortable();
+            })
+        }
+
         // Consulta de productos
         fetch('../prod_exts', {
             method: 'POST',
@@ -55,19 +181,11 @@ if (!Permisos['ALMACÉN']) {
                         <td>${item.Articulo}</td>
                             <td>${item.Existencia}</td>`;
 
-                        const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
-                        const button = '.description-product .buttons'
+
                         tr.addEventListener('click', () => {
+                            const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
 
                             if ($(selector).length === 0) {
-                                if ($(button).length === 0){
-                                    $(`.description-product`).append(`
-                                        <div class="DP buttons">
-                                            <input type="submit" value="Guardar" id="modyEqp" style="width: 100%;" onclick="agregarPet(event)" name="modyEqp"
-                                            class="Modify">
-                                        </div>
-                                    `);
-                                }
                                 $(`
                                     <div class="DP prod-count">
                                     <label article="${item.Cod_Barras}">${item.Articulo}</label>
@@ -83,11 +201,11 @@ if (!Permisos['ALMACÉN']) {
                             if ($(this).val() === item.Articulo) {
                                 if ($(selector).length === 0) {
                                     $(`
-                                    <div class="DP prod-count">
-                                    <label article="${item.Cod_Barras}">${item.Articulo}</label>
-                                    <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidaDFE" name="CantidaDFE" class="CantidaDFE" required min="0">
-                                    </div>
-                                    `).insertBefore('.buttons');
+                                        <div class="DP prod-count">
+                                        <label article="${item.Cod_Barras}">${item.Articulo}</label>
+                                        <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidaDFE" name="CantidaDFE" class="CantidaDFE" required min="0">
+                                        </div>
+                                        `).insertBefore('.buttons');
                                 } else {
                                     $(selector).closest('.prod-count').remove();
                                 }
@@ -105,7 +223,7 @@ if (!Permisos['ALMACÉN']) {
 
         window.addEventListener('load', function (event) {
             sselect()
-            colortable();
+            CRUDButtons()
         })
     }
 }

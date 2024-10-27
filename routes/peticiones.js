@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const petAdd = require('../bin/AddProd_exist');
+const petAdd = require('../bin/AddPet');
+const consulStatus = require('../bin/Status');
+const confirmPet = require('../bin/ConfirmacionPet');
 const isAuthenticated = require('../middleware/authMiddleware')
 
 router.post('/addPet', isAuthenticated, async (req, res) => {
@@ -13,5 +15,22 @@ router.post('/addPet', isAuthenticated, async (req, res) => {
     });
 });
 
+router.post('/status', isAuthenticated, async (req, res) => {
+    consulStatus(req, (err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
+        res.json(result);
+    });
+});
+
+router.post('/Solicitante', isAuthenticated, async (req, res) => {
+    confirmPet(req, (err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
+        res.json(result);
+    })
+})
 
 module.exports = router;

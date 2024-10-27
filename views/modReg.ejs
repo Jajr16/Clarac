@@ -1,0 +1,54 @@
+<div class="Fone-item">
+    <div class="boxes-containers one-item">
+        <div class="title-container">
+            Modificar Registros
+        </div>
+        <div class="content-container">
+            <form name="crearRespon" id="crearRespon">
+                <div class="FTB">
+                    <select id="mySelect" class="Reg searchInput" required>
+                        <option disabled selected>Buscar registro...</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <div class="Columns" style="padding-top: 1.5rem;">
+        <div class="table-responsive item1">
+            <table class="data-prod info-table" style="visibility: hidden;">
+                <thead>
+                    <tr id="table-headers">
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="boxes-containers item2 data">
+            <div class="subtitle-container">
+                Detalles del Registro   
+            </div>
+            <i class="fa-solid fa-trash trash" aria-hidden="true"
+                style="float: right; color: #001781; visibility: hidden;"></i>
+            <i class="fa fa-pencil-square-o edit" aria-hidden="true"
+                style="float: right; color: #001781; visibility: hidden;"></i>
+
+            <form method="POST" enctype="multipart/form-data" style="height: 100%;">
+                <div class="description-product" style="height: 100%;">
+                    <div class="actions two-boxes" style="height: 60%;">
+                        <center>
+                            <button class="options meter FTB" style="margin-right: 1rem;"><i
+                                    class="fa fa-pencil-square-o edit" style="font-size: 25px;"></i>Modificar Empleado</button>
+                            <button class="options sacar FTB"><i class="fa fa-pencil-square-o edit"
+                                    style="font-size: 25px;"></i>Modificar Usuarios</button>
+                        </center>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="/stylesheets/modReg.css">
+<script type="text/javascript" src="/javascripts/modRegistro.js"></script>

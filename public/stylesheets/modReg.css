@@ -52,6 +52,10 @@
     margin-right: 1rem;
 }
 
+/* .DP > select:first-of-type {
+    margin-right: 1rem;
+} */
+
 .DP label {
     display: flex;
     width: 12rem;
@@ -169,6 +173,14 @@
     margin-bottom: 0!important;
 }
 
-.actions {
-    margin-top: 2rem;
+button.options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* Ajusta el espacio interior según tu preferencia */
+    font-size: 16px; /* Ajusta el tamaño del texto según tu preferencia */
+}
+
+button.options i {
+    margin-right: 8px; /* Espacio entre el icono y el texto */
 }

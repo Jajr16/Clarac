@@ -2,8 +2,9 @@ var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de
 var Errores = require('./Error')
 var success = require('./success')
 
-function addEmpleado(req, callback) {
+function modEmpleado(req, callback) {
     const data = req.body
+    console.log("Datos recibidos:", data);
     db.query('CALL AgregarEmpleados(?,?,?,?)', [null, data.Nom, data.Area, 663], function (err, result) {
         if (err) { 
                 Errores(err); // Otros errores
@@ -25,7 +26,7 @@ function addEmpleado(req, callback) {
     });
 }
 
-function addUsuario(req, callback) {
+function modUsuario(req, callback) {
     const data = req.body;
     console.log("Datos recibidos:", data);
 
@@ -74,7 +75,7 @@ function addUsuario(req, callback) {
     });
 }
 
-function addPermisos(req, callback) {
+function modPermisos(req, callback) {
     const data = req.body
     console.log("Datos recibidos:", data);
     db.query('CALL AgregarPermisos(?,?,?)', [data.Permiso, data.User, data.modulo], function (err, result) {
@@ -99,7 +100,7 @@ function addPermisos(req, callback) {
 }
 
 // Función para obtener empleados de la base de datos
-function obtenerEmpleados(callback) {
+function obtenerRegistros(callback) {
     const query = 'SELECT Nom FROM empleado';
     
     db.query(query, (error, results) => {
@@ -113,8 +114,8 @@ function obtenerEmpleados(callback) {
 }
 
 module.exports = {
-    addEmpleado,
-    addUsuario,
-    addPermisos,
-    obtenerEmpleados
+    addEmpleado: modEmpleado,
+    addUsuario: modUsuario,
+    addPermisos: modPermisos,
+    obtenerEmpleados: obtenerRegistros
 };

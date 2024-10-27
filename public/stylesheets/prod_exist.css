@@ -168,3 +168,7 @@
 .searchInput, .ss-single-selected {
     margin-bottom: 0!important;
 }
+
+.actions {
+    margin-top: 2rem;
+}

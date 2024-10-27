@@ -3,7 +3,6 @@ const Errores = require('./Error');
 
 async function petAdd(req, callback) {
     const data = req.body;
-    console.log(data)
     
     try {
         // Recorrer cada producto en el arreglo 'productos'
@@ -11,15 +10,14 @@ async function petAdd(req, callback) {
             // Ejecutar el procedimiento almacenado para cada producto
             await new Promise((resolve, reject) => {
                 db.query(
-                    `CALL AgregarPeticiones(?,?,?,?,?)`,
-                    [data.factura, item.producto, item.cantidad, data.Dfactura, data.Proveedor],
+                    `CALL AgregarPeticiones(?,?,?)`,
+                    [item.producto, item.cantidad, data.user],
                     (err2, result) => {
                         if (err2) {
                             Errores(err2); // Manejo del error
                             return reject(err2);
                         } else {
                             // Verificar el resultado de la llamada al procedimiento
-                            console.log(result)
                             if (result[0] && result[0][0].status === 'Success') {
                                 resolve();
                             } else if (result[0] && result[0][0].status === 'error') {

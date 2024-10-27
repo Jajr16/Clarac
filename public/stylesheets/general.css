@@ -432,6 +432,16 @@ input[type="submit"]:hover {
     flex: 1 1 45%;
 }
 
+.table-responsive-box {
+    display: block;
+    width: 100%;
+    max-height: 16.5rem;
+    scrollbar-width: none;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 1rem;
+}
+
 .table-responsive {
     display: block;
     width: 100%;

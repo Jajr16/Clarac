@@ -4,7 +4,7 @@ var success = require('./success')
 
 function addEmpleado(req, callback) {
     const data = req.body
-    console.log("Datos recibidos:", data);
+    
     db.query('CALL AgregarEmpleados(?,?,?,?)', [null, data.Nom, data.Area, 663], function (err, result) {
         if (err) { 
                 Errores(err); // Otros errores

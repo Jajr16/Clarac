@@ -731,23 +731,21 @@ DROP PROCEDURE IF EXISTS AgregarPeticiones;
 DELIMITER //
 
 CREATE PROCEDURE AgregarPeticiones(
-    IN permiso VARCHAR(45),
-    IN usuario VARCHAR(45),
-    IN modulo VARCHAR(45))
+    IN CBS VARCHAR(45),
+    IN CANT INT,
+    IN USR VARCHAR(45))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         -- Manejo del error: devolver un mensaje de error y hacer rollback
         ROLLBACK;
-        SELECT 'Error: Ocurrió un error al insertar el permiso' AS status;
+        SELECT 'error' AS status, 'Ocurrió un error al agregar la petición' as message;
     END;
 
     -- Iniciar la transacción
     START TRANSACTION;
 
-    -- Insertar el permiso en la tabla de permisos
-    INSERT INTO permisos (permiso, usuario, modulo) 
-    VALUES (permiso, usuario, modulo);
+    INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario WHERE Usuario = USR), NOW());
 
     -- Confirmar los cambios
     COMMIT;
@@ -757,6 +755,35 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE PeticionesAceptadas(
+    IN CBS VARCHAR(45),
+    IN CANT INT,
+    IN USR VARCHAR(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al agregar la petición' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario WHERE Usuario = USR), NOW());
+
+    -- Confirmar los cambios
+    COMMIT;
+
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
+END //
+
+DELIMITER ;
+
 
 drop procedure extractPE;
 DELIMITER | 
@@ -871,3 +898,106 @@ BEGIN
     COMMIT;
 END |
 DELIMITER ;
+
+drop procedure if exists consulPet;
+DELIMITER | 
+CREATE PROCEDURE consulPet(
+	IN USR VARCHAR(45)
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+    
+	START TRANSACTION;
+		
+		SELECT 
+        soli_car.Cod_Barras_SC AS CBSC,
+        almacen.Articulo as artic,
+        soli_car.cantidad_SC AS Cant,
+        soli_car.request_date AS fecha,
+        CASE 
+            WHEN status_soli.delivered_ware = 1 THEN 'Entregado'
+            ELSE 'Pendiente'
+        END AS delivered_ware,
+        CASE 
+            WHEN status_soli.delivered_soli = 1 THEN 'Recibido'
+            ELSE 'Pendiente'
+        END AS delivered_soli,
+        CASE 
+            WHEN status_soli.sended = 1 THEN 'Enviado'
+            ELSE 'No enviado'
+        END AS sended,
+        CASE 
+            WHEN status_soli.cerrada = 1 THEN 'Cerrada'
+            ELSE 'Abierta'
+        END AS cerrada
+		FROM soli_car
+		LEFT JOIN status_soli ON soli_car.sol_id = status_soli.sol_id
+        INNER JOIN almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras
+		WHERE soli_car.emp_SC = (
+			SELECT Num_Emp 
+			FROM usuario 
+			WHERE Usuario = USR
+		);
+        
+    COMMIT;
+END |
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE showMob(
+    IN usu varchar(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    
+    -- Iniciar la transacción
+    START TRANSACTION;
+	
+		SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
+
+    -- Confirmar los cambios
+    COMMIT;
+END //
+DELIMITER ;
+
+drop procedure if exists ConfirmPet;
+DELIMITER //
+CREATE PROCEDURE ConfirmPet(
+	IN usu varchar(45),
+    IN CBP varchar(45),
+    IN FECHA DATETIME)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    
+    -- Iniciar la transacción
+    START TRANSACTION;
+	
+		IF EXISTS (SELECT 1 FROM status_soli WHERE sol_id = (SELECT sol_id FROM soli_car WHERE
+			Cod_Barras_SC = CBP and emp_SC = (SELECT Num_emp FROM Usuario WHERE usuario = usu) and
+            request_date = FECHA)) THEN
+				UPDATE status_soli SET delivered_soli = 1 WHERE sol_id = (SELECT sol_id FROM soli_car WHERE
+				Cod_Barras_SC = CBP and emp_SC = (SELECT Num_emp FROM Usuario WHERE usuario = usu) and
+				request_date = FECHA
+				);
+                SELECT 'Success' AS status, 'Operación exitosa' AS message;
+		ELSE
+			SELECT 'Empty' as status, 'Aún no han aceptado tu petición, para más información consulta a dirección' AS message;
+		END IF;
+    -- Confirmar los cambios
+    COMMIT;
+END //
+DELIMITER ;
+select*from soli_Car;
+select*from status_soli;

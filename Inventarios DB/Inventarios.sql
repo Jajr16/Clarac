@@ -1066,7 +1066,6 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS AgregarUEMob;
 DELIMITER //
-
 CREATE PROCEDURE AgregarUEMob(
 	IN arti varchar(100),
     IN descrip varchar(400),
@@ -1105,12 +1104,33 @@ BEGIN
     -- Confirmar si la inserción fue exitosa
     SELECT 'Success' AS status;
 END //
-
 DELIMITER ;
-CALL AgregarPermisos('1', 'ajimenez', 'EMPLEADOS');
-
 CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', 'JIMENEZ RIVERA ARMANDO','Si', 1);
-delete from mobiliario;
 
+DELIMITER //
+CREATE PROCEDURE showMob(
+    IN usu varchar(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    
+    -- Iniciar la transacción
+    START TRANSACTION;
+	
+		SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
+
+    -- Confirmar los cambios
+    COMMIT;
+
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
+END //
+DELIMITER ;
+
+SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
 SELECT*FROM mobiliario;
 select*from equipo;

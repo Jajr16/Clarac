@@ -18,13 +18,13 @@ function Login(req, callback) {
                 }
 
                 if (res.length > 0) {
-                    db.query("select Área from empleado where Num_emp = ?", [result[0].Num_Emp], function (err, area) {
+                    db.query("select Área, Nom from empleado where Num_emp = ?", [result[0].Num_Emp], function (err, res1) {
                         if (err) {
                             Errores(err);
                             return callback(err);
                         }
 
-                        if (area.length > 0) {
+                        if (res1.length > 0) {
                             let permisosModulos = {};
                             res.forEach(row => {
                                 if (!permisosModulos[row.modulo]) {
@@ -33,7 +33,7 @@ function Login(req, callback) {
                                 permisosModulos[row.modulo].push(row.permiso);
                             });
                             console.log('ASdASD')
-                            return callback(null, { type: 'success', Usuario: result[0].Usuario, permisosModulos, area: area[0].Área });
+                            return callback(null, { type: 'success', Usuario: result[0].Usuario, permisosModulos, area: res1[0].Área, empleado: res1.Nom });
                         } else {
                             return callback(null, { type: 'logInError', message: 'No se encontró el área del empleado.' });
                         }

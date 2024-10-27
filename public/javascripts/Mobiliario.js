@@ -1,11 +1,22 @@
 var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var pathname = window.location.pathname;
 var user = localStorage.getItem('user');
+var nom = localStorage.getItem('nombre')
 
 if (!Permisos['MOBILIARIO']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3') || Permisos['MOBILIARIO'].includes('5'))) {
+
+        function identificate(name) {
+            let nombre = ''
+            if (nom == name) {
+                nombre = user;
+            } else {
+                nombre = name
+            }
+            return nombre
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.querySelector('.fileInput');
@@ -65,7 +76,7 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('descripcion', descripcion);
                 formData.append('Cantidad', cantidad);
                 formData.append('Ubicacion', ubicacion);
-                
+
 
                 // Verificamos si el permiso es '5'
                 if (Permisos['MOBILIARIO'].includes('5')) {
@@ -235,7 +246,7 @@ if (!Permisos['MOBILIARIO']) {
             const formData = new FormData();
             formData.append('Narticulo', document.querySelector('.Fname').value)
             formData.append('Ndescripcion', document.querySelector('.DescM').value)
-            formData.append('user', user);
+            formData.append('user', identificate(item.Nombre)) // AQUÍ SE DEBE DE JALAR EL SELECT EN CASO DE QUE TENGA EL PERMISO O MANDAR EL USUARIO
             formData.append('cantidad', document.querySelector('.CantidadM').value);
             formData.append('ubicacion', document.querySelector('.UbiM').value);
             formData.append('articulo', oldName);
@@ -307,7 +318,8 @@ if (!Permisos['MOBILIARIO']) {
             var formData = new FormData()
             formData.append('articulo', nombre_Articulo)
             formData.append('descripcion', desc_Articulo)
-            formData.append('user', user)
+            
+            formData.append('user', identificate(item.Nombre)) // AQUÍ SE DEBE DE JALAR EL SELECT EN CASO DE QUE TENGA EL PERMISO O MANDAR EL USUARIO
 
             if (nombre_Articulo !== '' && desc_Articulo !== '') {
                 fetch('/mobiliario/delMob', {
@@ -383,7 +395,8 @@ if (!Permisos['MOBILIARIO']) {
                             const formData = new FormData();
                             formData.append('articulo', item.Articulo)
                             formData.append('descripcion', item.Descripcion)
-                            formData.append('user', user);
+
+                            formData.append('user', identificate(item.Nombre))
 
                             fetch('/mobiliario/users/disp_image', {
                                 method: 'POST',
@@ -412,7 +425,8 @@ if (!Permisos['MOBILIARIO']) {
                         const formData = new FormData();
                         formData.append('articulo', item.Articulo)
                         formData.append('descripcion', item.Descripcion)
-                        formData.append('user', user);
+
+                        formData.append('user', identificate(item.Nombre))
 
                         fetch('/mobiliario/users/disp_image', {
                             method: 'POST',

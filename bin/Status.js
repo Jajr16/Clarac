@@ -1,4 +1,3 @@
-
 const db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
 const Errores = require('./Error');
 var success = require('./success')

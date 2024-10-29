@@ -99,10 +99,24 @@ function modPermisos(req, callback) {
     });
 }
 
-// Función para obtener empleados de la base de datos
-function obtenerRegistros(callback) {
-    const query = 'SELECT Nom FROM empleado';
+function obtenerRegistrosUsuarios(callback) {
+    const query = `
+        SELECT empleado.Nom AS nombre, COALESCE(usuario.usuario, '-') AS usuario
+        FROM usuario
+        JOIN empleado ON usuario.Num_emp = empleado.Num_emp
+    `;
+    db.query(query, (error, results) => {
+        if (error) {
+            return callback(error, null);
+        }
+        // console.log("Resultados de la consulta:", results);
+        callback(null, results);
+    });
     
+}
+
+function obtenerRegistrosEmpleados(callback) {
+    const query = `SELECT Nom AS nombre, Área as area FROM empleado`;
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
@@ -117,5 +131,6 @@ module.exports = {
     addEmpleado: modEmpleado,
     addUsuario: modUsuario,
     addPermisos: modPermisos,
-    obtenerEmpleados: obtenerRegistros
+    obtenerRegistrosUsuarios: obtenerRegistrosUsuarios,
+    obtenerRegistrosEmpleados: obtenerRegistrosEmpleados
 };

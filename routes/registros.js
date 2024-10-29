@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig'); 
 const isAuthenticated = require('../middleware/authMiddleware')
-const { addEmpleado, addUsuario, addPermisos, obtenerEmpleados } = require('../bin/AddRegistros');
+const { addEmpleado, addUsuario, addPermisos, obtenerRegistrosUsuarios, obtenerRegistrosEmpleados } = require('../bin/ModRegistros');
 
 const prodExistConsul = require('../bin/Prod_exist_consul');
 const prodExistAdd = require('../bin/AddProd_exist');
@@ -87,6 +87,40 @@ router.get('/getEmpleados', (req, res) => {
     });
 });
 
+// Endpoint que utiliza la función para obtener empleados
+router.get('/getRegistrosUsuarios', (req, res) => {
+    obtenerRegistrosUsuarios((err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
 
+        // Convertir RowDataPacket a un array simple de objetos JSON
+        const empleados = result.map(row => ({
+            nombre: row.nombre, 
+            usuario: row.usuario || '-' 
+        }));
+
+        // console.log("Usuarios enviados al frontend:", empleados); 
+        res.json(empleados); 
+    });
+});
+
+// Endpoint que utiliza la función para obtener empleados
+router.get('/getRegistrosEmpleados', (req, res) => {
+    obtenerRegistrosEmpleados((err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
+
+        // Convertir RowDataPacket a un array simple de objetos JSON
+        const empleados = result.map(row => ({
+            nombre: row.nombre, 
+            area: row.area
+        }));
+
+        console.log("Empleados enviados al frontend:", empleados); 
+        res.json(empleados); 
+    });
+});
 
 module.exports = router;

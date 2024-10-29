@@ -7,28 +7,20 @@ function clearContent() {
     const headers = document.getElementById('table-headers');
     const table = document.querySelector(".data-prod");
 
-    // Limpiar las columnas y el contenido de la tabla
     headers.innerHTML = '';
     tbody.innerHTML = '';
-
-    // Ocultar la tabla
     table.style.visibility = "hidden";
-
-    // Opcional: Limpiar cualquier otro formulario o componente que sea necesario
-    //$('.description-product .DP').remove(); // Si hay elementos adicionales creados dinámicamente
 }
-
 
 $(document).off('click', '.meter').on('click', '.meter', function(e) {
     clearContent();
-    setupEmployeeTable();
+    obtenerRegistrosEmpleados();
 });
 
 $(document).off('click', '.sacar').on('click', '.sacar', function(e) {
     clearContent();
-    setupUserTable();
+    obtenerRegistrosUsuarios();
 });
-
 
 // Función para mostrar la tabla
 function showTable() {
@@ -36,148 +28,228 @@ function showTable() {
     table.style.visibility = "visible"; // Hacer visible la tabla
 }
 
-// Función para agregar las columnas de Modificar Empleado (1, 2, 3)
-function setupEmployeeTable() {
-    const headers = document.getElementById('table-headers');
-    const tbody = document.querySelector(".data-prod tbody");
-
-    // Limpiar las columnas y el contenido anterior
-    headers.innerHTML = '';
-    tbody.innerHTML = '';
-
-    // Agregar las columnas 1, 2, 3
-    headers.innerHTML = `
-        <th>Nombre Empleado</th>
-        <th>Área</th>
-        <th>Jefe</th>
-    `;
-
-    // Agregar filas de ejemplo
-    let exampleData = [
-        { col1: "Dato 1", col2: "Dato 2", col3: "Dato 3" },
-        { col1: "Dato A", col2: "Dato B", col3: "Dato C" }
-    ];
-
-    // Llenar la tabla con datos de ejemplo
-    exampleData.forEach(item => {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.col1}</td>
-            <td>${item.col2}</td>
-            <td>${item.col3}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-
-    showTable(); // Mostrar la tabla
-}
-
-// Función para agregar las columnas de Modificar Usuarios (puede ser diferente)
-function setupUserTable() {
-    const headers = document.getElementById('table-headers');
-    const tbody = document.querySelector(".data-prod tbody");
-
-    // Limpiar las columnas y el contenido anterior
-    headers.innerHTML = '';
-    tbody.innerHTML = '';
-
-    // Agregar otras columnas si es necesario (ejemplo: A, B, C)
-    headers.innerHTML = `
-        <th>Nombre Empleado</th>
-        <th>Usuario</th>
-    `;
-
-    // Agregar filas de ejemplo
-    let exampleData = [
-        { colA: "Usuario 1", colB: "Usuario 2" },
-        { colA: "Admin A", colB: "Admin B"}
-    ];
-
-    // Llenar la tabla con datos de ejemplo
-    exampleData.forEach(item => {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.colA}</td>
-            <td>${item.colB}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-
-    showTable(); // Mostrar la tabla
-}
-
-
 if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
     location.href = "index";
 } else {
     if (pathname == "/users/modReg" && (Permisos['EMPLEADOS'].includes('3'))){
 
-        function sacarPE(e) {
+        function modify(oldNum_Serie, e) {
+
             e.preventDefault()
+            const updatedData = {
 
-            let productos = obtenerP()
-            let encargado = $('.Employees').val()
+                Num_Serie: document.querySelector('.NumSerieE').value,
+                Equipo: document.querySelector('.Ename').value,
+                Marca: document.querySelector('.MarcaE').value,
+                Modelo: document.querySelector('.ModeloE').value,
+                Ubi: document.querySelector('.UbiE').value,
+                dataOldNS: oldNum_Serie,
+                User: user
 
-            if (productos.length > 0) {
-                fetch('/prod_exts/extract', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ encargado, productos })
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type == "Success") {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
+            };
+
+            if (Asignacion && Asignacion.val().trim() !== '') {
+                updatedData.Num_Serie_CPU = Asignacion.val()
             }
 
-        }
-
-        function agregarPE(e) {
-            e.preventDefault()
-
-            let factura = $('.NumFactPE').val()
-            let Dfactura = $('.FecFact').val()
-            let Proveedor = $('.ProveedorPE').val()
-
-            let productos = obtenerP()
-
-            if (productos.length > 0) {
-                fetch('/prod_exts/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ factura, Dfactura, Proveedor, productos })
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type == "success") {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlertReload(data.message, '/users/productos_exist')
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
-            } else {
-                showErrorAlert('No hay productos para enviar.');
+            if (Hardware && Hardware.val().trim() !== '') {
+                updatedData.Hardware = Hardware.val()
             }
 
+            if (Software && Software.val().trim() !== '') {
+                updatedData.Software = Software.val()
+            }
 
+            if (Mouse && Mouse.val().trim() !== '') {
+                updatedData.Mouse = Mouse.val()
+            }
+
+            if (Teclado && Teclado.val().trim() !== '') {
+                updatedData.Teclado = Teclado.val()
+            }
+
+            if (Accesorio && Accesorio.val().trim() !== '') {
+                updatedData.Accesorio = Accesorio.val()
+            }
+
+            if (Asignacion.val() !== '' || Asignacion.val() !== null || Asignacion.val() || undefined) {
+                updatedData.Num_Serie_CPU = Asignacion.val()
+            }
+
+            fetch('/equipo/mod_eqp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.type === 'RespDelEqp') {
+                        showSuccessAlertReload(data.message)
+                    } else {
+                        showErrorAlert(data.message)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
         }
+
+        // FUNCIONALIDAD PÁGINA
+        const edit = $('.edit');
+
+        edit.click(function (e) {
+
+            var Num_Serie = $('.NumSerieE').val();
+
+            var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
+            var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
+
+            editsFunctions(modify, cancel)
+        });
+
+        fetch('/equipo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: user })
+        }).then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector(".data-eqp tbody");
+                const selEqp = $('.Eqp')
+
+                if (data.length <= 0) {
+                    empty_table()
+                }
+
+                data.forEach(item => {
+                    selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
+
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td>${item.Num_Serie}</td>
+                    <td>${item.Equipo}</td>
+                    `;
+
+                    selEqp.change(function () {
+                        if ($(this).val() === item.Num_Serie) {
+                            iconsLogic()
+                            $('.NumSerieE').val(item.Num_Serie);
+                            $('.Ename').val(item.Equipo);
+                            $('.MarcaE').val(item.Marca);
+                            $('.ModeloE').val(item.Modelo);
+                            $('.UbiE').val(item.Ubi);
+                            $('.AsignCPU').val('')
+                            $('.Hardware').val('')
+                            $('.Software').val('')
+                            $('.Mouse').val('')
+                            $('.Teclado').val('')
+                            $('.Accesorio').val('')
+
+                            if (item.Num_Serie_CPU) {
+                                $('.AsignCPU').val(item.Num_Serie_CPU)
+                            }
+
+                            if (item.Hardware) {
+                                $('.Hardware').val(item.Hardware)
+                            }
+
+                            if (item.Software) {
+                                $('.Software').val(item.Software)
+                            }
+
+                            if (item.Mouse) {
+                                $('.Mouse').val(item.Mouse)
+                            }
+
+                            if (item.Teclado) {
+                                $('.Teclado').val(item.Teclado)
+                            }
+
+                            if (item.Accesorio) {
+                                $('.Accesorio').val(item.Accesorio)
+                            }
+
+                            if (item.Equipo === 'CPU') {
+                                Components.slideDown()
+                            } else {
+                                Components.slideUp()
+                            }
+
+                            if (item.Equipo === 'MONITOR') {
+                                div_Asignacion.slideDown()
+                            } else {
+                                div_Asignacion.slideUp()
+                            }
+                        }
+                    })
+
+                    tr.addEventListener('click', () => {
+
+                        $('.NumSerieE').val(item.Num_Serie);
+                        $('.Ename').val(item.Equipo);
+                        $('.MarcaE').val(item.Marca);
+                        $('.ModeloE').val(item.Modelo);
+                        $('.UbiE').val(item.Ubi);
+                        $('.AsignCPU').val('')
+                        $('.Hardware').val('')
+                        $('.Software').val('')
+                        $('.Mouse').val('')
+                        $('.Teclado').val('')
+                        $('.Accesorio').val('')
+
+                        iconsLogic()
+
+                        if (item.Num_Serie_CPU) {
+                            $('.AsignCPU').val(item.Num_Serie_CPU)
+                        }
+
+                        if (item.Hardware) {
+                            $('.Hardware').val(item.Hardware)
+                        }
+
+                        if (item.Software) {
+                            $('.Software').val(item.Software)
+                        }
+
+                        if (item.Mouse) {
+                            $('.Mouse').val(item.Mouse)
+                        }
+
+                        if (item.Teclado) {
+                            $('.Teclado').val(item.Teclado)
+                        }
+
+                        if (item.Accesorio) {
+                            $('.Accesorio').val(item.Accesorio)
+                        }
+
+                        if (item.Equipo === 'CPU') {
+                            Components.slideDown()
+                        } else {
+                            Components.slideUp()
+                        }
+
+                        if (item.Equipo === 'MONITOR') {
+                            div_Asignacion.slideDown()
+                        } else {
+                            div_Asignacion.slideUp()
+                        }
+                    });
+
+                    tbody.appendChild(tr);
+                });
+                sselect()
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+            });
 
         function cancel() {
-            clearContent();
+            // clearContent();
         
             // Restaurar el contenido inicial de los botones
             $('.description-product').html(`
@@ -190,7 +262,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     </center>
                 </div>
             `);
-        
+            obtenerRegistrosUsuarios();
             // Volver a configurar los eventos para los botones
             CRUDButtons();
         }
@@ -268,54 +340,85 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 });
             });
         }
+        // Función para obtener los datos de los usuarios y mostrarlos en la tabla
+        function obtenerRegistrosUsuarios() {
+            fetch('/registro/getRegistrosUsuarios')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector(".data-prod tbody");
+                    const headers = document.getElementById('table-headers');
         
-        // Inicializar los eventos de los botones al cargar la página
-        window.addEventListener('load', function (event) {
-            sselect(); // Si esta función es necesaria para la selección
-            CRUDButtons(); // Asignar los eventos al cargar la página
-        });
+                    // Limpiar cualquier contenido existente
+                    headers.innerHTML = '';
+                    tbody.innerHTML = '';
         
-
-
-        // Consulta de productos
-        fetch('/prod_exts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.json())
-            .then(data => {
-                const tbody = document.querySelector(".data-prod tbody");
-
-                data.forEach(item => {
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                    <td>${item.Cod_Barras}</td>
-                    <td>${item.Articulo}</td>
-                        <td>${item.Existencia}</td>`;
-
-                    tr.addEventListener('click', () => {
-                        const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
-
-                        if ($(selector).length === 0) {
-                            $(`
-                                <div class="DP prod-count">
-                                <label article="${item.Cod_Barras}">${item.Articulo}</label>
-                                <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidaDFE" name="CantidaDFE" class="CantidaDFE" required min="0">
-                                </div>
-                                `).insertBefore('.buttons');
-                        } else {
-                            $(selector).closest('.prod-count').remove();
-                        }
+                    // Configurar los encabezados de la tabla solo para Nombre y Usuario
+                    headers.innerHTML = `
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                    `;
+        
+                    // Llenar la tabla con los datos obtenidos
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${item.nombre || 'N/A'}</td>
+                            <td>${item.usuario}</td>
+                        `;
+                        tbody.appendChild(tr);
                     });
-
-                    tbody.appendChild(tr);
+        
+                    // Mostrar la tabla
+                    showTable();
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                    document.getElementById('errorMessage').innerText = 'Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.';
                 });
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-            });
+        }
+        
+        function obtenerRegistrosEmpleados() {
+            fetch('/registro/getRegistrosEmpleados')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector(".data-prod tbody");
+                    const headers = document.getElementById('table-headers');
+        
+                    // Limpiar cualquier contenido existente
+                    headers.innerHTML = '';
+                    tbody.innerHTML = '';
+        
+                    // Configurar los encabezados de la tabla solo para Nombre y Usuario
+                    headers.innerHTML = `
+                        <th>Nombre</th>
+                        <th>Área</th>
+                    `;
+        
+                    // Llenar la tabla con los datos obtenidos
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${item.nombre || 'N/A'}</td>
+                            <td>${item.area}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+        
+                    // Mostrar la tabla
+                    showTable();
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                    document.getElementById('errorMessage').innerText = 'Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.';
+                });
+        }
+
+        // Llamar a la función para mostrar los datos de los usuarios al cargar la página
+        window.addEventListener('load', obtenerRegistrosUsuarios);
+        window.addEventListener('load', function (event) {
+            sselect(); 
+            CRUDButtons(); 
+        });
 
     }
 }   

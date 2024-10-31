@@ -1,23 +1,23 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btn-logout').addEventListener('click', function (e) {
         e.preventDefault();
-    
+
         fetch('/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '/';
-            } else {
-                alert('Error al cerrar sesión. Por favor, inténtelo de nuevo.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    alert('Error al cerrar sesión. Por favor, inténtelo de nuevo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
 })
 
@@ -140,8 +140,20 @@ function dissapear() {
 }
 
 function empty_table() {
-    $('.info-table tbody').append($('<tr><td colspan="2"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
+    const tbody = $('.info-table tbody');
+
+    // Verificar si la tabla está vacía (sin filas en el tbody)
+    if (tbody.children('tr').length === 0) {
+        tbody.append(`
+            <tr>
+                <td colspan="2">
+                    <center><h3>En este momento no hay nada agregado.</h3></center>
+                </td>
+            </tr>
+        `);
+    }
 }
+
 
 function sselect() {
     let searchs = $('.searchInput').toArray()
@@ -197,7 +209,7 @@ function checkEmptyFields(data) {
     return true;
 }
 
-function addBody(Text, e){
+function addBody(Text, e) {
     e.preventDefault()
     $('.description-product').html(Text)
 }
@@ -219,7 +231,7 @@ function colortable() {
     });
 }
 
-function obtenerP () {
+function obtenerP() {
     let productos = []
 
     $('.description-product .prod-count').each(
@@ -238,4 +250,39 @@ function obtenerP () {
         }
     )
     return productos
+}
+
+function buscarTable() {
+
+    var filtro = $("#buscar").val().toUpperCase();
+
+    $(".info-table td").each(function () {
+        var textoEnTd = $(this).text().toUpperCase();
+        if (textoEnTd.indexOf(filtro) >= 0) {
+            $(this).addClass("existe");
+        } else {
+            $(this).removeClass("existe");
+        }
+    })
+
+    $(".info-table tbody tr").each(function () {
+        if ($(this).children(".existe").length > 0) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    })
+}
+
+function normalizeDate(dateNN) {
+    let date = new Date(dateNN);
+
+    let formattedDate = date.getFullYear() + "-" +
+        String(date.getMonth() + 1).padStart(2, '0') + "-" +
+        String(date.getDate()).padStart(2, '0') + " " +
+        String(date.getHours()).padStart(2, '0') + ":" +
+        String(date.getMinutes()).padStart(2, '0') + ":" +
+        String(date.getSeconds()).padStart(2, '0');
+
+    return formattedDate
 }

@@ -403,6 +403,7 @@ CREATE TABLE soli_car (
     emp_SC int,
     request_date datetime,
     cerrada BOOLEAN DEFAULT 0, -- Si la solicitud ya fue cerrada
+    cerrada BOOLEAN DEFAULT 0, -- Si la solicitud ya fue cerrada
     foreign key (Cod_Barras_SC) references almacen(Cod_Barras)
     on update cascade on delete cascade,
     foreign key (emp_SC) references usuario(Num_Emp)
@@ -412,6 +413,9 @@ CREATE TABLE soli_car (
 drop table if exists status_soli;
 CREATE TABLE status_soli(
 	sol_id int not null,
+    delivered_ware tinyint(1) DEFAULT 0,
+    sended tinyint(1) DEFAULT 0,
+    delivered_soli tinyint(1) DEFAULT 0,
     delivered_ware tinyint(1) DEFAULT 0,
     sended tinyint(1) DEFAULT 0,
     delivered_soli tinyint(1) DEFAULT 0,
@@ -597,6 +601,7 @@ CREATE TABLE soli_com (
     Acept BOOLEAN, -- Si la solicitud fue aceptada o no
     recibida tinyint(1), -- Si ya se recibió el pedido
     almacenada tinyint(1) -- Si el pedido ya fue almacenado
+    almacenada tinyint(1) -- Si el pedido ya fue almacenado
 );
 
 -- Modify table soli_com
@@ -744,6 +749,8 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 
+    INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario
+    WHERE Usuario = USR), NOW(), 0);
     INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario
     WHERE Usuario = USR), NOW(), 0);
 
@@ -945,8 +952,41 @@ BEGIN
 				ELSE 'Abierta'
 			END AS cerrada
 
+			soli_car.Cod_Barras_SC AS CBSC,
+			almacen.Articulo AS artic,
+			soli_car.cantidad_SC AS Cant,
+			soli_car.request_date AS fecha,
+			
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.delivered_ware IS NULL THEN 'En espera de confirmación'
+				WHEN status_soli.delivered_ware = 1 THEN 'Entregado'
+				ELSE 'Pendiente'
+			END AS delivered_ware,
+
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.delivered_soli IS NULL THEN 'En espera de confirmación'
+				WHEN status_soli.delivered_soli = 1 THEN 'Recibido'
+				ELSE 'Pendiente'
+			END AS delivered_soli,
+
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.sended IS NULL THEN 'En espera de confirmación'
+				WHEN status_soli.sended = 1 THEN 'Enviado'
+				ELSE 'No enviado'
+			END AS sended,
+
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.sol_id IS NULL THEN 'En espera de confirmación'
+				ELSE 'Abierta'
+			END AS cerrada
+
 		FROM soli_car
 		LEFT JOIN status_soli ON soli_car.sol_id = status_soli.sol_id
+		INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
 		INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
 		WHERE soli_car.emp_SC = (
 			SELECT Num_Emp 
@@ -955,10 +995,13 @@ BEGIN
 		);
 
 
+
+
         
     COMMIT;
 END |
 DELIMITER ;
+
 
 
 DELIMITER //
@@ -1014,6 +1057,86 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ;
+
+drop procedure if exists consulPetDir;
+DELIMITER //
+CREATE PROCEDURE consulPetDir(
+	IN usu varchar(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    -- Iniciar la transacción
+    START TRANSACTION;
+    
+    IF 'DIRECCION GENERAL' = (SELECT Área FROM empleado WHERE Num_emp = (SELECT Num_Emp FROM Usuario
+    WHERE Usuario = usu)) THEN
+		SELECT soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, empleado.Nom, 
+        soli_car.request_date FROM soli_car 
+        INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+        INNER JOIN empleado ON empleado.Num_emp = soli_car.emp_SC 
+        LEFT JOIN status_soli ON soli_car.sol_id = status_soli.sol_id WHERE status_soli.sol_id IS NULL
+        AND soli_car.cerrada = 0;
+        
+    END IF;
+		
+    -- Confirmar los cambios
+    COMMIT;
+END //
+DELIMITER ;
+
+drop procedure if exists ConfirmPetDir;
+DELIMITER //
+CREATE PROCEDURE ConfirmPetDir(
+    IN CBD VARCHAR(45),
+    IN EMP VARCHAR(45),
+    IN FPS DATETIME,
+    IN OP TINYINT(1)
+)
+BEGIN
+    DECLARE solID INT DEFAULT NULL;
+    DECLARE empID INT DEFAULT NULL;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    -- Verificar si el empleado existe y asignar empID
+    SET empID = (SELECT Num_emp FROM empleado WHERE Nom = EMP);
+    -- Comprobar si empID es NULL-- Esto mostrará el valor de empID para depuración
+    IF empID IS NULL THEN
+        -- Si empID es NULL, cancelar la operación y regresar un mensaje claro
+        SELECT 'Error: Empleado no encontrado' AS status;
+        ROLLBACK;
+    END IF;
+
+    -- Verificar si el producto existe en soli_car y asignar solID
+    SET solID = (SELECT sol_id FROM soli_car WHERE Cod_Barras_SC = CBD AND emp_SC = empID 
+    AND request_date = FPS);
+    -- Comprobar si solID es NULL
+    IF solID IS NULL THEN
+        -- Si solID es NULL, cancelar la operación y regresar un mensaje claro
+        SELECT 'Error: Solicitud no encontrada' AS status;
+        ROLLBACK;
+    END IF;
+
+    -- Proceder con la operación solicitada
+    IF OP = 1 THEN
+        INSERT INTO status_soli (sol_id) VALUES (solID);
+    ELSE 
+        UPDATE soli_car SET cerrada = 1 WHERE sol_id = solID;
+    END IF;
+
+    -- Confirmar los cambios si no hay errores
+    COMMIT;
+
+    -- Devolver el estado de éxito solo si la transacción fue exitosa
+    SELECT 'Success' AS status, 'Operación exitosa' AS message;
+END //
+DELIMITER ;
+
 
 drop procedure if exists consulPetDir;
 DELIMITER //

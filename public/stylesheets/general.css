@@ -401,7 +401,8 @@ input[type="submit"]:hover {
     width: 100%;
     height: 100%;
 }
-.two-boxes-registro  .FTB {
+
+.two-boxes-registro .FTB {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -419,8 +420,10 @@ input[type="submit"]:hover {
 
 
 .two-boxes-registro .FTB i {
-    margin-bottom: 10px; /* Espacio entre ícono y texto */
-    font-size: 24px; /* Ajuste del tamaño del ícono */
+    margin-bottom: 10px;
+    /* Espacio entre ícono y texto */
+    font-size: 24px;
+    /* Ajuste del tamaño del ícono */
 }
 
 .item1 {
@@ -429,6 +432,7 @@ input[type="submit"]:hover {
 }
 
 .item2 {
+    height: 100%;
     flex: 1 1 45%;
 }
 
@@ -471,6 +475,10 @@ input[type="submit"]:hover {
     background-color: rgb(134, 0, 0) !important;
 }
 
+.Deny {
+    background-color: rgb(199, 0, 0) !important;
+}
+
 .excel-icon {
     position: absolute;
     margin-top: 1rem;
@@ -500,4 +508,37 @@ input[type="submit"]:hover {
     align-items: center;
     width: auto;
     margin-right: 1rem;
+}
+
+.buscar {
+    width: 99% !important;
+}
+
+.separador {
+    border: solid 1px black;
+}
+
+.data-sol span {
+    margin-right: 0.5rem;
+}
+
+.data-sol b {
+    margin-right: 0.2rem;
+}
+
+.One-item-dir {
+    display: flex;
+    margin-top: 1.5rem;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.child-item-dir {
+    padding: 2.5rem 2rem;
+    width: 65%;
+}
+
+.one-button {
+    justify-content: center!important;
 }

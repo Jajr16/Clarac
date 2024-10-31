@@ -56,6 +56,11 @@
     margin-right: 1rem;
 } */
 
+.hidden-column {
+    display: none;
+}
+
+
 .DP label {
     display: flex;
     width: 12rem;

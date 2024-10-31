@@ -106,7 +106,7 @@ function obtenerEmpleados(callback) {
         if (error) {
             return callback(error, null);
         }
-        console.log("Resultados de la consulta:", results);
+        // console.log("Resultados de la consulta:", results);
         callback(null, results);
     });
     

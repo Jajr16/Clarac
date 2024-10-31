@@ -101,10 +101,24 @@ function modPermisos(req, callback) {
 
 function obtenerRegistrosUsuarios(callback) {
     const query = `
-        SELECT empleado.Nom AS nombre, COALESCE(usuario.usuario, '-') AS usuario
+        SELECT usuario.Num_emp AS numemp, 
+               empleado.Nom AS nombre, 
+               COALESCE(usuario.usuario, '-') AS usuario, 
+               usuario.Pass AS password
         FROM usuario
         JOIN empleado ON usuario.Num_emp = empleado.Num_emp
     `;
+    db.query(query, (error, results) => {
+        if (error) {
+            return callback(error, null);
+        }
+        console.log("Resultados de la consulta:", results); // Asegúrate de que `num_emp` esté aquí
+        callback(null, results);
+    });
+}
+
+function obtenerRegistrosEmpleados(callback) {
+    const query = `SELECT Num_emp as numemp, Nom AS nombre, Área as area FROM empleado`;
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
@@ -115,16 +129,63 @@ function obtenerRegistrosUsuarios(callback) {
     
 }
 
-function obtenerRegistrosEmpleados(callback) {
-    const query = `SELECT Nom AS nombre, Área as area FROM empleado`;
+function obtenerEmpleados(callback) {
+    const query = 'SELECT Nom FROM empleado';
+    
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
         }
-        console.log("Resultados de la consulta:", results);
+        // console.log("Resultados de la consulta:", results);
         callback(null, results);
     });
     
+}
+
+function modifyRegUsu(req, res) {
+    const data = req.body;
+
+    db.query(`CALL ActualizarRegUsu(?, ?, ?)`, [data.Num_emp, data.Usuario, data.Password], function (err, result) {
+        if (err) {
+            console.error('Error en la consulta:', err);
+            return res.status(500).json({ message: 'Error al modificar el usuario', details: err });
+        }
+        
+        if (result && Array.isArray(result) && result[0].length > 0) {
+            const response = result[0][0];
+            
+            if (response.status === 'Success') {
+                return res.status(200).json({ type: 'RespDelEqp', message: 'Usuario modificado exitosamente.' });
+            } else {
+                return res.status(500).json({ type: 'error', message: 'Error en la modificación del usuario.' });
+            }
+        } else {
+            return res.status(404).json({ message: 'No se encontró el usuario.' });
+        }
+    });
+}
+
+function modifyRegemp(req, res) {
+    const data = req.body;
+
+    db.query(`CALL ActualizarRegEmp(?, ?, ?)`, [data.Num_emp, data.Nombre, data.Area], function (err, result) {
+        if (err) {
+            console.error('Error en la consulta:', err);
+            return res.status(500).json({ message: 'Error al modificar el empleado', details: err });
+        }
+        
+        if (result && Array.isArray(result) && result[0].length > 0) {
+            const response = result[0][0];
+            
+            if (response.status === 'Success') {
+                return res.status(200).json({ type: 'RespDelEqp', message: 'Empleado modificado exitosamente.' });
+            } else {
+                return res.status(500).json({ type: 'error', message: 'Error en la modificación del empleado.' });
+            }
+        } else {
+            return res.status(404).json({ message: 'No se encontró el empleado.' });
+        }
+    });
 }
 
 module.exports = {
@@ -132,5 +193,9 @@ module.exports = {
     addUsuario: modUsuario,
     addPermisos: modPermisos,
     obtenerRegistrosUsuarios: obtenerRegistrosUsuarios,
-    obtenerRegistrosEmpleados: obtenerRegistrosEmpleados
+    obtenerRegistrosEmpleados: obtenerRegistrosEmpleados,
+    obtenerEmpleados: obtenerEmpleados,
+    modifyRegUsu: modifyRegUsu,
+    modifyRegemp: modifyRegemp
+
 };

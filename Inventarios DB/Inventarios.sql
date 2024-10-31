@@ -402,7 +402,7 @@ CREATE TABLE soli_car (
     cantidad_SC INT(10),
     emp_SC int,
     request_date datetime,
-    cerrada BOOLEAN, -- Si la solicitud ya fue cerrada
+    cerrada BOOLEAN DEFAULT 0, -- Si la solicitud ya fue cerrada
     foreign key (Cod_Barras_SC) references almacen(Cod_Barras)
     on update cascade on delete cascade,
     foreign key (emp_SC) references usuario(Num_Emp)
@@ -744,7 +744,8 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 
-    INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario WHERE Usuario = USR), NOW());
+    INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario
+    WHERE Usuario = USR), NOW(), 0);
 
     -- Confirmar los cambios
     COMMIT;

@@ -13,3 +13,5 @@ Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ConfirmPetDir does not exist 
 Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ConfirmPetDir does not exist | Error obtenido el -> 30/10/2024 18:22
 Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:22
 Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:44
+Error: Error al insertar el producto. null | Error obtenido el -> 30/10/2024 19:43
+Error: Error al insertar el producto. null | Error obtenido el -> 30/10/2024 19:43

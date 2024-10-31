@@ -403,7 +403,6 @@ CREATE TABLE soli_car (
     emp_SC int,
     request_date datetime,
     cerrada BOOLEAN DEFAULT 0, -- Si la solicitud ya fue cerrada
-    cerrada BOOLEAN DEFAULT 0, -- Si la solicitud ya fue cerrada
     foreign key (Cod_Barras_SC) references almacen(Cod_Barras)
     on update cascade on delete cascade,
     foreign key (emp_SC) references usuario(Num_Emp)

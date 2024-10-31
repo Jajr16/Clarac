@@ -252,7 +252,7 @@ function obtenerP() {
     return productos
 }
 
-function buscar() {
+function buscarTable() {
 
     var filtro = $("#buscar").val().toUpperCase();
 

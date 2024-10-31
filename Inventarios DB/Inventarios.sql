@@ -912,34 +912,48 @@ BEGIN
 	START TRANSACTION;
 		
 		SELECT 
-        soli_car.Cod_Barras_SC AS CBSC,
-        almacen.Articulo as artic,
-        soli_car.cantidad_SC AS Cant,
-        soli_car.request_date AS fecha,
-        CASE 
-            WHEN status_soli.delivered_ware = 1 THEN 'Entregado'
-            ELSE 'Pendiente'
-        END AS delivered_ware,
-        CASE 
-            WHEN status_soli.delivered_soli = 1 THEN 'Recibido'
-            ELSE 'Pendiente'
-        END AS delivered_soli,
-        CASE 
-            WHEN status_soli.sended = 1 THEN 'Enviado'
-            ELSE 'No enviado'
-        END AS sended,
-        CASE 
-            WHEN soli_car.cerrada = 1 THEN 'Cerrada'
-            ELSE 'Abierta'
-        END AS cerrada
+			soli_car.Cod_Barras_SC AS CBSC,
+			almacen.Articulo AS artic,
+			soli_car.cantidad_SC AS Cant,
+			soli_car.request_date AS fecha,
+			
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.delivered_ware IS NULL THEN 'En espera de confirmación'
+				WHEN status_soli.delivered_ware = 1 THEN 'Entregado'
+				ELSE 'Pendiente'
+			END AS delivered_ware,
+
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.delivered_soli IS NULL THEN 'En espera de confirmación'
+				WHEN status_soli.delivered_soli = 1 THEN 'Recibido'
+				ELSE 'Pendiente'
+			END AS delivered_soli,
+
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.sended IS NULL THEN 'En espera de confirmación'
+				WHEN status_soli.sended = 1 THEN 'Enviado'
+				ELSE 'No enviado'
+			END AS sended,
+
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
+				WHEN status_soli.sol_id IS NULL THEN 'En espera de confirmación'
+				ELSE 'Abierta'
+			END AS cerrada
+
 		FROM soli_car
 		LEFT JOIN status_soli ON soli_car.sol_id = status_soli.sol_id
-        INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+		INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
 		WHERE soli_car.emp_SC = (
 			SELECT Num_Emp 
 			FROM usuario 
 			WHERE Usuario = USR
 		);
+
+
         
     COMMIT;
 END |
@@ -1081,4 +1095,4 @@ DELIMITER ;
 
 select*from soli_Car;
 select*from status_soli;
-select*from usuario;
+select*from empleado;

@@ -64,7 +64,7 @@ if (area !== 'DIRECCION GENERAL') {
             `);
 
                 $('.description-product').html(`
-                <table class='info-table peti-acept'>
+                <table class='peti-acept'>
                     <thead>
                         <tr>
                             <th>Articulo</th>

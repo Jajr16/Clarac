@@ -13,3 +13,8 @@ main {
 .table-responsive-box {
     max-height: 12rem;
 }
+
+.globalColumn {
+    display: block;
+    margin: 1rem 4rem;
+}

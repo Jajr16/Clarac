@@ -30,7 +30,7 @@ if (area !== 'DIRECCION GENERAL') {
 
     function cancel(e) {
         e.preventDefault()
-        $('.Columns').remove()
+        $('.principalContent').remove()
         $(`
         <div class="two-boxes One-item-dir">
             <center>
@@ -49,44 +49,57 @@ if (area !== 'DIRECCION GENERAL') {
         document.querySelector('.boxes-containers').style.width = '50%'
     }
 
+    function enabledStructure() {
+        // ESTABLECER EL TAMAÑO DEL DIV DEL TÍTULO AL LARGO COMPLETO DEL DIV Y AJUSTAR EL ALTO DEL MISMO
+        document.body.style.height = 'auto'
+        document.querySelector('.boxes-containers').style.width = '90%'
+
+        // EMPEZAR CON LA INSERCIÓN DE TODAS LAS TABLAS, DIVS DE LAS ACCIONES DE LAS PETICIONES
+        $('.One-item-dir').remove() // Quitar los dos botones principales de la página
+
+        // Agregar el buscador de las tablas después del título del div principal
+        $(`
+        <div class="content-container">
+            <form name="crearRespon" id="crearRespon">
+                <div class="FTB">
+                    <input type="text" class="buscar" id="buscar" oninput="buscarTable(); mayus(this);"
+                        placeholder="BUSCAR EN TABLA" title="Empieza a escribir para buscar">
+                </div>
+            </form>
+        </div>    
+        `).insertAfter(`.title-container`)
+
+        $(`
+            <div class='one-button DP'>
+                <input type="submit" value="Cancelar" id="cancelEqp" class="Cancel" onclick="cancel(event)">
+            </div>
+        `).insertAfter('.principalContent')
+    }
+
+    // Función para agregarles eventos a los dos botones principales de la página
     function CRUDButtons() {
         $('.action-peti').click(e => {
-            // ESTABLECER EL TAMAÑO DEL DIV DEL TÍTULO AL LARGO COMPLETO DEL DIV Y AJUSTAR EL ALTO DEL MISMO
-            document.body.style.height = 'auto'
-            document.querySelector('.boxes-containers').style.width = '90%'
-            // EMPEZAR CON LA INSERCIÓN DE TODAS LAS TABLAS, DIVS DE LAS ACCIONES DE LAS PETICIONES
-            e.preventDefault()
-            $('.One-item-dir').remove()
+            e.preventDefault() // Evitar envío de formulario
+            /* Agregar toda la estructura principal para visualizar tanto la tabla de peticiones como la tabla que contendrá las peticiones 
+        a manipular.
+        Esto se insertará después del div del título */
             $(`
-            <div class="content-container">
-                <form name="crearRespon" id="crearRespon">
-                    <div class="FTB">
-                        <input type="text" class="buscar" id="buscar" oninput="buscarTable(); mayus(this);"
-                            placeholder="BUSCAR EN TABLA" title="Empieza a escribir para buscar">
-                    </div>
-                </form>
-            </div>    
-            `).insertAfter(`.title-container`)
-            $(`
-            <div class="Columns">
+            <div class="Columns principalContent">
                 <div class="table-responsive item1" style="flex: 1 1 45%;">
                 </div>
                 <div class="boxes-containers item2 data">
                     <div class="subtitle-container">
-                        ¿Qué deseas hacer?
+                        Gestión de solicitudes
                     </div>
-
+    
                     <form method="POST" enctype="multipart/form-data" style="height: 100%;" class="Peticiones">
                         <div class="description-product" style="height: 100%;">
                         </div>
                     </form>
                 </div>
-            </div>
-            <div class='one-button DP'>
-                <input type="submit" value="Cancelar" id="cancelEqp" class="Cancel" onclick="cancel(event)">
-            </div>
-            
+            </div>            
             `).insertAfter('.Fone-item')
+            enabledStructure()
 
             fetch('/pet/consulSol', {
                 method: 'POST',
@@ -248,6 +261,29 @@ if (area !== 'DIRECCION GENERAL') {
                     console.error('Error en la solicitud:', error);
                     document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                 });
+        })
+
+        $('.status').click(e => {
+            e.preventDefault()
+
+            $(`
+                <div class="globalColumn principalContent">
+                    <div class="table-responsive item1" style="justify-content: center; align-items: center;">
+                        <table class="data-prod info-table peti-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Solicitante</th>
+                                    <th>Fecha de solicitud</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>   
+                    </div>
+                </div>            
+                `).insertAfter('.Fone-item')
+            enabledStructure()
         })
     }
 

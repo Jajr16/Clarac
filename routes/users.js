@@ -47,4 +47,9 @@ router.get('/Peticiones', isAuthenticated, function (req, res, next) {
   res.render('peticiones', { title: 'Peticiones | CLARAC', layout: 'other_layout' });
 });
 
+// Consulta de Equipos
+router.get('/Solicitudes', isAuthenticated, function (req, res, next) {
+  res.render('solicitudes', { title: 'Solicitudes | CLARAC', layout: 'other_layout' });
+});
+
 module.exports = router;

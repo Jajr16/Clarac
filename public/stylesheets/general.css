@@ -429,6 +429,7 @@ input[type="submit"]:hover {
 }
 
 .item2 {
+    height: 100%;
     flex: 1 1 45%;
 }
 
@@ -471,6 +472,10 @@ input[type="submit"]:hover {
     background-color: rgb(134, 0, 0) !important;
 }
 
+.Deny {
+    background-color: rgb(199, 0, 0) !important;
+}
+
 .excel-icon {
     position: absolute;
     margin-top: 1rem;
@@ -500,4 +505,20 @@ input[type="submit"]:hover {
     align-items: center;
     width: auto;
     margin-right: 1rem;
+}
+
+.buscar {
+    width: 99%!important;
+}
+
+.separador {
+    border: solid 1px black;
+}
+
+.data-sol span {
+    margin-right: 0.5rem;
+}
+
+.data-sol b {
+    margin-right: 0.2rem;
 }

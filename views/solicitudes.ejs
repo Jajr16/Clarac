@@ -1,0 +1,31 @@
+<script type="text/javascript" src="/javascripts/solicitudes.js"></script>
+<div class="Fone-item">
+    <div class="boxes-containers one-item">
+        <div class="title-container">
+            Productos de almacén
+        </div>
+        <div class="content-container">
+            <form name="crearRespon" id="crearRespon">
+                <div class="FTB">
+                    <input type="text" class="buscar" id="buscar" oninput="buscar(); mayus(this);" placeholder="BUSCAR EN TABLA"
+                        title="Empieza a escribir para buscar">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="Columns">
+    <div class="table-responsive item1" style="flex: 1 1 45%;">
+    </div>
+    <div class="boxes-containers item2 data">
+        <div class="subtitle-container">
+            Peticiones a confirmar
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" style="height: 100%;" class="Peticiones">
+            <div class="description-product" style="height: 100%;"></div>
+        </form>
+    </div>
+</div>
+<link rel="stylesheet" type="text/css" href="/stylesheets/prod_exist.css">

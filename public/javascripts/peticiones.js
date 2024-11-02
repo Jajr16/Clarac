@@ -85,47 +85,53 @@ if (!Permisos['ALMACÉN']) {
                                     <td>${item.Cantidad}</td>
                                     <td>${item.Enviado}</td>
                                 `
+                                console.log(item.Enviado)
+                                if (item.Enviado !== 'Solicitud rechazada' &&
+                                    item.Enviado !== 'Artículo recibido, esperando confirmación del almacenista.' &&
+                                    item.Enviado !== 'Entrega completa.' && 
+                                    item.Enviado !== 'En espera de confirmación') {
 
-                                tr.addEventListener('click', () => {
-                                    Swal.fire({
-                                        title: '¿Ya recibiste este producto?',
-                                        text: 'Confirma la operación en caso de ya haber recibido el producto que pediste.',
-                                        icon: "warning",
-                                        cancelButtonText: "Cancelar",
-                                        confirmButtonText: `Si, ya recibí el artículo: ${item.Arti}`,
-                                        showCancelButton: true,
-                                        confirmButtonColor: "#001781",
-                                        cancelButtonColor: 'rgb(134, 0, 0)'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            fetch('/pet/Solicitante', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json'
-                                                },
-                                                body: JSON.stringify({ user, Cod_Barras: item.Cod_Barras, fecha: item.fecha })
-                                            })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.type == "success" || data.type == "Success") {
-                                                        showSuccessAlertReload(data.message)
-                                                    } else if (data.type == 'failed'){
-                                                        Swal.fire({
-                                                            icon: "error",
-                                                            title: 'Ups!!!.',
-                                                            text: data.message,
-                                                        });
-                                                    } else {
-                                                        showErrorAlert(data.message)
-                                                    }
+                                    tr.addEventListener('click', () => {
+                                        Swal.fire({
+                                            title: '¿Ya recibiste este producto?',
+                                            text: 'Confirma la operación en caso de ya haber recibido el producto que pediste.',
+                                            icon: "warning",
+                                            cancelButtonText: "Cancelar",
+                                            confirmButtonText: `Si, ya recibí el artículo: ${item.Arti}`,
+                                            showCancelButton: true,
+                                            confirmButtonColor: "#001781",
+                                            cancelButtonColor: 'rgb(134, 0, 0)'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                fetch('/pet/Solicitante', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ user, Cod_Barras: item.Cod_Barras, fecha: item.fecha })
                                                 })
-                                                .catch(error => {
-                                                    console.error('Error en la solicitud:', error);
-                                                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                                                });
-                                        }                                         
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.type == "success" || data.type == "Success") {
+                                                            showSuccessAlertReload(data.message)
+                                                        } else if (data.type == 'failed') {
+                                                            Swal.fire({
+                                                                icon: "error",
+                                                                title: 'Ups!!!.',
+                                                                text: data.message,
+                                                            });
+                                                        } else {
+                                                            showErrorAlert(data.message)
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error('Error en la solicitud:', error);
+                                                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                                                    });
+                                            }
+                                        })
                                     })
-                                })
+                                }
 
                                 tbody.appendChild(tr)
                             });

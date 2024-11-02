@@ -52,4 +52,9 @@ router.get('/Solicitudes', isAuthenticated, function (req, res, next) {
   res.render('solicitudes', { title: 'Solicitudes | CLARAC', layout: 'other_layout' });
 });
 
+// Consulta de Equipos
+router.get('/Petalm', isAuthenticated, function (req, res, next) {
+  res.render('almacenista', { title: 'Estatus de peticiones | CLARAC', layout: 'other_layout' });
+});
+
 module.exports = router;

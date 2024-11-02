@@ -542,3 +542,18 @@ input[type="submit"]:hover {
 .one-button {
     justify-content: center!important;
 }
+
+.globalColumn {
+    display: block;
+    margin: 1rem 4rem;
+}
+
+.status-peti {
+    justify-self: center;
+}
+
+.fa-clock-rotate-left {
+    top: 1.5rem;
+    right: 0.7rem;
+    position: absolute;
+}

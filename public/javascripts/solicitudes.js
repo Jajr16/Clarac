@@ -14,10 +14,10 @@ if (area !== 'DIRECCION GENERAL') {
         tbodyProd.querySelectorAll('tr').forEach(tr => {
             tr.addEventListener('click', () => {
                 const articleValue = tr.getAttribute('article'); // Asegúrate de que cada tr en la tabla tenga este atributo
-                console.log(articleValue)
+
                 // Verificar si hay un tr en peti-acept que tenga el mismo article
                 const matchingRow = [...tbodyAcept.querySelectorAll('tr')].find(row => row.getAttribute('article') === articleValue);
-                console.log(matchingRow)
+
                 // Cambiar el color de fondo en función de si se encontró o no un match
                 if (matchingRow) {
                     tr.style.backgroundColor = '#b0c9ff'; // Si hay coincidencia
@@ -60,12 +60,10 @@ if (area !== 'DIRECCION GENERAL') {
         // Agregar el buscador de las tablas después del título del div principal
         $(`
         <div class="content-container">
-            <form name="crearRespon" id="crearRespon">
-                <div class="FTB">
-                    <input type="text" class="buscar" id="buscar" oninput="buscarTable(); mayus(this);"
-                        placeholder="BUSCAR EN TABLA" title="Empieza a escribir para buscar">
-                </div>
-            </form>
+            <div class="FTB">
+                <input type="text" class="buscar" id="buscar" oninput="buscarTable(); mayus(this);"
+                    placeholder="BUSCAR EN TABLA" title="Empieza a escribir para buscar" autocomplete="off">
+            </div>
         </div>    
         `).insertAfter(`.title-container`)
 
@@ -169,7 +167,7 @@ if (area !== 'DIRECCION GENERAL') {
                                 } else {
                                     document.querySelector(trAceptSelector).remove();
                                 }
-
+                                
                                 if (tbodyacept && tbodyacept.children.length !== 0) {
                                     // Verificar si los botones ya están presentes
                                     if (document.querySelector('.buttons') === null) {
@@ -251,6 +249,7 @@ if (area !== 'DIRECCION GENERAL') {
                             });
 
                             tbody.appendChild(tr);
+                            empty_table('peti-table', 4)
                         });
                         colortable();
 
@@ -265,25 +264,109 @@ if (area !== 'DIRECCION GENERAL') {
 
         $('.status').click(e => {
             e.preventDefault()
+            function initStatus() {
+                fetch('/pet/viewStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user })
+                })
+                    .then(response => response.json())
+                    .then(data => {
 
+                        const tbody = document.querySelector('.status-peti tbody');
+                        tbody.innerHTML = "";
+                        data.dataToSend.forEach(item => {
+                            let tr = document.createElement('tr');
+                            let date = normalizeDate(item.fecha);
+
+                            tr.innerHTML = `
+                                <td>${date}</td>
+                                <td>${item.Arti}</td>
+                                <td>${item.Cantidad}</td>
+                                <td>${item.Nombre}</td>
+                                <td>${item.Estatus}</td>
+                                `
+
+                            tbody.appendChild(tr)
+                            empty_table('status-peti', 5)
+                        })
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
             $(`
                 <div class="globalColumn principalContent">
                     <div class="table-responsive item1" style="justify-content: center; align-items: center;">
-                        <table class="data-prod info-table peti-table">
+                        <table class="data-prod info-table status-peti">
                             <thead>
                                 <tr>
+                                    <th>Fecha de solicitud</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
                                     <th>Solicitante</th>
-                                    <th>Fecha de solicitud</th>
+                                    <th>Estatus</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
-                        </table>   
+                        </table>
                     </div>
+                    <i class="fa-solid fa-clock-rotate-left body-icons History" style="font-size: 25px;" data-history="true"></i>
                 </div>            
-                `).insertAfter('.Fone-item')
+            `).insertAfter('.Fone-item')
+
+            $('.History').click(() => {
+                const icon = $('.fa-clock-rotate-left');
+                if (icon.attr('data-history') === 'true') { 
+                    // Ver Historial
+                    fetch('/pet/viewHistory', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ user })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const tbody = document.querySelector('.status-peti tbody');
+                            tbody.innerHTML = "";
+
+                            data.dataToSend.forEach(item => {
+                                let tr = document.createElement('tr');
+                                let date = normalizeDate(item.fecha);
+
+                                tr.innerHTML = `
+                                <td>${date}</td>
+                                <td>${item.Arti}</td>
+                                <td>${item.Cantidad}</td>
+                                <td>${item.Nombre}</td>
+                                <td>${item.Estatus}</td>
+                                `;
+
+                                tbody.appendChild(tr);
+                            });
+                            empty_table('status-peti', 5)
+                            // Cambia a estado de "actual"
+                            icon.attr('data-history', 'false');
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                } else {
+                    // Ver Estado Actual
+                    initStatus();
+                    icon.attr('data-history', 'true');
+                }
+            });
+
             enabledStructure()
+            document.querySelector('.item1').style.marginRight = 0;
+            document.querySelector('.table-responsive').style.display = 'grid';
+            initStatus()
         })
     }
 

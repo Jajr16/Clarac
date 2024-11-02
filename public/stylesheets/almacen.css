@@ -1,0 +1,8 @@
+.table-responsive {
+    display: grid;
+    width: 100%;
+}
+
+.content-container {
+    margin-bottom: 1.5rem;
+}

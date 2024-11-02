@@ -419,15 +419,6 @@ CREATE TABLE status_soli(
     on update cascade on delete cascade
 );
 
-DELIMITER |
-create trigger ASEPSE before update on soli_car
-	FOR EACH ROW BEGIN
-		IF NEW.delivered_ware = 1 AND NEW.delivered_soli = 1 THEN
-        SET NEW.cerrada = 1;
-		end if;
-	END
-| DELIMITER ;
-
 -- PROCEDURES Y TRANSACTIONS
 -- Para dar de alta los equipos
 DROP PROCEDURE IF EXISTS AgregarEquipos;
@@ -919,43 +910,39 @@ BEGIN
 			soli_car.request_date AS fecha,
 			
 			CASE 
-				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
-				WHEN status_soli.delivered_ware IS NULL THEN 'En espera de confirmación'
-				WHEN status_soli.delivered_ware = 1 THEN 'Entregado'
+				WHEN soli_car.cerrada = 1 AND status_soli.sol_id IS NULL THEN 'Solicitud rechazada'
+                WHEN status_soli.sol_id IS NULL THEN 'En espera de confirmación'
+                WHEN 
+					status_soli.delivered_ware = 1 AND 
+                    status_soli.delivered_soli = 0 
+				THEN 
+					'Entregado por el almacenista, esperando tu confirmación.'
+				WHEN 
+					status_soli.delivered_ware = 0 AND 
+                    status_soli.delivered_soli = 1
+				THEN 
+					'Artículo recibido, esperando confirmación del almacenista.'
+				WHEN 
+					status_soli.delivered_ware = 0 AND 
+                    status_soli.delivered_soli = 0
+				THEN 
+					'Esperando entrega del almacenista.'
+				WHEN 
+					status_soli.delivered_ware = 1 AND 
+                    status_soli.delivered_soli = 1
+				THEN 
+					'Entrega completa.'
 				ELSE 'Pendiente'
-			END AS delivered_ware,
+			END AS status_peti
 
-			CASE 
-				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
-				WHEN status_soli.delivered_soli IS NULL THEN 'En espera de confirmación'
-				WHEN status_soli.delivered_soli = 1 THEN 'Recibido'
-				ELSE 'Pendiente'
-			END AS delivered_soli,
-
-			CASE 
-				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
-				WHEN status_soli.sended IS NULL THEN 'En espera de confirmación'
-				WHEN status_soli.sended = 1 THEN 'Enviado'
-				ELSE 'No enviado'
-			END AS sended,
-
-			CASE 
-				WHEN soli_car.cerrada = 1 THEN 'Rechazada'
-				WHEN status_soli.sol_id IS NULL THEN 'En espera de confirmación'
-				ELSE 'Abierta'
-			END AS cerrada
-
-		FROM soli_car
-		LEFT JOIN status_soli ON soli_car.sol_id = status_soli.sol_id
-		INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+			FROM soli_car
+				LEFT JOIN status_soli ON soli_car.sol_id = status_soli.sol_id
+				INNER JOIN almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
 		WHERE soli_car.emp_SC = (
 			SELECT Num_Emp 
 			FROM usuario 
 			WHERE Usuario = USR
 		);
-
-
-        
     COMMIT;
 END |
 DELIMITER ;
@@ -985,31 +972,47 @@ DELIMITER ;
 drop procedure if exists ConfirmPet;
 DELIMITER //
 CREATE PROCEDURE ConfirmPet(
-	IN usu varchar(45),
-    IN CBP varchar(45),
-    IN FECHA DATETIME)
+    IN usu VARCHAR(45),
+    IN CBP VARCHAR(45),
+    IN FECHA DATETIME
+)
 BEGIN
+    DECLARE solId INT;
+    DECLARE empNum INT;
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        -- Manejo del error: rollback y mensaje de error
         ROLLBACK;
-        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+        SELECT 'Error' AS status, 'Ocurrió un error al procesar la solicitud' AS message;
     END;
-    
+
     -- Iniciar la transacción
     START TRANSACTION;
-	
-		IF EXISTS (SELECT 1 FROM status_soli WHERE sol_id = (SELECT sol_id FROM soli_car WHERE
-			Cod_Barras_SC = CBP and emp_SC = (SELECT Num_emp FROM Usuario WHERE usuario = usu) and
-            request_date = FECHA)) THEN
-				UPDATE status_soli SET delivered_soli = 1 WHERE sol_id = (SELECT sol_id FROM soli_car WHERE
-				Cod_Barras_SC = CBP and emp_SC = (SELECT Num_emp FROM Usuario WHERE usuario = usu) and
-				request_date = FECHA
-				);
-                SELECT 'Success' AS status, 'Operación exitosa' AS message;
-		ELSE
-			SELECT 'Empty' as status, 'Aún no han aceptado tu petición, para más información consulta a dirección' AS message;
-		END IF;
+
+    -- Obtener el Num_emp del usuario y el sol_id de soli_car en variables
+    SELECT Num_emp INTO empNum 
+    FROM Usuario 
+    WHERE usuario = usu;
+
+    SELECT sol_id INTO solId
+    FROM soli_car
+    WHERE Cod_Barras_SC = CBP 
+      AND emp_SC = empNum 
+      AND request_date = FECHA;
+
+    -- Verificar si el sol_id existe en status_soli
+    IF solId IS NOT NULL AND EXISTS (SELECT 1 FROM status_soli WHERE sol_id = solId) THEN
+        -- Actualizar delivered_soli a 1 en status_soli
+        UPDATE status_soli 
+        SET delivered_soli = 1 
+        WHERE sol_id = solId;
+
+        SELECT 'Success' AS status, 'Operación exitosa' AS message;
+    ELSE
+        SELECT 'Empty' AS status, 'Aún no han aceptado tu petición, para más información consulta a dirección' AS message;
+    END IF;
+
     -- Confirmar los cambios
     COMMIT;
 END //
@@ -1093,6 +1096,298 @@ BEGIN
     SELECT 'Success' AS status, 'Operación exitosa' AS message;
 END //
 DELIMITER ;
+
+drop procedure if exists statusSolicitudesDir;
+DELIMITER //
+CREATE PROCEDURE statusSolicitudesDir(
+IN usu VARCHAR(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    -- Iniciar la transacción
+    START TRANSACTION;
+    
+		IF 'DIRECCION GENERAL' = (SELECT Área FROM empleado WHERE Num_emp = (SELECT Num_Emp FROM Usuario
+		WHERE Usuario = usu)) THEN
+			SELECT 
+				almacen.Articulo AS artic,
+				soli_car.cantidad_SC AS Cant,
+				soli_car.request_date AS fecha,
+				empleado.Nom,
+				CASE 
+					WHEN status_soli.delivered_ware = 0 AND delivered_soli = 0 THEN 'Esperando a que el almacenista entregue el producto.'
+					WHEN status_soli.delivered_ware = 1 AND delivered_soli = 0 THEN 'Entregado por almacenista, esperando confirmación del solicitante.'
+					WHEN status_soli.delivered_ware = 1 AND delivered_soli = 1 THEN 'Entrega confirmada por ambas partes.'
+					WHEN status_soli.delivered_ware = 0 AND delivered_soli = 1 THEN 'Artículo recibido por el solicitante, esperando confirmación del almacenista.'
+				END AS status_solicitudes
+			FROM 
+				status_soli
+			LEFT JOIN 
+				soli_car ON soli_car.sol_id = status_soli.sol_id
+			INNER JOIN 
+				almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+			INNER JOIN 
+				empleado ON soli_car.emp_SC = empleado.Num_emp
+			WHERE 
+				soli_car.cerrada != 1;
+		END IF;
+    COMMIT;
+END //
+DELIMITER ;
+
+drop procedure if exists HistorySolicitudesDir;
+DELIMITER //
+CREATE PROCEDURE HistorySolicitudesDir(
+IN usu VARCHAR(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    -- Iniciar la transacción
+    START TRANSACTION;
+    
+		IF 'DIRECCION GENERAL' = (SELECT Área FROM empleado WHERE Num_emp = (SELECT Num_Emp FROM Usuario
+		WHERE Usuario = usu)) THEN
+			SELECT 
+				almacen.Articulo AS artic,
+				soli_car.cantidad_SC AS Cant,
+				soli_car.request_date AS fecha,
+				empleado.Nom,
+				CASE 
+					WHEN soli_car.cerrada = 1 THEN 'Proceso finalizado.'
+				END AS status_solicitudes
+			FROM 
+				soli_car
+			LEFT JOIN 
+				status_soli ON soli_car.sol_id = status_soli.sol_id
+			INNER JOIN 
+				almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+			INNER JOIN 
+				empleado ON soli_car.emp_SC = empleado.Num_emp
+			WHERE 
+				soli_car.cerrada = 1;
+		END IF;
+    COMMIT;
+END //
+DELIMITER ;
+
+drop procedure if exists confirmpetalmacen;
+DELIMITER //
+CREATE PROCEDURE ConfirmPetAlmacen(
+    IN FECHA DATETIME,
+    IN CBP VARCHAR(45),
+    IN SOLN VARCHAR(45)
+)
+BEGIN
+    DECLARE solId INT;
+    DECLARE empNum INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error' AS status, 'Ocurrió un error al procesar la solicitud' AS message;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    -- Obtener el Num_emp del empleado y el sol_id de soli_car en variables
+    SELECT Num_emp INTO empNum 
+    FROM empleado 
+    WHERE Nom = SOLN;
+
+    SELECT sol_id INTO solId
+    FROM soli_car
+    WHERE Cod_Barras_SC = CBP 
+      AND emp_SC = empNum 
+      AND request_date = FECHA;
+
+    -- Verificar si existe el registro en status_soli
+    IF solId IS NOT NULL AND EXISTS (SELECT 1 FROM status_soli WHERE sol_id = solId) THEN
+        -- Actualizar delivered_soli a 1 en status_soli
+        UPDATE status_soli 
+        SET delivered_ware = 1 
+        WHERE sol_id = solId;
+
+        SELECT 'Success' AS status, 'Operación exitosa' AS message;
+    ELSE
+        SELECT 'Empty' AS status, 'Aún no han aceptado tu petición, para más información consulta a dirección' AS message;
+    END IF;
+
+    -- Confirmar los cambios
+    COMMIT;
+END //
+DELIMITER ;
+
+drop procedure if exists statusSolicitudesAlmacen;
+DELIMITER //
+CREATE PROCEDURE statusSolicitudesAlmacen()
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    -- Iniciar la transacción
+    START TRANSACTION;
+		SELECT 
+			soli_car.Cod_Barras_SC as CBA,
+			almacen.Articulo AS artic,
+			soli_car.cantidad_SC AS Cant,
+			soli_car.request_date AS fecha,
+			empleado.Nom,
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Entrega finalizada'
+				WHEN status_soli.delivered_ware = 0 AND delivered_soli = 0 THEN 'Proceso no iniciado, por favor, vaya a entregar este artículo.'
+				WHEN status_soli.delivered_ware = 1 AND delivered_soli = 0 THEN 'Artículo entregado, falta confirmación del solicitante.'
+				WHEN status_soli.delivered_ware = 1 AND delivered_soli = 1 THEN 'Entrega confirmada por ambas partes.'
+				WHEN status_soli.delivered_ware = 0 AND delivered_soli = 1 THEN 'Artículo recibido por el solicitante, esperando tu confirmación.'
+			END AS status_solicitudes
+		FROM 
+			status_soli
+		LEFT JOIN 
+			soli_car ON soli_car.sol_id = status_soli.sol_id
+		INNER JOIN 
+			almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+		INNER JOIN 
+			empleado ON soli_car.emp_SC = empleado.Num_emp
+		WHERE 
+			soli_car.cerrada != 1;
+    COMMIT;
+END //
+DELIMITER ;
+
+drop procedure if exists HistorySolicitudesAlmacen;
+DELIMITER //
+CREATE PROCEDURE HistorySolicitudesAlmacen()
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    -- Iniciar la transacción
+    START TRANSACTION;
+		SELECT 
+			soli_car.Cod_Barras_SC as CBA,
+			almacen.Articulo AS artic,
+			soli_car.cantidad_SC AS Cant,
+			soli_car.request_date AS fecha,
+			empleado.Nom,
+			CASE 
+				WHEN soli_car.cerrada = 1 THEN 'Entrega finalizada.'
+			END AS status_solicitudes
+		FROM 
+			status_soli
+		LEFT JOIN 
+			soli_car ON soli_car.sol_id = status_soli.sol_id
+		INNER JOIN 
+			almacen ON soli_car.Cod_Barras_SC = almacen.Cod_Barras
+		INNER JOIN 
+			empleado ON soli_car.emp_SC = empleado.Num_emp
+		WHERE 
+			soli_car.cerrada = 1;
+    COMMIT;
+END //
+DELIMITER ;
+
+-- Modificar Registro Usuarios
+DROP PROCEDURE IF EXISTS ActualizarRegUsu;
+DELIMITER |
+CREATE PROCEDURE ActualizarRegUsu(
+    IN emp_num VARCHAR(45),
+    IN usuario VARCHAR(45),
+    IN contra VARCHAR(45)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error' AS status, 'Transaction failed' AS message;
+    END;
+
+    START TRANSACTION;
+    
+    -- Actualiza el usuario y la contraseña en la tabla usuario
+    UPDATE usuario 
+    SET Usuario = usuario, Pass = contra
+    WHERE Num_emp = emp_num;
+
+    COMMIT;
+    SELECT 'Success' AS status;
+END |
+DELIMITER ;
+
+CALL ActualizarRegUsu('797', 'NuevoUsuario', 'NuevaContrasena');
+
+-- Modificar Registro Empleados
+DROP PROCEDURE IF EXISTS ActualizarRegEmp;
+DELIMITER |
+CREATE PROCEDURE ActualizarRegEmp(
+    IN emp_num VARCHAR(45),
+    IN nombre VARCHAR(45),
+    IN area VARCHAR(45)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error' AS status, 'Transaction failed' AS message;
+    END;
+
+    START TRANSACTION;
+    
+    -- Actualiza el usuario y la contraseña en la tabla usuario
+    UPDATE empleado
+    SET Nom = nombre, Área = area
+    WHERE Num_emp = emp_num;
+
+    COMMIT;
+    SELECT 'Success' AS status;
+END |
+DELIMITER ;
+CALL ActualizarRegEmp('813', 'editado', 'editado');
+####################### TRIGGERS ########################
+drop trigger EPE;
+DELIMITER | 
+CREATE TRIGGER EPE BEFORE INSERT ON salidas_productos
+	FOR EACH ROW BEGIN
+    
+    DECLARE current_stock INT;
+    -- Consultar la cantidad actual en el almacén
+    SELECT COALESCE(fp.total_entrada, 0) - COALESCE(sp.total_salida, 0)
+    as Existencia INTO current_stock FROM almacen a LEFT JOIN (SELECT Cod_Barras, SUM(Cantidad)
+    as total_entrada FROM factus_productos GROUP BY Cod_Barras) fp ON a.Cod_Barras = fp.Cod_Barras
+	LEFT JOIN (SELECT Cod_BarrasS, SUM(Cantidad_Salida) as total_salida FROM salidas_productos
+    GROUP BY Cod_BarrasS) sp ON a.Cod_Barras = sp.Cod_BarrasS where Cod_BarrasS = new.Cod_BarrasS;
+    
+    IF NEW.Cantidad_Salida > current_stock THEN
+        SIGNAL SQLSTATE '45000' 
+		SET MESSAGE_TEXT = 'No hay suficiente existencia para realizar la salida';
+	END IF;
+    END
+| DELIMITER;
+
+DELIMITER |
+CREATE TRIGGER ASEPSE BEFORE UPDATE ON status_soli
+	FOR EACH ROW BEGIN
+		IF NEW.delivered_ware = 1 AND NEW.delivered_soli = 1 THEN
+			UPDATE soli_car 
+			SET cerrada = 1
+			WHERE sol_id = NEW.sol_id;  
+		END IF;
+	END
+| DELIMITER ;
 
 select*from soli_Car;
 select*from status_soli;

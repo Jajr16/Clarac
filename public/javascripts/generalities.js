@@ -58,7 +58,12 @@ function showSuccessAlertReload(message) {
 }
 
 function empty_table(tabla, n) {
-    $('#' + tabla + ' tbody').append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
+    const tbody = $(`.${tabla} tbody`);
+
+    // Verificar si la tabla está vacía (sin filas en el tbody)
+    if (tbody.children('tr').length === 0) {
+        tbody.append($('<tr><td colspan="' + n + '"><center><h3>En este momento no hay nada agregado.</h3></center></td></tr>'))
+    }
 }
 
 function iconsLogic() {
@@ -138,22 +143,6 @@ function dissapear() {
     const trash = $('.trash');
     trash.css('display', 'none')
 }
-
-function empty_table() {
-    const tbody = $('.info-table tbody');
-
-    // Verificar si la tabla está vacía (sin filas en el tbody)
-    if (tbody.children('tr').length === 0) {
-        tbody.append(`
-            <tr>
-                <td colspan="2">
-                    <center><h3>En este momento no hay nada agregado.</h3></center>
-                </td>
-            </tr>
-        `);
-    }
-}
-
 
 function sselect() {
     let searchs = $('.searchInput').toArray()
@@ -254,7 +243,7 @@ function obtenerP() {
 
 function buscarTable() {
 
-    var filtro = $("#buscar").val().toUpperCase();
+    var filtro = $(".buscar").val().toUpperCase();
 
     $(".info-table td").each(function () {
         var textoEnTd = $(this).text().toUpperCase();

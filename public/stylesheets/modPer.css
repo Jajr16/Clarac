@@ -1,0 +1,227 @@
+/* CSS PANTALLA PRODUCTOS EXISTENTES */
+
+.sidebar {
+    top: 0;
+    height: 100%;
+    width: 4.5%;
+    position: fixed;
+    background: linear-gradient(to top, #0A8EBC, #001781);
+    z-index: 2;
+    flex-direction: column;
+    display: flex;
+}
+
+.menu {
+    position: relative;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.menu li {
+    margin-bottom: 2rem;
+    list-style: none;
+    position: relative;
+}
+
+.description-product div {
+    /* margin-bottom: 1rem; */
+    align-items: center;
+}
+
+.Columns {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem 4rem;
+    justify-content: space-between;
+}
+
+.Pname {
+    text-transform: capitalize;
+}
+
+.DP {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.DP > input[type='text']:first-of-type {
+    margin-right: 1rem;
+}
+
+/* .DP > select:first-of-type {
+    margin-right: 1rem;
+} */
+
+.hidden-column {
+    display: none;
+}
+
+.DPU {
+    display: inline-block;
+    margin-right: 1rem; /* Espacio entre los checkboxes */
+}
+
+.module-category {
+    display: grid;
+    grid-template-columns: repeat(2, auto); /* 2 columnas */
+    gap: 1rem; /* Espacio entre los checkboxes */
+    align-items: center; /* Alinea verticalmente los elementos */
+}
+
+
+.DP label {
+    display: flex;
+    width: 12rem;
+    align-items: center;
+    width: auto;
+}
+
+.menu-item {
+    display: inline-block;
+    transition: all .3s;
+}
+
+.menu li:hover {
+    transition: all .3s;
+}
+
+.mini-menu {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 1.5s;
+    background-color: #ccc;
+    top: -1rem;
+    left: 2rem;
+    padding-left: 0;
+    border-radius: 0.6rem;
+    width: 11.5rem;
+}
+
+.mini-menu li a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.mini-menu li {
+    margin: 0;
+}
+
+.mini-menu li:first-child {
+    border-top-left-radius: 0.6rem;
+    border-top-right-radius: 0.6rem;
+}
+
+.mini-menu li:last-child {
+    border-bottom-left-radius: 0.6rem;
+    border-bottom-right-radius: 0.6rem;
+}
+
+.mini-menu li:hover {
+    margin: 0;
+    background-color: #001781;
+    color: white;
+}
+
+.mini-menu li:last-child {
+    margin-bottom: 0;
+}
+
+.mini-menu li a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.menu li:hover .mini-menu {
+    visibility: visible;
+    opacity: 1;
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.menu-item .mini-menu::after {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: -1.2rem;
+    border: 1px solid transparent;
+    border-width: 10px;
+    border-left-color: #ccc;
+    ;
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.cancelProd {
+    background-color: rgb(134, 0, 0) !important;
+}
+
+.agregarP {
+    width: 50%;
+}
+
+.fa-circle-plus,
+.fa-circle-minus {
+    color: white;
+    margin-bottom: 1rem;
+    margin-top: 0.3rem;
+}
+
+.options {
+    width: 45% !important;
+    background-color: #1132cd;
+    border: none;
+    border-radius: 1rem;
+    color: white;
+    padding: 1.5rem 1rem !important;
+    transition: .3s ease-in;
+}
+
+.options:hover {
+    transform: scale(1.05);
+}
+
+.searchInput, .ss-single-selected {
+    margin-bottom: 0!important;
+}
+
+button.options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* Ajusta el espacio interior según tu preferencia */
+    font-size: 16px; /* Ajusta el tamaño del texto según tu preferencia */
+}
+
+button.options i {
+    margin-right: 8px; /* Espacio entre el icono y el texto */
+}
+
+.hidden {
+    visibility: hidden; /* Los elementos no son visibles, pero siguen ocupando espacio */
+}
+
+.aviso {
+    /* border-bottom: 1px #000000 solid; */
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    max-height: 27rem;
+    scrollbar-width: none;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 1rem;
+}

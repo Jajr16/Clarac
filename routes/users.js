@@ -22,6 +22,11 @@ router.get('/modReg', isAuthenticated, function (req, res, next) {
   res.render('modReg', { title: 'Modificar Registros', layout: 'other_layout' });
 });
 
+// Modificar Permisos
+router.get('/modPer', isAuthenticated, function (req, res, next) {
+  res.render('modPer', { title: 'Modificar Permisos', layout: 'other_layout' });
+});
+
 // Consulta de productos
 router.get('/consulProd', isAuthenticated, function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });

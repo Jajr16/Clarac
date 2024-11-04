@@ -1449,3 +1449,49 @@ BEGIN
 END |
 DELIMITER ;
 CALL ActualizarRegEmp('813', 'editado', 'editado');
+
+-- Modificar Permisos
+DROP PROCEDURE IF EXISTS ModificarPermisos;
+
+DELIMITER $$
+
+CREATE PROCEDURE ModificarPermisos(
+    IN user VARCHAR(255),
+    IN permisos JSON
+)
+BEGIN
+    DECLARE permiso INT;
+    DECLARE modulo VARCHAR(255);
+    DECLARE permisoIndex INT DEFAULT 0;
+    DECLARE permisoCount INT;
+
+    -- Error handler to rollback on exception
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error' AS status, 'Transaction failed' AS message;
+    END;
+    START TRANSACTION;
+
+    -- Delete existing permissions for the user
+    DELETE FROM permisos WHERE usuario = user;
+
+    -- Get the length of the JSON array
+    SET permisoCount = JSON_LENGTH(permisos);
+
+    -- Loop through the JSON array
+    WHILE permisoIndex < permisoCount DO
+        SET permiso = JSON_UNQUOTE(JSON_EXTRACT(permisos, CONCAT('$[', permisoIndex, '].permiso')));
+        SET modulo = JSON_UNQUOTE(JSON_EXTRACT(permisos, CONCAT('$[', permisoIndex, '].modulo')));
+
+        -- Insert new permission
+        INSERT INTO permisos (permiso, usuario, modulo) VALUES (permiso, user, modulo);
+
+        SET permisoIndex = permisoIndex + 1;
+    END WHILE;
+
+    -- Commit the transaction
+    COMMIT;
+END$$
+
+DELIMITER ;

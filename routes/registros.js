@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig'); 
 const isAuthenticated = require('../middleware/authMiddleware')
-const { addEmpleado, addUsuario, addPermisos, obtenerRegistrosUsuarios, obtenerRegistrosEmpleados, obtenerEmpleados, modifyRegUsu, modifyRegemp} = require('../bin/ModRegistros');
+const { addEmpleado, addUsuario, addPermisos, obtenerRegistrosUsuarios, obtenerRegistrosEmpleados, obtenerPermisosPorUsuario, obtenerEmpleados, modifyRegUsu, modifyRegemp, modifyRegPer} = require('../bin/ModRegistros');
 
 router.get('/', (req, res) => {
     obtenerRegistrosUsuarios((err, result) => {
@@ -23,6 +23,22 @@ router.get('/', (req, res) => {
         res.json(empleados); 
     });
 });
+
+router.get('/getRegistrosPermisos', (req, res) => {
+    const usuario = req.query.usuario;
+    if (!usuario) {
+        return res.status(400).json({ type: 'error', message: 'Usuario no especificado' });
+    }
+
+    obtenerPermisosPorUsuario(usuario, (err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
+
+        res.json(result);
+    });
+});
+
 router.get('/registro/emp', (req, res) => {
     obtenerRegistrosEmpleados((err, result) => {
         if (err) {
@@ -123,13 +139,15 @@ router.get('/getRegistrosEmpleados', (req, res) => {
 });
 
 router.post('/mod_reg_emp', isAuthenticated, upload.none(), (req, res) => {
-    // Llama a modifyRegUsu con req y res directamente
     modifyRegemp(req, res);
 });
 
 router.post('/mod_reg_usu', isAuthenticated, upload.none(), (req, res) => {
-    // Llama a modifyRegUsu con req y res directamente
     modifyRegUsu(req, res);
+});
+
+router.post('/mod_reg_per', isAuthenticated, upload.none(), (req, res) => {
+    modifyRegPer(req, res);
 });
 
 module.exports = router;

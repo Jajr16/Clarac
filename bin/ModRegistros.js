@@ -112,7 +112,7 @@ function obtenerRegistrosUsuarios(callback) {
         if (error) {
             return callback(error, null);
         }
-        console.log("Resultados de la consulta:", results); // Asegúrate de que `num_emp` esté aquí
+        // console.log("Resultados de la consulta:", results); // Asegúrate de que `num_emp` esté aquí
         callback(null, results);
     });
 }
@@ -140,6 +140,21 @@ function obtenerEmpleados(callback) {
         callback(null, results);
     });
     
+}
+
+function obtenerPermisosPorUsuario(usuario, callback) {
+    const query = `
+        SELECT permiso, modulo
+        FROM permisos
+        WHERE usuario = ?
+    `;
+
+    db.query(query, [usuario], (error, results) => {
+        if (error) {
+            return callback(error, null);
+        }
+        callback(null, results);
+    });
 }
 
 function modifyRegUsu(req, res) {
@@ -188,14 +203,37 @@ function modifyRegemp(req, res) {
     });
 }
 
+function modifyRegPer(req, res) {
+    const { Usuario, Permissions } = req.body;
+
+    // Check if Usuario and Permissions are provided
+    if (!Usuario || !Permissions || !Array.isArray(Permissions)) {
+        return res.status(400).json({ message: 'Datos inválidos. Asegúrese de proporcionar Usuario y Permissions.' });
+    }
+
+    // Convert Permissions array to a JSON string
+    const permisosJson = JSON.stringify(Permissions);
+
+    // Call the stored procedure
+    db.query(`CALL ModificarPermisos(?, ?)`, [Usuario, permisosJson], (err, result) => {
+        if (err) {
+            console.error('Error en la consulta:', err);
+            return res.status(500).json({ message: 'Error al modificar los permisos', details: err });
+        }
+
+        return res.status(200).json({ type: 'RespDelEqp', message: 'Permisos modificados exitosamente.' });
+    });
+}
+
 module.exports = {
     addEmpleado: modEmpleado,
     addUsuario: modUsuario,
     addPermisos: modPermisos,
     obtenerRegistrosUsuarios: obtenerRegistrosUsuarios,
     obtenerRegistrosEmpleados: obtenerRegistrosEmpleados,
+    obtenerPermisosPorUsuario: obtenerPermisosPorUsuario,
     obtenerEmpleados: obtenerEmpleados,
     modifyRegUsu: modifyRegUsu,
-    modifyRegemp: modifyRegemp
-
+    modifyRegemp: modifyRegemp,
+    modifyRegPer: modifyRegPer
 };

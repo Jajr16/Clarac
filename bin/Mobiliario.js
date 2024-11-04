@@ -12,7 +12,7 @@ function consulmob(req, callback) {
 
         if (res.length > 0) { // Si se encontró el usuario
             if (!(res[0].Área === 'SISTEMAS')) {
-                db.query('SELECT * FROM mobiliario', function (err, result) {
+                db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
                     if (err) {
                         Errores(err);
                         return callback(err);
@@ -23,7 +23,8 @@ function consulmob(req, callback) {
                         Descripcion: item.Descripcion,
                         Ubicacion: item.Ubicacion,
                         Cantidad: item.Cantidad,
-                        Area: item.Área
+                        Area: item.Área,
+                        Nombre: item.Nom
                     }));
                     return callback(null, dataToSend);
                 });
@@ -39,7 +40,8 @@ function consulmob(req, callback) {
                         Descripcion: item.Descripcion,
                         Ubicacion: item.Ubicacion,
                         Cantidad: item.Cantidad,
-                        Area: item.Área
+                        Area: item.Área,
+                        Nombre: item.Nom
                     }));
 
                     return callback(null, dataToSend);

@@ -1,17 +1,48 @@
-Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:20
-Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:21
-Error: ER_SIGNAL_EXCEPTION: Error: Ocurrió un error en la operación de las peticiones | Error obtenido el -> 30/10/2024 18:22
-Error: ER_SIGNAL_EXCEPTION: Error: Ocurrió un error en la operación de las peticiones | Error obtenido el -> 30/10/2024 18:22
-Error: ER_SIGNAL_EXCEPTION: Error: Ocurrió un error en la operación de las peticiones | Error obtenido el -> 30/10/2024 18:22
-Error: ER_SIGNAL_EXCEPTION: Error: Ocurrió un error en la operación de las peticiones | Error obtenido el -> 30/10/2024 18:22
-Error: ER_NO_SUCH_TABLE: Table 'inventarios.empleados' doesn't exist | Error obtenido el -> 30/10/2024 18:22
-Error: ER_NO_SUCH_TABLE: Table 'inventarios.empleados' doesn't exist | Error obtenido el -> 30/10/2024 18:22
-Error: ER_NO_SUCH_TABLE: Table 'inventarios.empleados' doesn't exist | Error obtenido el -> 30/10/2024 18:22
-Error: ER_NO_SUCH_TABLE: Table 'inventarios.empleados' doesn't exist | Error obtenido el -> 30/10/2024 18:22
-Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:22
-Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ConfirmPetDir does not exist | Error obtenido el -> 30/10/2024 18:22
-Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ConfirmPetDir does not exist | Error obtenido el -> 30/10/2024 18:22
-Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:22
-Error: Error en la operación de las peticiones. null | Error obtenido el -> 30/10/2024 18:44
-Error: Error al insertar el producto. null | Error obtenido el -> 30/10/2024 19:43
-Error: Error al insertar el producto. null | Error obtenido el -> 30/10/2024 19:43
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', Descripcion = '1', Num_emp = 'ajimenez'' at line 1 | Error obtenido el -> 11/08/2024 21:3
+Error: ER_TRUNCATED_WRONG_VALUE: Truncated incorrect DOUBLE value: 'ajimenez' | Error obtenido el -> 11/08/2024 21:8
+Error: ER_TRUNCATED_WRONG_VALUE: Truncated incorrect DOUBLE value: 'ajimenez' | Error obtenido el -> 11/08/2024 21:10
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 'ajimenez')' at line 1 | Error obtenido el -> 11/08/2024 21:14
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 'ajimenez')' at line 1 | Error obtenido el -> 11/08/2024 21:17
+Error: ER_BAD_FIELD_ERROR: Unknown column 'mobiliario.Area' in 'field list' | Error obtenido el -> 09/09/2024 20:34
+Error: ER_DUP_ENTRY: Duplicate entry 'DWA' for key 'equipo.PRIMARY' | Error obtenido el -> 11/09/2024 22:32
+Error: ER_EMPTY_QUERY: Query was empty | Error obtenido el -> 24/09/2024 11:32
+Error: ER_SUBQUERY_NO_1_ROW: Subquery returns more than 1 row | Error obtenido el -> 24/09/2024 11:38
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:10
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?,?,?,?,?,?,?,?)' at line 1 | Error obtenido el -> 25/09/2024 11:11
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Monitor' in 'field list' | Error obtenido el -> 05/10/2024 17:33
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie' in 'on clause' | Error obtenido el -> 05/10/2024 17:45
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie_CPU' in 'field list' | Error obtenido el -> 05/10/2024 18:45
+Error: ER_BAD_NULL_ERROR: Column 'Num_Fact' cannot be null | Error obtenido el -> 15/10/2024 11:39
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.AgregarProdExistentes does not exist | Error obtenido el -> 17/10/2024 13:12
+Error: ER_TRUNCATED_WRONG_VALUE: Incorrect date value: '' for column 'FINGRESO' at row 1 | Error obtenido el -> 18/10/2024 13:30
+Error: ER_DATA_TOO_LONG: Data too long for column 'NFP' at row 1 | Error obtenido el -> 18/10/2024 13:40
+Error: ER_DUP_ENTRY: Duplicate entry 'A' for key 'almacen.PRIMARY' | Error obtenido el -> 18/10/2024 15:33
+Error: Error al insertar el producto. | Error obtenido el -> 18/10/2024 17:23
+Error: Error al insertar el producto. | Error obtenido el -> 18/10/2024 17:23
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:29
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:30
+Error: ER_SP_WRONG_NO_OF_ARGS: Incorrect number of arguments for PROCEDURE inventarios.AgregarProdExistentes; expected 5, got 6 | Error obtenido el -> 18/10/2024 17:30
+Error: ER_SP_WRONG_NO_OF_ARGS: Incorrect number of arguments for PROCEDURE inventarios.AgregarProdExistentes; expected 5, got 6 | Error obtenido el -> 18/10/2024 17:30
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:48
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 17:48
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 20:8
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:44
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:46
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:50
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:51
+Error: Error al insertar el producto. null | Error obtenido el -> 18/10/2024 22:53
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 20/10/2024 13:53
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 20/10/2024 15:33
+undefined | Error obtenido el -> 21/10/2024 0:23
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 21/10/2024 0:27
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 22/10/2024 9:21
+Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie_CPU' in 'field list' | Error obtenido el -> 25/10/2024 17:2
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.AgregarEquipos does not exist | Error obtenido el -> 25/10/2024 17:2
+undefined, undefined | Error obtenido el -> 03/11/2024 22:36
+undefined, undefined | Error obtenido el -> 03/11/2024 22:53
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ModificarUEMob does not exist | Error obtenido el -> 04/11/2024 11:39

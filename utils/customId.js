@@ -8,6 +8,13 @@ function customId(req, update) {
     const abc7 = '7890';
     let customId
 
+    console.log(req.body)
+    if (req.body.user == null || req.body.user == 'null') {
+        console.log('Si entra aquí')
+        req.body.user = req.body.encargado;
+    }
+    console.log(req.body)
+
     if (req.body.Narticulo && req.body.Ndescripcion && update) {
         customId = `${req.body.Narticulo}A${req.body.Ndescripcion}A${req.body.user}`;
     } else {

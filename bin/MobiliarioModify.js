@@ -1,20 +1,34 @@
 var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
-var Errores = require('./Error')
+var Errores = require('./Error');
+var success = require('./success');
 
 function modifyMob(req, callback) {
-    const data = req.body
+    
+    const data = req.body;
 
-    db.query('UPDATE mobiliario SET Articulo = ?, Descripcion = ?, Ubicacion = ?, Cantidad = ? WHERE Articulo = ? AND Descripcion = ? AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = ?)', [data.Narticulo, data.Ndescripcion, data.ubicacion, data.cantidad, data.articulo, data.descripcion, data.user], function (err2, result) {
-        if (err2) { Errores(err2); return callback(err); } // Se hace un control de errores
-        else {
-            if (result.affectedRows > 0) { //Si sí hizo una búsqueda
-                return callback(null, { type: 'RespDelMob', message: 'Mobiliario modificado con éxito.', data: { Articulo: data.Articulo, Cantidad: data.Cantidad } });
+    const usuario = data.user || null;          // Usuario actual (puede ser nulo)
+    const encargado = data.encargado || null;   // Encargado (puede ser nulo)
+
+    // Realizar la llamada al procedimiento almacenado
+    db.query('CALL ModificarUEMob(?, ?, ?, ?, ?, ?, ?, ?)', 
+        [data.Narticulo, data.Ndescripcion, usuario, encargado, data.ubicacion, data.cantidad, data.articulo, data.descripcion], 
+        function (err, result) {
+            if (err) { 
+                Errores(err); 
+                return callback(err); // Se hace un control de errores
             } else {
-                console.log(result)
-                return callback(null, { type: 'ErrorModMob', message: "No se pudo modificar el mobiliario." })
+                if (result) {
+                    if (success(result) == 'Success') {
+                        console.log(result);
+                        return callback(null, { type: 'success', message: 'Mobiliario modificado correctamente.' });
+                    } else {
+                        Errores(`${result.Code, result.Message}`);
+                        return callback(null, { type: 'failed', message: `El mobiliario no se pudo dar de alta.` })
+                    }
+                }
             }
         }
-    });
+    );
 }
 
 module.exports = modifyMob;

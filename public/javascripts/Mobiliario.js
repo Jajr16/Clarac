@@ -147,7 +147,7 @@ if (!Permisos['MOBILIARIO']) {
 
                 // Agregar botones de Guardar y Cancelar
                 var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); cancel(); dissapearImage();" name="Cancel" class="Cancel">';
 
                 addFunctions(add, cancel, 'Ingresa los datos del mobiliario');
 

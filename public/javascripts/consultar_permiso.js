@@ -4,10 +4,12 @@ window.insertSelectForEmployees = function (defaultEmployee) {
         const targetDiv = document.querySelector('.DF');
         if (!document.querySelector('#actionSelect') && !document.querySelector('label[for="actionSelect"]')) {
             const selectHTML = `
+            <div class="DF">
                 <label for="actionSelect">Encargado:</label>
-                <select id="actionSelect" name="actionSelect" class="actionSelect" style="margin-bottom: 20px;">
+                <select id="actionSelect" name="actionSelect" class="actionSelect"">
                     <option value="">Cargando encargados...</option> 
-                </select>`;
+                </select>
+            </div>`;
             targetDiv.insertAdjacentHTML('beforebegin', selectHTML);
             const employSelect = document.querySelector('#actionSelect');
 

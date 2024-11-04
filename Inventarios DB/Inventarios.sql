@@ -1202,12 +1202,14 @@ BEGIN
         SET 
             Articulo = nuevoArticulo,
             Descripcion = nuevaDescripcion,
+            Num_emp = (SELECT Num_emp from empleado where Nom = encargado),
             Ubicacion = nuevaUbicacion,
             Cantidad = nuevaCantidad
         WHERE 
             Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua 
-            AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = encargado);
+            AND Descripcion = descripcionAntigua;
+            
+		select Num_emp from mobiliario;
         
     ELSE
         -- Modificar el mobiliario en la tabla de mobiliario utilizando el usuario
@@ -1215,12 +1217,12 @@ BEGIN
         SET 
             Articulo = nuevoArticulo,
             Descripcion = nuevaDescripcion,
+            Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuar),
             Ubicacion = nuevaUbicacion,
             Cantidad = nuevaCantidad
         WHERE 
             Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua 
-            AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuar);
+            AND Descripcion = descripcionAntigua;
     END IF;
 
     -- Confirmar los cambios
@@ -1232,18 +1234,19 @@ END //
 DELIMITER ;
 
 CALL ModificarUEMob(
-    'BANDEJA',          -- Narticulo: El nuevo nombre del artículo
+    'SILLA',          -- Narticulo: El nuevo nombre del artículo
     'Nueva descripción',       -- Ndescripcion: La nueva descripción del mobiliario
     'Prueba',             -- usuar: Nombre del usuario que está realizando la modificación
     null,        -- encargado: Nombre del encargado relacionado (puede ser NULL)
     'Nueva Ubicación',         -- ubicacion: La nueva ubicación del mobiliario
     10,                         -- cantidad: La nueva cantidad del mobiliario
-    'AROS',
+    'BANDEJA',
     '1'
 );
 
 
 SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
 SELECT*FROM mobiliario;
-delete from mobiliario where Num_Inventario = 18;
+delete from mobiliario where Num_Inventario = 34;
 select*from equipo;
+select*from empleado;

@@ -26,7 +26,7 @@ if (!Permisos['MOBILIARIO']) {
             } else {
                 formData.append('user', user);
             }
-        }        
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.querySelector('.fileInput');
@@ -160,14 +160,14 @@ if (!Permisos['MOBILIARIO']) {
             window.dissapear = function () {
                 // Volver a deshabilitar el input
                 inputP.attr("disabled", true);
-
+            
                 // Mostrar el botón "fa-circle-plus" de nuevo
                 addF.show();
-
+            
                 // Eliminar los botones "Guardar" y "Cancelar"
                 $('.Modify').remove();
                 $('.Cancel').remove();
-
+            
                 // Eliminar el select y su label si existen
                 const select = document.querySelector('#actionSelect');
                 const label = document.querySelector('label[for="actionSelect"]');
@@ -177,10 +177,15 @@ if (!Permisos['MOBILIARIO']) {
                 if (label) {
                     label.remove();
                 }
-
+            
+                // Ocultar los botones "edit" y "trash"
+                $('.edit').hide();
+                $('.trash').hide();
+            
                 // Mostrar otros elementos ocultos, si es necesario
                 $('.editE').css('display', 'inline');
             };
+            
         });
 
         function dissapearImage() {
@@ -213,7 +218,7 @@ if (!Permisos['MOBILIARIO']) {
                 body: formData
             }).then(response => response.json())
                 .then(data1 => {
-                    if (data1.type === 'RespDelMob') {
+                    if (data1.type === 'success') {
 
                         const inputFile = document.getElementById('file');
 
@@ -278,7 +283,7 @@ if (!Permisos['MOBILIARIO']) {
 
             // Agregar encargado o usuario
             agregarEncargadoOUsuario(formData, Permisos, user);
-            
+
             if (nombre_Articulo !== '' && desc_Articulo !== '') {
                 fetch('/mobiliario/delMob', {
                     method: 'POST',
@@ -300,21 +305,21 @@ if (!Permisos['MOBILIARIO']) {
         })
 
         const edit = $('.edit');
-
         edit.click(function (e) {
 
+            const nombre_Articulo = $('.Fname').val();
+            const desc_Articulo = $('.DescM').val();
+            const empleado = $('.EmpM').val(); // Obtener el nombre del empleado
             removeEmpM(); // Llamada a la función
-            var nombre_Articulo = $('.Fname').val();
-            var desc_Articulo = $('.DescM').val();
-            const image = $('.furniture-image');
 
+            const image = $('.furniture-image');
             image.css('cursor', 'pointer');
 
             const inputE = $('.EditData');
             inputE.attr("disabled", false);
 
-            // Llama a la función para insertar el select
-            window.insertSelectForEmployees(); // Llamada a la función aquí
+            // Llama a la función insertSelectForEmployees con el nombre del empleado
+            window.insertSelectForEmployees(empleado);
 
             var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
@@ -322,10 +327,10 @@ if (!Permisos['MOBILIARIO']) {
             editsFunctions(modify, cancel);
 
             const imagen = document.getElementsByClassName('furniture-image')[0];
-
             imagen.addEventListener('click', ImageFunction);
 
         });
+
 
 
         fetch('/mobiliario', {
@@ -452,7 +457,7 @@ if (!Permisos['MOBILIARIO']) {
             if (empMDiv) {
                 empMDiv.remove();
             }
-        }        
-        
+        }
+
     }
 }

@@ -1,13 +1,12 @@
-// public/javascripts/consultar_permiso.js
-window.insertSelectForEmployees = function () {
+window.insertSelectForEmployees = function (defaultEmployee) {
     // Verificamos si el permiso es '5'
     if (Permisos['MOBILIARIO'].includes('5')) {
         const targetDiv = document.querySelector('.DF');
         if (!document.querySelector('#actionSelect') && !document.querySelector('label[for="actionSelect"]')) {
             const selectHTML = `
-                <label for="actionSelect">Selecciona un encargado:</label>
+                <label for="actionSelect">Encargado:</label>
                 <select id="actionSelect" name="actionSelect" class="actionSelect" style="margin-bottom: 20px;">
-                    <option value="">Cargando empleados...</option> 
+                    <option value="">Cargando encargados...</option> 
                 </select>`;
             targetDiv.insertAdjacentHTML('beforebegin', selectHTML);
             const employSelect = document.querySelector('#actionSelect');
@@ -17,13 +16,18 @@ window.insertSelectForEmployees = function () {
             })
             .then(response => response.json())
             .then(data => {
-                employSelect.innerHTML = '<option value="">Selecciona un encargado</option>';
+                employSelect.innerHTML = '<option value="">Encargado</option>';
                 data.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.employee;
                     option.textContent = item.employee;
                     employSelect.appendChild(option);
                 });
+
+                // Establecer el valor predeterminado si se proporciona
+                if (defaultEmployee) {
+                    employSelect.value = defaultEmployee;
+                }
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);

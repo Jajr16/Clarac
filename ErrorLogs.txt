@@ -38,3 +38,10 @@ Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Err
 Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 22/10/2024 9:21
 Error: ER_BAD_FIELD_ERROR: Unknown column 'Monitor.Num_Serie_CPU' in 'field list' | Error obtenido el -> 25/10/2024 17:2
 Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.AgregarEquipos does not exist | Error obtenido el -> 25/10/2024 17:2
+undefined, undefined | Error obtenido el -> 03/11/2024 22:36
+undefined, undefined | Error obtenido el -> 03/11/2024 22:53
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37
+undefined | Error obtenido el -> 03/11/2024 23:37

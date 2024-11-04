@@ -9,8 +9,6 @@ function modifyMob(req, callback) {
     const usuario = data.user || null;          // Usuario actual (puede ser nulo)
     const encargado = data.encargado || null;   // Encargado (puede ser nulo)
 
-    console.log()
-
     // Realizar la llamada al procedimiento almacenado
     db.query('CALL ModificarUEMob(?, ?, ?, ?, ?, ?, ?, ?)', 
         [data.Narticulo, data.Ndescripcion, usuario, encargado, data.ubicacion, data.cantidad, data.articulo, data.descripcion], 
@@ -24,8 +22,8 @@ function modifyMob(req, callback) {
                         console.log(result);
                         return callback(null, { type: 'success', message: 'Mobiliario modificado correctamente.' });
                     } else {
-                        Errores(`${result.Code}, ${result.Message}`);
-                        return callback(null, { type: 'failed', message: 'No se pudo modificar el mobiliario.' });
+                        Errores(`${result.Code, result.Message}`);
+                        return callback(null, { type: 'failed', message: `El mobiliario no se pudo dar de alta.` })
                     }
                 }
             }

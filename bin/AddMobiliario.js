@@ -23,7 +23,8 @@ function cargarArchivoJSON() {
 }
 
 function addFurniture(req, callback) {
-    const data = req.body
+
+    const data = req.body;
     
     const usuario = data.user || null;
     const encargado = data.encargado || null;
@@ -40,10 +41,10 @@ function addFurniture(req, callback) {
     
                     guardarArchivoJSON(articulos);
 
-                    return callback(null, { type: 'success', message: 'Empleado dado de alta.' });
+                    return callback(null, { type: 'success', message: 'Mobiliario dado de alta.' });
                 }else {
                     Errores(`${result.Code, result.Message}`);
-                    return callback(null, { type: 'failed', message: `El Empleado no se pudo dar de alta.` })
+                    return callback(null, { type: 'failed', message: `El mobiliario no se pudo dar de alta.` })
                 }
             }
         }

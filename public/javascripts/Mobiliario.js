@@ -18,6 +18,16 @@ if (!Permisos['MOBILIARIO']) {
             return nombre
         }
 
+        function agregarEncargadoOUsuario(formData, Permisos, user) {
+            // Verificamos si el permiso es '5'
+            if (Permisos['MOBILIARIO'].includes('5')) {
+                const encargado = document.querySelector('.actionSelect').value;
+                formData.append('encargado', encargado);
+            } else {
+                formData.append('user', user);
+            }
+        }        
+
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.querySelector('.fileInput');
             const imagePreview = document.querySelector('.furniture-image');
@@ -77,19 +87,8 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('Cantidad', cantidad);
                 formData.append('Ubicacion', ubicacion);
 
-
-                // Verificamos si el permiso es '5'
-                if (Permisos['MOBILIARIO'].includes('5')) {
-
-                    const encargado = document.querySelector('.actionSelect').value;
-
-                    formData.append('encargado', encargado);
-
-                } else {
-
-                    formData.append('user', user);
-
-                }
+                // Agregar encargado o usuario
+                agregarEncargadoOUsuario(formData, Permisos, user);
 
                 fetch('/mobiliario/users/check-filename', {
                     method: 'POST',
@@ -134,61 +133,14 @@ if (!Permisos['MOBILIARIO']) {
             const inputP = $('.EditData');
 
             addF.click(function (e) {
+
+                removeEmpM(); // Llamada a la función
                 const image = $('.furniture-image');
 
                 image.css('cursor', 'pointer');
                 image.attr('src', "/images/add-image.png");
 
-                // Verificamos si el permiso es '5'
-                if (Permisos['MOBILIARIO'].includes('5')) {
-                    // Seleccionamos el div donde queremos añadir el select y label
-                    const buttonsDiv = document.querySelector('.empleado');
-
-                    // Verificamos si ya existe el label y select para evitar duplicados
-                    if (!document.querySelector('#actionSelect') && !document.querySelector('label[for="actionSelect"]')) {
-                        // Definimos el HTML del label y select
-                        const selectHTML = `
-                    <label for="actionSelect">Selecciona un empleado:</label>
-                    <select id="actionSelect" name="actionSelect" class="actionSelect">
-                        <option value="">Cargando empleados...</option> 
-                    </select>`;
-
-                        // Añadimos el label y select dentro del div de botones
-                        buttonsDiv.insertAdjacentHTML('beforeend', selectHTML);
-
-                        // Referencia al select que acabamos de añadir
-                        const employSelect = document.querySelector('#actionSelect');
-
-                        // Hacer el fetch para obtener la lista de empleados
-                        fetch('/responsiva/getEmploys', {
-                            method: 'GET'
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                // Limpiamos el select antes de agregar las nuevas opciones
-                                employSelect.innerHTML = '<option value="">Selecciona un empleado</option>';
-
-                                // Añadimos los empleados como opciones al select
-                                data.forEach(item => {
-                                    const option = document.createElement('option');
-                                    option.value = item.employee;
-                                    option.textContent = item.employee;
-                                    employSelect.appendChild(option);
-                                });
-                            })
-                            .catch(error => {
-                                console.error('Error en la solicitud:', error);
-                                showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
-                            });
-
-                        // Evento para manejar el cambio de opción en el select
-                        employSelect.addEventListener('change', function (e) {
-                            const selectedOption = e.target.value;
-                            console.log('Empleado seleccionado:', selectedOption);
-                            // Aquí puedes agregar la lógica según la opción seleccionada
-                        });
-                    }
-                }
+                window.insertSelectForEmployees();
 
                 // Habilitar inputs
                 inputP.attr("disabled", false);
@@ -244,9 +196,12 @@ if (!Permisos['MOBILIARIO']) {
             e.preventDefault()
 
             const formData = new FormData();
-            formData.append('Narticulo', document.querySelector('.Fname').value)
-            formData.append('Ndescripcion', document.querySelector('.DescM').value)
-            formData.append('user', identificate(item.Nombre)) // AQUÍ SE DEBE DE JALAR EL SELECT EN CASO DE QUE TENGA EL PERMISO O MANDAR EL USUARIO
+            formData.append('Narticulo', document.querySelector('.Fname').value);
+            formData.append('Ndescripcion', document.querySelector('.DescM').value);
+
+            // Agregar encargado o usuario
+            agregarEncargadoOUsuario(formData, Permisos, user);
+
             formData.append('cantidad', document.querySelector('.CantidadM').value);
             formData.append('ubicacion', document.querySelector('.UbiM').value);
             formData.append('articulo', oldName);
@@ -309,18 +264,21 @@ if (!Permisos['MOBILIARIO']) {
                     showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                 });
         }
+
         // FUNCIONALIDAD PÁGINA
         const trash = $('.trash')
         trash.click(function (e) {
+
             var nombre_Articulo = $('.Fname').val();
             var desc_Articulo = $('.DescM').val();
 
             var formData = new FormData()
             formData.append('articulo', nombre_Articulo)
             formData.append('descripcion', desc_Articulo)
-            
-            formData.append('user', identificate(item.Nombre)) // AQUÍ SE DEBE DE JALAR EL SELECT EN CASO DE QUE TENGA EL PERMISO O MANDAR EL USUARIO
 
+            // Agregar encargado o usuario
+            agregarEncargadoOUsuario(formData, Permisos, user);
+            
             if (nombre_Articulo !== '' && desc_Articulo !== '') {
                 fetch('/mobiliario/delMob', {
                     method: 'POST',
@@ -344,24 +302,31 @@ if (!Permisos['MOBILIARIO']) {
         const edit = $('.edit');
 
         edit.click(function (e) {
+
+            removeEmpM(); // Llamada a la función
             var nombre_Articulo = $('.Fname').val();
             var desc_Articulo = $('.DescM').val();
-            const image = $('.furniture-image')
+            const image = $('.furniture-image');
 
-            image.css('cursor', 'pointer')
+            image.css('cursor', 'pointer');
 
             const inputE = $('.EditData');
             inputE.attr("disabled", false);
 
+            // Llama a la función para insertar el select
+            window.insertSelectForEmployees(); // Llamada a la función aquí
+
             var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
 
-            editsFunctions(modify, cancel)
+            editsFunctions(modify, cancel);
 
             const imagen = document.getElementsByClassName('furniture-image')[0];
 
             imagen.addEventListener('click', ImageFunction);
+
         });
+
 
         fetch('/mobiliario', {
             method: 'POST',
@@ -440,6 +405,22 @@ if (!Permisos['MOBILIARIO']) {
                             const url = URL.createObjectURL(blob); // Crear URL del blob
                             document.querySelector('.furniture-image').src = url;
                             $('.Fname').val(item.Articulo);
+
+                            if (Permisos['MOBILIARIO'].includes('5')) {
+                                const targetDiv = document.querySelector('.DF');
+                                if (!document.querySelector('#EmpM') && !document.querySelector('label[for="EmpM"]')) {
+                                    const divHTML = `
+                                        <div class="DF">
+                                            <label>Encargado:</label>
+                                            <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
+                                                maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                                        </div>`;
+                                    targetDiv.insertAdjacentHTML('beforebegin', divHTML);
+                                }
+
+                                $('.EmpM').val(item.Nombre);
+                            }
+
                             $('.UbiM').val(item.Ubicacion);
                             $('.CantidadM').val(item.Cantidad);
                             $('.DescM').val(item.Descripcion);
@@ -465,5 +446,13 @@ if (!Permisos['MOBILIARIO']) {
                 Excels('ExcelM')
             })
         }
+
+        function removeEmpM() {
+            const empMDiv = document.querySelector('.DF > input#EmpM')?.parentElement;
+            if (empMDiv) {
+                empMDiv.remove();
+            }
+        }        
+        
     }
 }

@@ -1105,7 +1105,8 @@ BEGIN
     SELECT 'Success' AS status;
 END //
 DELIMITER ;
-CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', 'JIMENEZ RIVERA ARMANDO','Si', 1);
+
+CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', 'JIMENEZ RIVERA ARMANDO','Si', 1); -- Ejemplo
 
 DELIMITER //
 CREATE PROCEDURE showMob(
@@ -1131,6 +1132,118 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS EliminarUEMob;
+DELIMITER //
+CREATE PROCEDURE EliminarUEMob(
+    IN arti VARCHAR(100),
+    IN usuar VARCHAR(45),
+    IN encargado VARCHAR(45)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al eliminar el mobiliario' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    IF encargado IS NOT NULL THEN
+        -- Eliminar el mobiliario de la tabla de mobiliario
+        DELETE FROM mobiliario 
+        WHERE arti = arti AND Num_emp IN (
+            SELECT Num_emp FROM empleado WHERE Nom = encargado
+        );
+    ELSE
+        -- Eliminar el mobiliario de la tabla de mobiliario
+        DELETE FROM mobiliario 
+        WHERE arti = arti AND Num_emp IN (
+            SELECT Num_emp FROM usuario WHERE Usuario = usuar
+        );
+    END IF;
+
+    -- Confirmar los cambios
+    COMMIT;
+
+    -- Confirmar si la eliminación fue exitosa
+    SELECT 'Success' AS status;
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS ModificarUEMob;
+DELIMITER //
+CREATE PROCEDURE ModificarUEMob(
+    IN nuevoArticulo VARCHAR(100),
+    IN nuevaDescripcion VARCHAR(400),
+    IN usuar VARCHAR(45),
+    IN encargado VARCHAR(45),
+    IN nuevaUbicacion VARCHAR(400),
+    IN nuevaCantidad INT,
+    IN articuloAntiguo VARCHAR(100),
+    IN descripcionAntigua VARCHAR(400)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al modificar el mobiliario' AS status;
+    END;
+
+    -- Iniciar la transacción
+    START TRANSACTION;
+
+    IF encargado IS NOT NULL THEN
+        -- Modificar el mobiliario en la tabla de mobiliario utilizando el encargado
+        UPDATE mobiliario
+        SET 
+            Articulo = nuevoArticulo,
+            Descripcion = nuevaDescripcion,
+            Ubicacion = nuevaUbicacion,
+            Cantidad = nuevaCantidad
+        WHERE 
+            Articulo = articuloAntiguo 
+            AND Descripcion = descripcionAntigua 
+            AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = encargado);
+        
+    ELSE
+        -- Modificar el mobiliario en la tabla de mobiliario utilizando el usuario
+        UPDATE mobiliario
+        SET 
+            Articulo = nuevoArticulo,
+            Descripcion = nuevaDescripcion,
+            Ubicacion = nuevaUbicacion,
+            Cantidad = nuevaCantidad
+        WHERE 
+            Articulo = articuloAntiguo 
+            AND Descripcion = descripcionAntigua 
+            AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuar);
+    END IF;
+
+    -- Confirmar los cambios
+    COMMIT;
+
+    -- Confirmar si la modificación fue exitosa
+    SELECT 'Success' AS status;
+END //
+DELIMITER ;
+
+CALL ModificarUEMob(
+    'BANDEJA',          -- Narticulo: El nuevo nombre del artículo
+    'Nueva descripción',       -- Ndescripcion: La nueva descripción del mobiliario
+    'Prueba',             -- usuar: Nombre del usuario que está realizando la modificación
+    null,        -- encargado: Nombre del encargado relacionado (puede ser NULL)
+    'Nueva Ubicación',         -- ubicacion: La nueva ubicación del mobiliario
+    10,                         -- cantidad: La nueva cantidad del mobiliario
+    'AROS',
+    '1'
+);
+
+
 SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
 SELECT*FROM mobiliario;
+delete from mobiliario where Num_Inventario = 18;
 select*from equipo;

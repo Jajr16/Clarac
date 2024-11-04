@@ -1127,7 +1127,6 @@ CALL ModificarUEMob(
     '1'
 );
 
-
 drop procedure if exists ConfirmPet;
 DELIMITER //
 CREATE PROCEDURE ConfirmPet(

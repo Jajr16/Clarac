@@ -3,7 +3,9 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig'); 
 const isAuthenticated = require('../middleware/authMiddleware')
-const { addEmpleado, addUsuario, addPermisos, obtenerRegistrosUsuarios, obtenerRegistrosEmpleados, obtenerPermisosPorUsuario, obtenerEmpleados, modifyRegUsu, modifyRegemp, modifyRegPer} = require('../bin/ModRegistros');
+const { addEmpleado, addUsuario, addPermisos, obtenerRegistrosUsuarios,
+    obtenerRegistrosEmpleados, obtenerPermisosPorUsuario, obtenerEmpleados,
+    modifyRegUsu, modifyRegemp, modifyRegPer} = require('../bin/ModRegistros');
 
 router.get('/', (req, res) => {
     obtenerRegistrosUsuarios((err, result) => {

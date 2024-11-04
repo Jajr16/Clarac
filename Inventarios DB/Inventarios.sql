@@ -1653,3 +1653,5 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+select*from usuario;

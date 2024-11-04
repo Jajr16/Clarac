@@ -197,7 +197,7 @@ if (!Permisos['MOBILIARIO']) {
             imagen.style.cursor = 'default';
         }
 
-        function modify(oldName, oldDesc, e) {
+        function modify(oldName, oldDesc, Oldempleado, e) {
             e.preventDefault()
 
             const formData = new FormData();
@@ -211,8 +211,8 @@ if (!Permisos['MOBILIARIO']) {
             formData.append('ubicacion', document.querySelector('.UbiM').value);
             formData.append('articulo', oldName);
             formData.append('descripcion', oldDesc);
+            formData.append('Oldempleado', Oldempleado);
 
-            console.log(formData)
             fetch('/mobiliario/mod_mob', {
                 method: 'POST',
                 body: formData
@@ -320,8 +320,8 @@ if (!Permisos['MOBILIARIO']) {
 
             // Llama a la función insertSelectForEmployees con el nombre del empleado
             window.insertSelectForEmployees(empleado);
-
-            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', event)" class="Modify">`;
+            console.log(empleado)
+            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${empleado}' event)" class="Modify">`;
             var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
 
             editsFunctions(modify, cancel);

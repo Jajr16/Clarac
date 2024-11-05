@@ -6,7 +6,9 @@ const logger = require('morgan');
 const { body, validationResult } = require('express-validator');
 const createError = require('http-errors');
 const rateLimit = require('express-rate-limit');
+const multer = require('multer');
 const methodOverride = require('method-override');
+const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const MySQLStore = require('express-mysql-session')(session);
 const db = require('./Conexion/BaseDatos')
@@ -79,40 +81,28 @@ app.use('/users', usersRouter);
 app.post('/login', loginLimiter, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ message: 'Por favor, complete todos los campos requeridos.' });
+    req.session.errorMessage = 'Por favor, complete todos los campos requeridos.'; // Mensaje de error específico
+    return res.redirect('/login');
   }
 
   login(req, (err, result) => {
     if (err) {
-      console.error(err);
-      return res.status(500).json({ message: 'Error en el servidor. Inténtelo de nuevo más tarde.' });
+      console.err(err)
+      console.log(err)
+      req.session.errorMessage = 'Error en el servidor. Inténtelo de nuevo más tarde.'; // Mensaje de error específico
+      return res.redirect('/');
     }
     if (result.type === 'success') {
+      // Autenticación exitosa
       req.session.userId = req.body.username;
-      const query = 'SELECT permiso, modulo FROM permisos WHERE usuario = ?';
-      db.query(query, [req.body.username], (err, results) => {
-        if (err) {
-          console.error('Error al obtener los permisos:', err);
-          return res.status(500).json({ message: 'Error al obtener permisos. Inténtelo de nuevo más tarde.' });
-        }
-
-        const permissions = {};
-        results.forEach(row => {
-          if (!permissions[row.modulo]) {
-            permissions[row.modulo] = [];
-          }
-          permissions[row.modulo].push(row.permiso);
-        });
-
-        req.session.permissions = permissions;
-        res.json({ type: 'success', permissions });
-      });
+      req.session.permissions = result.permissions;
+      return res.json(result);
     } else {
-      return res.status(401).json({ message: 'Credenciales incorrectas.' });
+      // Error de autenticación
+      return res.status(401).json(result); 
     }
   });
 });
-
 
 app.use(authMiddleware);
 app.use('/equipo', equipoRoutes);
@@ -126,8 +116,7 @@ app.use('/pet', peticiones);
 
 app.get('/', (req, res) => {
   if (req.session && req.session.userId) {
-    const permissions = req.session.permissions || {};
-    res.render('home', { title: 'CLARAC | Home', layout: 'other_layout', permissions });
+    res.render('home', { title: 'CLARAC | Home', layout: 'other_layout' });
   } else {
     console.log(req.session)
     const errorMessage = req.session.errorMessage;

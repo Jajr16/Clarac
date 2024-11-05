@@ -25,15 +25,15 @@ function Login(req, callback) {
                         }
 
                         if (res1.length > 0) {
-                            let permisosModulos = {};
+                            let permissions = {};
                             res.forEach(row => {
-                                if (!permisosModulos[row.modulo]) {
-                                    permisosModulos[row.modulo] = [];
+                                if (!permissions[row.modulo]) {
+                                    permissions[row.modulo] = [];
                                 }
-                                permisosModulos[row.modulo].push(row.permiso);
+                                permissions[row.modulo].push(row.permiso);
                             });
                             console.log('ASdASD')
-                            return callback(null, { type: 'success', Usuario: result[0].Usuario, permisosModulos, area: res1[0].Área, empleado: res1.Nom });
+                            return callback(null, { type: 'success', Usuario: result[0].Usuario, permissions, area: res1[0].Área, empleado: res1.Nom });
                         } else {
                             return callback(null, { type: 'logInError', message: 'No se encontró el área del empleado.' });
                         }

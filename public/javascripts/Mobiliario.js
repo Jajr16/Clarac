@@ -365,10 +365,9 @@ if (!Permisos['MOBILIARIO']) {
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-            <td>${item.Articulo}</td>
-            <td>${item.Cantidad}</td>
-        `;
-
+                        <td>${item.Articulo}</td>
+                        <td>${item.Cantidad}</td>
+                    `;
                     $('.Mob').change(function () {
                         if ($(this).val() === item.Articulo) {
                             iconsLogic()
@@ -402,7 +401,8 @@ if (!Permisos['MOBILIARIO']) {
 
                     tr.addEventListener('click', () => {
                         iconsLogic()
-
+                        removeSelectAction();   // Quita el select
+                        disableSelectMob();     // Pone en disabled el select de mobiliario
                         const formData = new FormData();
                         formData.append('articulo', item.Articulo)
                         formData.append('descripcion', item.Descripcion)
@@ -463,12 +463,30 @@ if (!Permisos['MOBILIARIO']) {
             })
         }
 
+        // Quita el input con el empleado
         function removeEmpM() {
             const empMDiv = document.querySelector('.DF > input#EmpM')?.parentElement;
             if (empMDiv) {
                 empMDiv.remove();
             }
         }
+
+        // Quita el select del empleado
+        function removeSelectAction() {
+            const actionSelectDiv = document.querySelector('.DF > select#actionSelect')?.parentElement;
+            if (actionSelectDiv) {
+                actionSelectDiv.remove();
+            }
+        } 
+
+        // Pone en disabled el select de nombre de mobiliario
+        function disableSelectMob() {
+            const fnameSelect = document.querySelector('select#Fname');
+            if (fnameSelect) {
+                fnameSelect.disabled = true;
+            }
+        }
+        
 
     }
 }

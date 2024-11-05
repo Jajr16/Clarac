@@ -46,3 +46,4 @@ undefined | Error obtenido el -> 03/11/2024 23:37
 undefined | Error obtenido el -> 03/11/2024 23:37
 undefined | Error obtenido el -> 03/11/2024 23:37
 Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ModificarUEMob does not exist | Error obtenido el -> 04/11/2024 11:39
+Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 04/11/2024 19:15

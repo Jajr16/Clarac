@@ -1,34 +1,40 @@
 var express = require('express');
 var router = express.Router();
-const isAuthenticated = require('../middleware/authMiddleware')
+const isAuthenticated = require('../middleware/authMiddleware');
+
+// Middleware para pasar permisos a todas las vistas
+router.use(isAuthenticated, (req, res, next) => {
+  res.locals.permissions = req.session.permissions || {}; // Pasa permisos a las vistas
+  next();
+});
 
 /* GET users listing. */
-router.get('/home', isAuthenticated, function (req, res, next) {
+router.get('/home', function (req, res, next) {
   res.render('home', { title: 'CLARAC | Home', layout: 'other_layout' });
 });
 
 // Consulta de mobiliario
-router.get('/consulMob', isAuthenticated, function (req, res, next) {
+router.get('/consulMob', function (req, res, next) {
   res.render('consulMob', { title: 'Consultar Mobiliario', layout: 'other_layout' });
 });
 
 // Registros
-router.get('/registros', isAuthenticated, function (req, res, next) {
+router.get('/registros', function (req, res, next) {
   res.render('registros', { title: 'Registros', layout: 'other_layout' });
 });
 
 // Modificar Registros
-router.get('/modReg', isAuthenticated, function (req, res, next) {
+router.get('/modReg', function (req, res, next) {
   res.render('modReg', { title: 'Modificar Registros', layout: 'other_layout' });
 });
 
 // Modificar Permisos
-router.get('/modPer', isAuthenticated, function (req, res, next) {
+router.get('/modPer', function (req, res, next) {
   res.render('modPer', { title: 'Modificar Permisos', layout: 'other_layout' });
 });
 
 // Consulta de productos
-router.get('/consulProd', isAuthenticated, function (req, res, next) {
+router.get('/consulProd', function (req, res, next) {
   res.render('consulProd', { title: 'Consultar Productos', layout: 'other_layout' });
 });
 
@@ -38,27 +44,27 @@ router.get('/productos_exist', function (req, res, next) {
 });
 
 // Responsivas
-router.get('/responsivas', isAuthenticated, function (req, res, next) {
-  res.render('responsivas', { title: 'Responsivas' });
+router.get('/responsivas', function (req, res, next) {
+  res.render('responsivas', { title: 'Responsivas', layout: 'other_layout' });
 });
 
 // Consulta de Equipos
-router.get('/consulEqp', isAuthenticated, function (req, res, next) {
+router.get('/consulEqp', function (req, res, next) {
   res.render('consulEqp', { title: 'Consultar Equipos', layout: 'other_layout' });
 });
 
-// Consulta de Equipos
-router.get('/Peticiones', isAuthenticated, function (req, res, next) {
+// Peticiones
+router.get('/Peticiones', function (req, res, next) {
   res.render('peticiones', { title: 'Peticiones | CLARAC', layout: 'other_layout' });
 });
 
-// Consulta de Equipos
-router.get('/Solicitudes', isAuthenticated, function (req, res, next) {
+// Solicitudes
+router.get('/Solicitudes', function (req, res, next) {
   res.render('solicitudes', { title: 'Solicitudes | CLARAC', layout: 'other_layout' });
 });
 
-// Consulta de Equipos
-router.get('/Petalm', isAuthenticated, function (req, res, next) {
+// Estatus de peticiones
+router.get('/Petalm', function (req, res, next) {
   res.render('almacenista', { title: 'Estatus de peticiones | CLARAC', layout: 'other_layout' });
 });
 

@@ -17,23 +17,33 @@
                         <li>Mobiliario</li>
                     </ul>
                 </li></a>
-                <a href="consulEqp" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-desktop"></i>
-                    <ul class="mini-menu">
-                        <li>Equipos</li>
-                    </ul>
-                </li></a>
+                <% if (permissions['EQUIPOS'] && (permissions['EQUIPOS'].includes('4') || permissions['EQUIPOS'].includes('2') || permissions['EQUIPOS'].includes('1') || permissions['EQUIPOS'].includes('3'))) { %>
+                    <a href="consulEqp" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-desktop"></i>
+                        <ul class="mini-menu">
+                            <li>Equipos</li>
+                        </ul>
+                    </li></a>
+                <% } %>
                 <a href="responsivas" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-clipboard-list"></i>
                     <ul class="mini-menu">
                         <li>Responsivas</li>
                     </ul>
                 </li></a>
-                <li class="menu-item"><i class="fa-regular fa-address-card"></i>
-                    <ul class="mini-menu">
-                        <li><a href="registros">Registros</a></li>
-                        <li><a href="modReg">Modificar Registros</a></li>
-                        <li><a href="modPer">Modificar Permisos</a></li>
-                    </ul>
-                </li>
+                <% if (permissions['USUARIOS']) { %>
+                    <li class="menu-item"><i class="fa-regular fa-address-card"></i>
+                      <ul class="mini-menu">
+                        <% if (permissions['USUARIOS'].includes('1')) { %>
+                          <li><a href="registros">Registros</a></li>
+                        <% } %>
+                        <% if (permissions['USUARIOS'].includes('3')) { %>
+                          <li><a href="modReg">Modificar Registros</a></li>
+                        <% } %>
+                        <% if (permissions['USUARIOS'].includes('3')) { %>
+                          <li><a href="modPer">Modificar Permisos</a></li>
+                        <% } %>
+                      </ul>
+                    </li>
+                  <% } %>                                 
                 <!-- <a href="registros" class="ref-mini-menu"><li class="menu-item"><i class="fa-regular fa-address-card"></i>
                     <ul class="mini-menu">
                         <li>Registros</li>

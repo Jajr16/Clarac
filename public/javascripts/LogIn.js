@@ -18,7 +18,7 @@ form.addEventListener('submit', (e) => {
             if (data.type === 'success') {
                 // Usuario autenticado correctamente
                 localStorage.setItem('user', data.Usuario);
-                localStorage.setItem('permisosModulos', JSON.stringify(data.permisosModulos));
+                localStorage.setItem('permisosModulos', JSON.stringify(data.permissions));
                 localStorage.setItem('area', data.area);
                 localStorage.setItem('nombre', data.empleado);
                 console.log(data.permisosModulos);

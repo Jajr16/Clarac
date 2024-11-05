@@ -79,27 +79,40 @@ app.use('/users', usersRouter);
 app.post('/login', loginLimiter, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.session.errorMessage = 'Por favor, complete todos los campos requeridos.'; // Mensaje de error específico
-    return res.redirect('/login');
+    return res.status(400).json({ message: 'Por favor, complete todos los campos requeridos.' });
   }
 
   login(req, (err, result) => {
     if (err) {
-      console.err(err)
-      console.log(err)
-      req.session.errorMessage = 'Error en el servidor. Inténtelo de nuevo más tarde.'; // Mensaje de error específico
-      return res.redirect('/');
+      console.error(err);
+      return res.status(500).json({ message: 'Error en el servidor. Inténtelo de nuevo más tarde.' });
     }
     if (result.type === 'success') {
-      // Autenticación exitosa
       req.session.userId = req.body.username;
-      return res.json(result);
+      const query = 'SELECT permiso, modulo FROM permisos WHERE usuario = ?';
+      db.query(query, [req.body.username], (err, results) => {
+        if (err) {
+          console.error('Error al obtener los permisos:', err);
+          return res.status(500).json({ message: 'Error al obtener permisos. Inténtelo de nuevo más tarde.' });
+        }
+
+        const permissions = {};
+        results.forEach(row => {
+          if (!permissions[row.modulo]) {
+            permissions[row.modulo] = [];
+          }
+          permissions[row.modulo].push(row.permiso);
+        });
+
+        req.session.permissions = permissions;
+        res.json({ type: 'success', permissions });
+      });
     } else {
-      // Error de autenticación
-      return res.status(401).json(result); 
+      return res.status(401).json({ message: 'Credenciales incorrectas.' });
     }
   });
 });
+
 
 app.use(authMiddleware);
 app.use('/equipo', equipoRoutes);
@@ -113,7 +126,8 @@ app.use('/pet', peticiones);
 
 app.get('/', (req, res) => {
   if (req.session && req.session.userId) {
-    res.render('home', { title: 'CLARAC | Home', layout: 'other_layout' });
+    const permissions = req.session.permissions || {};
+    res.render('home', { title: 'CLARAC | Home', layout: 'other_layout', permissions });
   } else {
     console.log(req.session)
     const errorMessage = req.session.errorMessage;

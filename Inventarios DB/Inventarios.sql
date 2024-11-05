@@ -1151,15 +1151,20 @@ BEGIN
     START TRANSACTION;
 
     IF encargado IS NOT NULL THEN
+    
+		select arti;
+        select usuar;
+        select encargado;
+        
         -- Eliminar el mobiliario de la tabla de mobiliario
         DELETE FROM mobiliario 
-        WHERE arti = arti AND Num_emp IN (
+        WHERE Articulo = arti AND Num_emp IN (
             SELECT Num_emp FROM empleado WHERE Nom = encargado
         );
     ELSE
         -- Eliminar el mobiliario de la tabla de mobiliario
         DELETE FROM mobiliario 
-        WHERE arti = arti AND Num_emp IN (
+        WHERE Articulo = arti AND Num_emp IN (
             SELECT Num_emp FROM usuario WHERE Usuario = usuar
         );
     END IF;
@@ -1183,7 +1188,8 @@ CREATE PROCEDURE ModificarUEMob(
     IN nuevaUbicacion VARCHAR(400),
     IN nuevaCantidad INT,
     IN articuloAntiguo VARCHAR(100),
-    IN descripcionAntigua VARCHAR(400)
+    IN descripcionAntigua VARCHAR(400),
+    IN usuarioAntiguo VARCHAR(45)
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -1207,7 +1213,8 @@ BEGIN
             Cantidad = nuevaCantidad
         WHERE 
             Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua;
+            AND Descripcion = descripcionAntigua 
+            AND Num_emp = (SELECT Num_emp from empleado where Nom = usuarioAntiguo);
             
 		select Num_emp from mobiliario;
         
@@ -1222,7 +1229,8 @@ BEGIN
             Cantidad = nuevaCantidad
         WHERE 
             Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua;
+            AND Descripcion = descripcionAntigua
+            AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
     END IF;
 
     -- Confirmar los cambios
@@ -1232,18 +1240,6 @@ BEGIN
     SELECT 'Success' AS status;
 END //
 DELIMITER ;
-
-CALL ModificarUEMob(
-    'SILLA',          -- Narticulo: El nuevo nombre del artículo
-    'Nueva descripción',       -- Ndescripcion: La nueva descripción del mobiliario
-    'Prueba',             -- usuar: Nombre del usuario que está realizando la modificación
-    null,        -- encargado: Nombre del encargado relacionado (puede ser NULL)
-    'Nueva Ubicación',         -- ubicacion: La nueva ubicación del mobiliario
-    10,                         -- cantidad: La nueva cantidad del mobiliario
-    'BANDEJA',
-    '1'
-);
-
 
 SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
 SELECT*FROM mobiliario;

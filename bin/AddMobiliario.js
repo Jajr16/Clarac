@@ -28,6 +28,9 @@ function addFurniture(req, callback) {
     
     const usuario = data.user || null;
     const encargado = data.encargado || null;
+
+    console.log("el usuario es " + usuario);
+    console.log("el encargado es " + encargado);
     
     db.query('CALL AgregarUEMob(?,?,?,?,?,?)', [data.articulo, data.descripcion, usuario, encargado, data.Ubicacion, data.Cantidad], function (err, result) {
         if (err) { Errores(err); return callback(err); } // Se hace un control de errores

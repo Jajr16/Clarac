@@ -20,7 +20,7 @@ function customId(req, update) {
     console.log("El usuario anterior es " + req.body.oldUsuario);
 
     // Valida si hay un usuario anterior
-    if (req.body.oldUsuario == null) {
+    if (req.body.oldUsuario == null || req.body.oldUsuario == 'null') {
         // Crea el ID con el articulo y descripcion nueva
         if (req.body.Narticulo && req.body.Ndescripcion && update) {
             customId = `${req.body.Narticulo}A${req.body.Ndescripcion}A${req.body.user}`;

@@ -12,7 +12,7 @@ function delFurnit(req, callback) {
     console.log("el usuario es " + usuario);
     console.log("el encargado es " + encargado);
 
-    db.query('CALL EliminarUEMob(?, ?, ?)', [data.articulo, usuario, encargado], function (err, result) {
+    db.query('CALL EliminarUEMob(?, ?, ?, ?)', [data.articulo, data.descripcion, usuario, encargado], function (err, result) {
         if (err) { 
             Errores(err); 
             return callback(err); // Se hace un control de errores

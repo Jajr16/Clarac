@@ -1136,6 +1136,7 @@ DROP PROCEDURE IF EXISTS EliminarUEMob;
 DELIMITER //
 CREATE PROCEDURE EliminarUEMob(
     IN arti VARCHAR(100),
+    IN descri VARCHAR (400),
     IN usuar VARCHAR(45),
     IN encargado VARCHAR(45)
 )
@@ -1152,19 +1153,17 @@ BEGIN
 
     IF encargado IS NOT NULL THEN
     
-		select arti;
-        select usuar;
-        select encargado;
+		select arti, descri, usuar, encargado;
         
         -- Eliminar el mobiliario de la tabla de mobiliario
         DELETE FROM mobiliario 
-        WHERE Articulo = arti AND Num_emp IN (
+        WHERE Articulo = arti AND Descripcion = descri AND Num_emp IN (
             SELECT Num_emp FROM empleado WHERE Nom = encargado
         );
     ELSE
         -- Eliminar el mobiliario de la tabla de mobiliario
         DELETE FROM mobiliario 
-        WHERE Articulo = arti AND Num_emp IN (
+        WHERE Articulo = arti AND Descripcion = descri AND Num_emp IN (
             SELECT Num_emp FROM usuario WHERE Usuario = usuar
         );
     END IF;

@@ -9,17 +9,23 @@ function customId(req, update) {
     let customId
 
     console.log(req.body)
+    
+    // Verifica si hay usuario o encargado
     if (req.body.user == null || req.body.user == 'null') {
         console.log('Si entra aquí')
         req.body.user = req.body.encargado;
     }
-    console.log(req.body)
+    //console.log(req.body)
 
-    if (req.body.Narticulo && req.body.Ndescripcion && update) {
+    console.log("El usuario anterior es " + req.body.oldUsuario);
+
+    // Crea el ID con el articulo y descripcion nueva
+    if (req.body.Narticulo && req.body.Ndescripcion && req.body.oldUsuario && update) {
         customId = `${req.body.Narticulo}A${req.body.Ndescripcion}A${req.body.user}`;
     } else {
-        customId = `${req.body.articulo}A${req.body.descripcion}A${req.body.user}`;
+        customId = `${req.body.articulo}A${req.body.descripcion}A${req.body.oldUsuario}`;
     }
+
     console.log(customId)
     let count = 0;
 

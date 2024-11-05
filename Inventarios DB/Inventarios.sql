@@ -1243,7 +1243,7 @@ DELIMITER ;
 
 SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
 SELECT*FROM mobiliario;
-delete from mobiliario;
+delete from mobiliario where Num_Inventario = 57;
 select*from equipo;
 select*from empleado;
 select*from permisos;

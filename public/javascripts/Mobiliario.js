@@ -197,7 +197,7 @@ if (!Permisos['MOBILIARIO']) {
             imagen.style.cursor = 'default';
         }
 
-        function modify(oldName, oldDesc, Oldempleado, e) {
+        function modify(oldName, oldDesc, oldUser, e) {
             e.preventDefault()
 
             const formData = new FormData();
@@ -211,7 +211,7 @@ if (!Permisos['MOBILIARIO']) {
             formData.append('ubicacion', document.querySelector('.UbiM').value);
             formData.append('articulo', oldName);
             formData.append('descripcion', oldDesc);
-            formData.append('Oldempleado', Oldempleado);
+            formData.append('oldUsuario', oldUser);
 
             fetch('/mobiliario/mod_mob', {
                 method: 'POST',
@@ -281,8 +281,13 @@ if (!Permisos['MOBILIARIO']) {
             formData.append('articulo', nombre_Articulo)
             formData.append('descripcion', desc_Articulo)
 
-            // Agregar encargado o usuario
-            agregarEncargadoOUsuario(formData, Permisos, user);
+            // Verificamos si el permiso es '5'
+            if (Permisos['MOBILIARIO'].includes('5')) {
+                var encargado = $('.EmpM').val();
+                formData.append('encargado', encargado);
+            } else {
+                formData.append('user', user);
+            }
 
             if (nombre_Articulo !== '' && desc_Articulo !== '') {
                 fetch('/mobiliario/delMob', {
@@ -320,8 +325,13 @@ if (!Permisos['MOBILIARIO']) {
 
             // Llama a la función insertSelectForEmployees con el nombre del empleado
             window.insertSelectForEmployees(empleado);
-            console.log(empleado)
-            var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${empleado}' event)" class="Modify">`;
+
+            if (Permisos['MOBILIARIO'].includes('5')) {
+                var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${empleado}', event)" class="Modify">`;
+            } else {
+                var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${user}', event)" class="Modify">`;
+            }
+
             var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
 
             editsFunctions(modify, cancel);
@@ -354,10 +364,9 @@ if (!Permisos['MOBILIARIO']) {
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-            <td>${item.Articulo}</td>
-            <td>${item.Cantidad}</td>
-        `;
-
+                        <td>${item.Articulo}</td>
+                        <td>${item.Cantidad}</td>
+                    `;
                     $('.Mob').change(function () {
                         if ($(this).val() === item.Articulo) {
                             iconsLogic()
@@ -391,7 +400,8 @@ if (!Permisos['MOBILIARIO']) {
 
                     tr.addEventListener('click', () => {
                         iconsLogic()
-
+                        removeSelectAction();   // Quita el select
+                        disableSelectMob();     // Pone en disabled el select de mobiliario
                         const formData = new FormData();
                         formData.append('articulo', item.Articulo)
                         formData.append('descripcion', item.Descripcion)
@@ -452,12 +462,30 @@ if (!Permisos['MOBILIARIO']) {
             })
         }
 
+        // Quita el input con el empleado
         function removeEmpM() {
             const empMDiv = document.querySelector('.DF > input#EmpM')?.parentElement;
             if (empMDiv) {
                 empMDiv.remove();
             }
         }
+
+        // Quita el select del empleado
+        function removeSelectAction() {
+            const actionSelectDiv = document.querySelector('.DF > select#actionSelect')?.parentElement;
+            if (actionSelectDiv) {
+                actionSelectDiv.remove();
+            }
+        } 
+
+        // Pone en disabled el select de nombre de mobiliario
+        function disableSelectMob() {
+            const fnameSelect = document.querySelector('select#Fname');
+            if (fnameSelect) {
+                fnameSelect.disabled = true;
+            }
+        }
+        
 
     }
 }

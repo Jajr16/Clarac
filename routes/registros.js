@@ -21,7 +21,6 @@ router.get('/', (req, res) => {
             password: row.password
         }));
 
-        // console.log("Empleados enviados al frontend:", empleados); 
         res.json(empleados); 
     });
 });
@@ -54,7 +53,6 @@ router.get('/registro/emp', (req, res) => {
             area: row.area
         }));
 
-        // console.log("Empleados enviados al frontend:", empleados); 
         res.json(empleados); 
     });
 });
@@ -95,7 +93,6 @@ router.get('/getEmpleados', (req, res) => {
 
         // Convertir RowDataPacket a un array simple de objetos JSON
         const empleados = result.map(row => row.Nom);
-        // console.log("Empleados enviados al frontend:", empleados); // Verificar la estructura
         res.json(empleados); // Enviar los datos al frontend en formato JSON
     });
 });
@@ -108,15 +105,13 @@ router.get('/getRegistrosUsuarios', (req, res) => {
         }
 
         // Convertir RowDataPacket a un array simple de objetos JSON
-        console.log("Resultados de la consulta:", result);
         const empleados = result.map(row => ({
             numemp: row.numemp,
             nombre: row.nombre, 
             usuario: row.usuario || '-',
             password: row.password
         }));
-
-        console.log("Usuarios enviados al frontend:", empleados); 
+        
         res.json(empleados); 
     });
 });

@@ -263,10 +263,11 @@ if (!Permisos['EQUIPOS']) {
             .then(data => {
                 const tbody = document.querySelector(".data-eqp tbody");
                 const selEqp = $('.Eqp')
-
+                
                 if (data.length <= 0) {
                     empty_table()
                 }
+                console.log(data)
 
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))

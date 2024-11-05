@@ -21,7 +21,7 @@ form.addEventListener('submit', (e) => {
                 localStorage.setItem('permisosModulos', JSON.stringify(data.permissions));
                 localStorage.setItem('area', data.area);
                 localStorage.setItem('nombre', data.empleado);
-                console.log(data.permisosModulos);
+                console.log(data.permissions);
                 // Redirigir a la página de inicio de sesión exitosa
                 location.href = "/users/home";
             } else {

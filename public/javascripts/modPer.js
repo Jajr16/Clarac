@@ -195,12 +195,11 @@ function sselect2() {
                     select: element
                 });
                 slimSelectInstances.push(instance); // Guardar la instancia en el array
-                console.log("SlimSelect inicializado en:", element);
             } catch (error) {
                 console.error("Error al inicializar SlimSelect en el elemento:", element, error);
             }
         } else {
-            console.warn("El elemento no es visible o no tiene opciones suficientes para inicializar SlimSelect:", element);
+            // console.warn("El elemento no es visible o no tiene opciones suficientes para inicializar SlimSelect:", element);
         }
     });
 }
@@ -220,7 +219,7 @@ function obtenerRegistros(url) {
         selEqp.append(new Option("Buscar...", "")).attr("disabled", true);
 
         if (data.length === 0) {
-            console.warn("No se encontraron datos para mostrar.");
+            // console.warn("No se encontraron datos para mostrar.");
         } else {
             data.forEach(item => {
                 selEqp.append(new Option(item.nombre, item.nombre));
@@ -247,7 +246,6 @@ function obtenerPermisosPorUsuario(usuario) {
                 console.error("Datos inesperados recibidos:", data);
                 return;
             }
-            console.log("Permisos recibidos para el usuario", usuario, data);
 
             // Clear all checkboxes
             document.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
@@ -269,7 +267,6 @@ function obtenerPermisosPorUsuario(usuario) {
             console.error('Error al obtener los permisos:', error);
         });
 }
-
 
 function getCheckboxId(modulo, permiso) {
     // Map modules to the corresponding checkbox ID suffix
@@ -365,7 +362,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         });
         // Función para inicializar SlimSelect en elementos con clase `.searchInput`
         function sselect() {
-            console.log("Iniciando sselect...");
 
             let searchs = $('.searchInput').toArray();
             if (searchs.length === 0) {
@@ -379,12 +375,11 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                         new SlimSelect({
                             select: element
                         });
-                        console.log("SlimSelect inicializado en:", element);
                     } catch (error) {
                         console.error("Error al inicializar SlimSelect en el elemento:", element, error);
                     }
                 } else {
-                    console.warn("El elemento no tiene opciones suficientes para inicializar SlimSelect:", element);
+                    // console.warn("El elemento no tiene opciones suficientes para inicializar SlimSelect:", element);
                 }
             });
         }
@@ -402,7 +397,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
             // selEqp.empty();  // Limpiar opciones previas
 
             if (data.length === 0) {
-                console.warn("No se encontraron datos para mostrar.");
+                // console.warn("No se encontraron datos para mostrar.");
             } else {
                 // Cargar las opciones en el select
                 data.forEach(item => {
@@ -434,7 +429,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         }
 
         function populateInputs(item) {
-            console.log("Datos de item:", item); 
         
             const nombreSelect = $('.Nombre');
             if (nombreSelect.find(`option[value="${item.nombre}"]`).length) {
@@ -457,7 +451,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
             fetch('/registro/getRegistrosUsuarios')
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Datos recibidos del backend:", data);
                     const tbody = document.querySelector(".data-prod tbody");
                     const headers = document.getElementById('table-headers');
                     const selEqp = $('#mySelect');  // Assume `#mySelect` is the target select element
@@ -478,7 +471,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         
                     // Populate table and select with new data
                     data.forEach(item => {
-                        // console.log("Item actual:", item);
                         // Populate select options
                         selEqp.append(new Option(item.nombre, item.nombre));
         
@@ -523,7 +515,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 .then(response => response.json())
                 .then(data => {
                     
-                    console.log("Datos recibidos del backend:", data);
                     const tbody = document.querySelector(".data-prod tbody");
                     const headers = document.getElementById('table-headers');
                     const selEqp = $('#mySelect');  // Assume `#mySelect` is the target select element
@@ -543,7 +534,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         
                     // Populate table and select with new data
                     data.forEach(item => {
-                        console.log("Item actual:", item);
                         // Populate select options
                         selEqp.append(new Option(item.nombre, item.nombre));
         

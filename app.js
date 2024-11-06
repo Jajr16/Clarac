@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 const MySQLStore = require('express-mysql-session')(session);
 const db = require('./Conexion/BaseDatos')
 const sessionMiddleware = require('./middleware/sessionMiddleware');
-const authMiddleware = require('./middleware/authMiddleware');
+const { isAuthenticated, permissions } = require('./middleware/authMiddleware');
 
 require('dotenv').config();
 
@@ -66,6 +66,16 @@ app.use(layout);
 app.use(methodOverride('_method'));
 app.use(sessionMiddleware);
 
+app.use((req, res, next) => {
+  res.locals.permissions = getPermissions(req);
+  next();
+});
+
+function getPermissions(req) {
+  console.log(req.session.permissions)
+  return req.session.permissions || {};
+}
+
 // Configurar limitador de intentos de inicio de sesión
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -104,7 +114,7 @@ app.post('/login', loginLimiter, (req, res) => {
   });
 });
 
-app.use(authMiddleware);
+app.use(isAuthenticated);
 app.use('/equipo', equipoRoutes);
 app.use('/mobiliario', mobiliarioRoutes);
 app.use('/producto', productoRoutes);

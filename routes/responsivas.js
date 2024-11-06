@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig');
-const isAuthenticated = require('../middleware/authMiddleware')
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 const getResponsives = require('../bin/getResponsives')
 const getEmploys = require('../bin/getEmploys')

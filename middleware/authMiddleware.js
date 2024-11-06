@@ -13,4 +13,22 @@ function isAuthenticated(req, res, next) {
   }
 }
 
-module.exports = isAuthenticated;
+function permissions(...categories) {
+  return function (req, res, next) {
+    const userPermissions = req.session.permissions || {};
+
+    // Verificar si el usuario tiene todos los permisos requeridos
+    const hasAllPermissions = categories.every(category => userPermissions[category]);
+
+    if (hasAllPermissions) {
+      return next();
+    } else {
+      return res.redirect('/users/home');
+    }
+  };
+}
+
+module.exports = {
+  isAuthenticated,
+  permissions
+};

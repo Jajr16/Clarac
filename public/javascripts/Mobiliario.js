@@ -341,8 +341,6 @@ if (!Permisos['MOBILIARIO']) {
 
         });
 
-
-
         fetch('/mobiliario', {
             method: 'POST',
             headers: {

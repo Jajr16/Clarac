@@ -7,7 +7,7 @@ const products = require('../bin/Productos');
 const addProduct = require('../bin/AddProductos');
 const modProduct = require('../bin/ProductosModify');
 const delProduct = require('../bin/deleteProductos');
-const isAuthenticated = require('../middleware/authMiddleware')
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 const upload = require('../config/multerConfig'); 
 

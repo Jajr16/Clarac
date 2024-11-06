@@ -12,11 +12,13 @@
                         <li><a>Registro de productos sacados</a></li>
                     </ul>
                 </li>
-                <a href="consulMob" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-couch"></i>
-                    <ul class="mini-menu">
-                        <li>Mobiliario</li>
-                    </ul>
-                </li></a>
+                <% if (permissions['MOBILIARIO']) { %>
+                    <a href="consulMob" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-couch"></i>
+                        <ul class="mini-menu">
+                            <li>Mobiliario</li>
+                        </ul>
+                    </li></a>
+                <% } %>
                 <% if (permissions['EQUIPOS']) { %>
                     <a href="consulEqp" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-desktop"></i>
                         <ul class="mini-menu">
@@ -24,11 +26,13 @@
                         </ul>
                     </li></a>
                 <% } %>
-                <a href="responsivas" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-clipboard-list"></i>
-                    <ul class="mini-menu">
-                        <li>Responsivas</li>
-                    </ul>
-                </li></a>
+                <% if (permissions['RESPONSIVAS']) { %>
+                    <a href="responsivas" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-clipboard-list"></i>
+                        <ul class="mini-menu">
+                            <li>Responsivas</li>
+                        </ul>
+                    </li></a>
+                <% } %>
                 <% if (permissions['USUARIOS']) { %>
                     <li class="menu-item"><i class="fa-regular fa-address-card"></i>
                       <ul class="mini-menu">
@@ -43,19 +47,8 @@
                         <% } %>
                       </ul>
                     </li>
-                  <% } %>                                 
-                <!-- <a href="registros" class="ref-mini-menu"><li class="menu-item"><i class="fa-regular fa-address-card"></i>
-                    <ul class="mini-menu">
-                        <li>Registros</li>
-                    </ul>
-                </li></a> -->
+                <% } %>
             </ul>
         </div>
     </div>
 </header>
-<!-- <script>
-    men = document.getElementsByClassName('sidebar')[0]
-    document.getElementsByClassName('extend -menu')[0].addEventListener("click", function(e){
-        men.style.width = "10rem";
-    })
-</script> -->

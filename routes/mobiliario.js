@@ -8,7 +8,7 @@ const addFurnit = require('../bin/AddMobiliario');
 const modFurnit = require('../bin/MobiliarioModify');
 const delFurnit = require('../bin/deleteMobiliario');
 const upload = require('../config/multerConfig');
-const isAuthenticated = require('../middleware/authMiddleware')
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 const customId = require('../utils/customId');
 

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig'); 
-const isAuthenticated = require('../middleware/authMiddleware')
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 const getExcelE = require('../bin/ExcelE')
 const getExcelM = require('../bin/ExcelM')

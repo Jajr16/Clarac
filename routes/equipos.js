@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig'); 
-const isAuthenticated = require('../middleware/authMiddleware')
+const { isAuthenticated } = require('../middleware/authMiddleware');
+
 
 const equipments = require('../bin/Equipos');
 const addEquip = require('../bin/AddEquipos');

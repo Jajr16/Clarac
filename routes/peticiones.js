@@ -11,7 +11,7 @@ const consulHistory = require('../bin/viewHistory');
 const viewStatusAlmacen = require('../bin/viewStatusAlmacen');
 const viewHistoryAlmacenista = require('../bin/viewHistoryAlmacenista');
 const ConfirmAlmacen = require('../bin/ConfirmAlmacen');
-const isAuthenticated = require('../middleware/authMiddleware')
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 router.post('/addPet', isAuthenticated, async (req, res) => {
     petAdd(req, (err, result) => {

@@ -2,12 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../config/multerConfig'); 
-const { isAuthenticated } = require('../middleware/authMiddleware');
+const { isAuthenticated, permissions } = require('../middleware/authMiddleware');
 const { addEmpleado, addUsuario, addPermisos, obtenerRegistrosUsuarios,
     obtenerRegistrosEmpleados, obtenerPermisosPorUsuario, obtenerEmpleados,
     modifyRegUsu, modifyRegemp, modifyRegPer} = require('../bin/ModRegistros');
 
-router.get('/', (req, res) => {
+router.get('/', isAuthenticated, (req, res) => {
     obtenerRegistrosUsuarios((err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/getRegistrosPermisos', (req, res) => {
+router.get('/getRegistrosPermisos', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), (req, res) => {
     const usuario = req.query.usuario;
     if (!usuario) {
         return res.status(400).json({ type: 'error', message: 'Usuario no especificado' });
@@ -40,7 +40,7 @@ router.get('/getRegistrosPermisos', (req, res) => {
     });
 });
 
-router.get('/registro/emp', (req, res) => {
+router.get('/registro/emp', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), (req, res) => {
     obtenerRegistrosEmpleados((err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -57,7 +57,7 @@ router.get('/registro/emp', (req, res) => {
     });
 });
 
-router.post('/new_reg_emp', isAuthenticated, (req, res) => {
+router.post('/new_reg_emp', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), (req, res) => {
     addEmpleado(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -66,7 +66,7 @@ router.post('/new_reg_emp', isAuthenticated, (req, res) => {
     });
 });
 
-router.post('/new_reg_usu', isAuthenticated, (req, res) => {
+router.post('/new_reg_usu', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), (req, res) => {
     addUsuario(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -75,7 +75,7 @@ router.post('/new_reg_usu', isAuthenticated, (req, res) => {
     });
 });
 
-router.post('/new_reg_permisos', isAuthenticated, (req, res) => {
+router.post('/new_reg_permisos', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), (req, res) => {
     addPermisos(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -135,15 +135,15 @@ router.get('/getRegistrosEmpleados', (req, res) => {
     });
 });
 
-router.post('/mod_reg_emp', isAuthenticated, upload.none(), (req, res) => {
+router.post('/mod_reg_emp', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), upload.none(), (req, res) => {
     modifyRegemp(req, res);
 });
 
-router.post('/mod_reg_usu', isAuthenticated, upload.none(), (req, res) => {
+router.post('/mod_reg_usu', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), upload.none(), (req, res) => {
     modifyRegUsu(req, res);
 });
 
-router.post('/mod_reg_per', isAuthenticated, upload.none(), (req, res) => {
+router.post('/mod_reg_per', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), upload.none(), (req, res) => {
     modifyRegPer(req, res);
 });
 

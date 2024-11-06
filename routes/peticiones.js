@@ -11,9 +11,9 @@ const consulHistory = require('../bin/viewHistory');
 const viewStatusAlmacen = require('../bin/viewStatusAlmacen');
 const viewHistoryAlmacenista = require('../bin/viewHistoryAlmacenista');
 const ConfirmAlmacen = require('../bin/ConfirmAlmacen');
-const { isAuthenticated } = require('../middleware/authMiddleware');
+const { isAuthenticated, subperm, valArea } = require('../middleware/authMiddleware');
 
-router.post('/addPet', isAuthenticated, async (req, res) => {
+router.post('/addPet', isAuthenticated, subperm('PETICIONES', [1]), async (req, res) => {
     petAdd(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -22,7 +22,7 @@ router.post('/addPet', isAuthenticated, async (req, res) => {
     });
 });
 
-router.post('/status', isAuthenticated, async (req, res) => {
+router.post('/status', isAuthenticated, subperm('PETICIONES', [1]), async (req, res) => {
     consulStatus(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -31,7 +31,7 @@ router.post('/status', isAuthenticated, async (req, res) => {
     });
 });
 
-router.post('/Solicitante', isAuthenticated, async (req, res) => {
+router.post('/Solicitante', isAuthenticated, subperm('PETICIONES', [1]), async (req, res) => {
     confirmPet(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -40,7 +40,7 @@ router.post('/Solicitante', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/consulSol', isAuthenticated, async (req, res) => {
+router.post('/consulSol', isAuthenticated, subperm('PETICIONES', [1]), valArea('DIRECCION GENERAL'), async (req, res) => {
     consulSol(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -49,7 +49,7 @@ router.post('/consulSol', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/confirmPetDir', isAuthenticated, async (req, res) => {
+router.post('/confirmPetDir', isAuthenticated, subperm('PETICIONES', [1]), valArea('DIRECCION GENERAL'), async (req, res) => {
     confirmPetDir(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -58,7 +58,7 @@ router.post('/confirmPetDir', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/viewStatus', isAuthenticated, async (req, res) => {
+router.post('/viewStatus', isAuthenticated, subperm('PETICIONES', [1]), valArea('DIRECCION GENERAL'), async (req, res) => {
     viewStatus(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -67,7 +67,7 @@ router.post('/viewStatus', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/viewHistory', isAuthenticated, async (req, res) => {
+router.post('/viewHistory', isAuthenticated, subperm('PETICIONES', [1]), valArea('DIRECCION GENERAL'), async (req, res) => {
     consulHistory(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -76,7 +76,7 @@ router.post('/viewHistory', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/viewStatusAlmacen', isAuthenticated, async (req, res) => {
+router.post('/viewStatusAlmacen', isAuthenticated, subperm('ALMACÉN', [1,2,3,4]), async (req, res) => {
     viewStatusAlmacen(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -85,7 +85,7 @@ router.post('/viewStatusAlmacen', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/viewHistoryAlmacenista', isAuthenticated, async (req, res) => {
+router.post('/viewHistoryAlmacenista', isAuthenticated, subperm('ALMACÉN', [1,2,3,4]), async (req, res) => {
     viewHistoryAlmacenista(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -94,7 +94,7 @@ router.post('/viewHistoryAlmacenista', isAuthenticated, async (req, res) => {
     })
 })
 
-router.post('/ConfirmAlmacen', isAuthenticated, async (req, res) => {
+router.post('/ConfirmAlmacen', isAuthenticated, subperm('ALMACÉN', [1,2,3,4]), async (req, res) => {
     ConfirmAlmacen(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

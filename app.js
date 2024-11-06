@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 const MySQLStore = require('express-mysql-session')(session);
 const db = require('./Conexion/BaseDatos')
 const sessionMiddleware = require('./middleware/sessionMiddleware');
-const { isAuthenticated, permissions } = require('./middleware/authMiddleware');
+const { isAuthenticated } = require('./middleware/authMiddleware');
 
 require('dotenv').config();
 
@@ -67,12 +67,16 @@ app.use(methodOverride('_method'));
 app.use(sessionMiddleware);
 
 app.use((req, res, next) => {
+  res.locals.area = getArea(req);
   res.locals.permissions = getPermissions(req);
   next();
 });
 
+function getArea(req) {
+  return req.session.area || {};
+}
+
 function getPermissions(req) {
-  console.log(req.session.permissions)
   return req.session.permissions || {};
 }
 
@@ -106,6 +110,7 @@ app.post('/login', loginLimiter, (req, res) => {
       // Autenticación exitosa
       req.session.userId = req.body.username;
       req.session.permissions = result.permissions;
+      req.session.area = result.area;
       return res.json(result);
     } else {
       // Error de autenticación

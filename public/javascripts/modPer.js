@@ -291,7 +291,6 @@ function getCheckboxId(modulo, permiso) {
     return `${permisoMap[permiso]}${moduloMap[modulo]}`;
 }
 
-
 if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
     location.href = "index";
 } else {

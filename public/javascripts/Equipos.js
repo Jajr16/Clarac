@@ -17,76 +17,78 @@ if (!Permisos['EQUIPOS']) {
         const Components_CPU = $('.Components_CPU')
         const div_Asignacion = $('.Asignation')
 
-        function addEquipment(e) {
-            e.preventDefault();
-
-            const addData = {
-                Num_Serie: document.querySelector('.NumSerieE').value,
-                Equipo: document.querySelector('.Ename').value,
-                Marca: document.querySelector('.MarcaE').value,
-                Modelo: document.querySelector('.ModeloE').value,
-                Ubi: document.querySelector('.UbiE').value,
-                User: user
-            };
-
-            if (Asignacion && Asignacion.val().trim() !== '') {
-                addData.Num_Serie_CPU = Asignacion.val()
-            }
-
-            if (Hardware && Hardware.val().trim() !== '') {
-                addData.Hardware = Hardware.val()
-            }
-
-            if (Software && Software.val().trim() !== '') {
-                addData.Software = Software.val()
-            }
-
-            if (Mouse && Mouse.val().trim() !== '') {
-                addData.Mouse = Mouse.val()
-            }
-
-            if (Teclado && Teclado.val().trim() !== '') {
-                addData.Teclado = Teclado.val()
-            }
-
-            if (Accesorio && Accesorio.val().trim() !== '') {
-                addData.Accesorio = Accesorio.val()
-            }
-
-            if (document.querySelector('.Ename').value === 'CPU' && ((Hardware.val().trim() === '') || (Software.val().trim() === ''))) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Ocurrió un error",
-                    text: 'Debes llenar todos los datos para continuar.',
-                })
-
-            }
-
-            if (!checkEmptyFields(addData)) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Ocurrió un error",
-                    text: 'Debes llenar todos los datos para continuar.',
-                })
-            } else {
-                fetch('/equipo/new_eqp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(addData)
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
+        if (Permisos['EQUIPOS'].includes('1')) {
+            function addEquipment(e) {
+                e.preventDefault();
+    
+                const addData = {
+                    Num_Serie: document.querySelector('.NumSerieE').value,
+                    Equipo: document.querySelector('.Ename').value,
+                    Marca: document.querySelector('.MarcaE').value,
+                    Modelo: document.querySelector('.ModeloE').value,
+                    Ubi: document.querySelector('.UbiE').value,
+                    User: user
+                };
+    
+                if (Asignacion && Asignacion.val().trim() !== '') {
+                    addData.Num_Serie_CPU = Asignacion.val()
+                }
+    
+                if (Hardware && Hardware.val().trim() !== '') {
+                    addData.Hardware = Hardware.val()
+                }
+    
+                if (Software && Software.val().trim() !== '') {
+                    addData.Software = Software.val()
+                }
+    
+                if (Mouse && Mouse.val().trim() !== '') {
+                    addData.Mouse = Mouse.val()
+                }
+    
+                if (Teclado && Teclado.val().trim() !== '') {
+                    addData.Teclado = Teclado.val()
+                }
+    
+                if (Accesorio && Accesorio.val().trim() !== '') {
+                    addData.Accesorio = Accesorio.val()
+                }
+    
+                if (document.querySelector('.Ename').value === 'CPU' && ((Hardware.val().trim() === '') || (Software.val().trim() === ''))) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Debes llenar todos los datos para continuar.',
                     })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
+    
+                }
+    
+                if (!checkEmptyFields(addData)) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Debes llenar todos los datos para continuar.',
+                    })
+                } else {
+                    fetch('/equipo/new_eqp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(addData)
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                }
             }
         }
 
@@ -135,99 +137,71 @@ if (!Permisos['EQUIPOS']) {
                 }
             })
 
-            const addP = $('.fa-circle-plus')
-            const inputP = $('.EditData');
-
-            addP.click(function (e) {
-
-                var add = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="addEquipment(event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-
-                addFunctions(add, cancel, 'Ingresa los datos del equipo')
-            })
+            if (Permisos['EQUIPOS'].includes('1')) {
+                const addP = $('.fa-circle-plus')
+                addP.click(function (e) {
+    
+                    var add = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="addEquipment(event)" class="Modify">`;
+                    var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
+    
+                    addFunctions(add, cancel, 'Ingresa los datos del equipo')
+                })
+            }
 
         });
-
-        function modify(oldNum_Serie, e) {
-
-            e.preventDefault()
-            const updatedData = {
-
-                Num_Serie: document.querySelector('.NumSerieE').value,
-                Equipo: document.querySelector('.Ename').value,
-                Marca: document.querySelector('.MarcaE').value,
-                Modelo: document.querySelector('.ModeloE').value,
-                Ubi: document.querySelector('.UbiE').value,
-                dataOldNS: oldNum_Serie,
-                User: user
-
-            };
-
-            if (Asignacion && Asignacion.val().trim() !== '') {
-                updatedData.Num_Serie_CPU = Asignacion.val()
-            }
-
-            if (Hardware && Hardware.val().trim() !== '') {
-                updatedData.Hardware = Hardware.val()
-            }
-
-            if (Software && Software.val().trim() !== '') {
-                updatedData.Software = Software.val()
-            }
-
-            if (Mouse && Mouse.val().trim() !== '') {
-                updatedData.Mouse = Mouse.val()
-            }
-
-            if (Teclado && Teclado.val().trim() !== '') {
-                updatedData.Teclado = Teclado.val()
-            }
-
-            if (Accesorio && Accesorio.val().trim() !== '') {
-                updatedData.Accesorio = Accesorio.val()
-            }
-
-            if (Asignacion.val() !== '' || Asignacion.val() !== null || Asignacion.val() || undefined) {
-                updatedData.Num_Serie_CPU = Asignacion.val()
-            }
-
-            fetch('/equipo/mod_eqp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedData)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.type === 'RespDelEqp') {
-                        showSuccessAlertReload(data.message)
-                    } else {
-                        showErrorAlert(data.message)
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                });
-        }
-
-        // Borrar equipo
-        const trash = $('.trash')
-        trash.click(function (e) {
-            var NumSerie = $('.NumSerieE').val()
-
-            if (NumSerie !== '') {
-
-                const formData = new FormData()
-                formData.append('Num_Serie', NumSerie)
-                formData.append('user', user)
-
-                fetch('/equipo/del_eqp', {
+        if (Permisos['EQUIPOS'].includes('3')) {
+            function modify(oldNum_Serie, e) {
+    
+                e.preventDefault()
+                const updatedData = {
+    
+                    Num_Serie: document.querySelector('.NumSerieE').value,
+                    Equipo: document.querySelector('.Ename').value,
+                    Marca: document.querySelector('.MarcaE').value,
+                    Modelo: document.querySelector('.ModeloE').value,
+                    Ubi: document.querySelector('.UbiE').value,
+                    dataOldNS: oldNum_Serie,
+                    User: user
+    
+                };
+    
+                if (Asignacion && Asignacion.val().trim() !== '') {
+                    updatedData.Num_Serie_CPU = Asignacion.val()
+                }
+    
+                if (Hardware && Hardware.val().trim() !== '') {
+                    updatedData.Hardware = Hardware.val()
+                }
+    
+                if (Software && Software.val().trim() !== '') {
+                    updatedData.Software = Software.val()
+                }
+    
+                if (Mouse && Mouse.val().trim() !== '') {
+                    updatedData.Mouse = Mouse.val()
+                }
+    
+                if (Teclado && Teclado.val().trim() !== '') {
+                    updatedData.Teclado = Teclado.val()
+                }
+    
+                if (Accesorio && Accesorio.val().trim() !== '') {
+                    updatedData.Accesorio = Accesorio.val()
+                }
+    
+                if (Asignacion.val() !== '' || Asignacion.val() !== null || Asignacion.val() || undefined) {
+                    updatedData.Num_Serie_CPU = Asignacion.val()
+                }
+    
+                fetch('/equipo/mod_eqp', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
                 }).then(response => response.json())
                     .then(data => {
-                        if (data.type === 'success') {
+                        if (data.type === 'RespDelEqp') {
                             showSuccessAlertReload(data.message)
                         } else {
                             showErrorAlert(data.message)
@@ -238,20 +212,51 @@ if (!Permisos['EQUIPOS']) {
                         document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
                     });
             }
-        })
-
-        // FUNCIONALIDAD PÁGINA
-        const edit = $('.edit');
-
-        edit.click(function (e) {
-
-            var Num_Serie = $('.NumSerieE').val();
-
-            var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
-            var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-
-            editsFunctions(modify, cancel)
-        });
+        }
+        if (Permisos['EQUIPOS'].includes('2')) {
+            // Borrar equipo
+            const trash = $('.trash')
+            trash.click(function (e) {
+                var NumSerie = $('.NumSerieE').val()
+    
+                if (NumSerie !== '') {
+    
+                    const formData = new FormData()
+                    formData.append('Num_Serie', NumSerie)
+                    formData.append('user', user)
+    
+                    fetch('/equipo/del_eqp', {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                }
+            })
+        }
+        if (Permisos['EQUIPOS'].includes('3')) {
+            // FUNCIONALIDAD PÁGINA
+            const edit = $('.edit');
+    
+            edit.click(function (e) {
+    
+                var Num_Serie = $('.NumSerieE').val();
+    
+                var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
+                var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
+    
+                editsFunctions(modify, cancel)
+            });
+        }
 
         fetch('/equipo', {
             method: 'POST',

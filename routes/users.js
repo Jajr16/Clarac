@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { isAuthenticated, permissions } = require('../middleware/authMiddleware');
+const { isAuthenticated, permissions, valArea, subperm } = require('../middleware/authMiddleware');
 
 /* GET home page */
 router.get('/home', isAuthenticated, function (req, res, next) {
@@ -92,7 +92,7 @@ router.get('/Peticiones', isAuthenticated, permissions('PETICIONES'), function (
 });
 
 // Solicitudes
-router.get('/Solicitudes', isAuthenticated, permissions('PETICIONES'), function (req, res, next) {
+router.get('/Solicitudes', isAuthenticated, permissions('PETICIONES'), valArea('DIRECCION GENERAL'), function (req, res, next) {
   res.render('solicitudes', {
     title: 'Solicitudes | CLARAC',
     layout: 'other_layout',
@@ -101,7 +101,7 @@ router.get('/Solicitudes', isAuthenticated, permissions('PETICIONES'), function 
 });
 
 // Estatus de peticiones
-router.get('/Petalm', isAuthenticated, permissions('PETICIONES'), function (req, res, next) {
+router.get('/Petalm', isAuthenticated, permissions('PETICIONES'), subperm('ALMACEN', [1,2,3,4]), function (req, res, next) {
   res.render('almacenista', {
     title: 'Estatus de peticiones | CLARAC',
     layout: 'other_layout',

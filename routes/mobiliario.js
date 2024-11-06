@@ -8,7 +8,7 @@ const addFurnit = require('../bin/AddMobiliario');
 const modFurnit = require('../bin/MobiliarioModify');
 const delFurnit = require('../bin/deleteMobiliario');
 const upload = require('../config/multerConfig');
-const { isAuthenticated } = require('../middleware/authMiddleware');
+const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
 
 const customId = require('../utils/customId');
 
@@ -42,7 +42,7 @@ router.post('/', isAuthenticated, (req, res) => {
   });
 });
 
-router.post('/new_mob', isAuthenticated, (req, res) => {
+router.post('/new_mob', isAuthenticated, subperm('MOBILIARIO', [1]), (req, res) => {
   addFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -51,7 +51,7 @@ router.post('/new_mob', isAuthenticated, (req, res) => {
   });
 });
 
-router.post('/mod_mob', isAuthenticated, upload.none(), (req, res) => {
+router.post('/mod_mob', isAuthenticated, subperm('MOBILIARIO', [3]), upload.none(), (req, res) => {
   modFurnit(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -60,7 +60,7 @@ router.post('/mod_mob', isAuthenticated, upload.none(), (req, res) => {
   });
 });
 
-router.post('/delMob', isAuthenticated, upload.none(), async (req, res) => {
+router.post('/delMob', isAuthenticated, subperm('MOBILIARIO', [2]), upload.none(), async (req, res) => {
   delFurnit(req, async (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -83,7 +83,7 @@ router.post('/delMob', isAuthenticated, upload.none(), async (req, res) => {
   });
 })
 
-router.post('/renameImage', isAuthenticated, upload.single('file'), async (req, res) => {
+router.post('/renameImage', isAuthenticated, subperm('MOBILIARIO', [3]), upload.single('file'), async (req, res) => {
   try {
     let filename = customId(req, false)
     console.log('El filename original es este ', filename)
@@ -116,7 +116,7 @@ router.post('/renameImage', isAuthenticated, upload.single('file'), async (req, 
   }
 })
 
-router.post('/renew', isAuthenticated, upload.single('file'), async (req, res) => {
+router.post('/renew', isAuthenticated, subperm('MOBILIARIO', [3]), upload.single('file'), async (req, res) => {
   try {
 
     if (!req.file) {
@@ -153,7 +153,7 @@ router.post('/renew', isAuthenticated, upload.single('file'), async (req, res) =
   }
 })
 
-router.post('/users/check-filename', isAuthenticated, upload.none(), async (req, res) => {
+router.post('/users/check-filename', subperm('MOBILIARIO', [1]), isAuthenticated, upload.none(), async (req, res) => {
   let filename = customId(req, false)
   console.log('El id es este ', filename)
 
@@ -176,7 +176,7 @@ router.post('/users/check-filename', isAuthenticated, upload.none(), async (req,
   }
 });
 
-router.post('/users/upload', isAuthenticated, upload.single('file'), (req, res) => {
+router.post('/users/upload', isAuthenticated, subperm('MOBILIARIO', [1]), upload.single('file'), (req, res) => {
   if (!req.file) {
     console.log('No file uploaded');
     res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });
@@ -191,31 +191,31 @@ router.post('/users/upload', isAuthenticated, upload.single('file'), (req, res) 
   });
 });
 
-router.get('/users/files', isAuthenticated, async (req, res) => {
-  if (!gfsBucket) {
-    console.log('gfsBucket no está inicializado');
-    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
-  }
+// router.get('/users/files', isAuthenticated, async (req, res) => {
+//   if (!gfsBucket) {
+//     console.log('gfsBucket no está inicializado');
+//     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+//   }
 
-  console.log('Obteniendo archivos de GridFS...');
+//   console.log('Obteniendo archivos de GridFS...');
 
-  try {
-    const files = await gfsBucket.find().toArray();
+//   try {
+//     const files = await gfsBucket.find().toArray();
 
-    console.log('Archivos obtenidos:', files);
-    if (!files || files.length === 0) {
-      console.log('No hay archivos guardados');
-      return res.status(404).json({ err: 'No hay archivos guardados' });
-    }
+//     console.log('Archivos obtenidos:', files);
+//     if (!files || files.length === 0) {
+//       console.log('No hay archivos guardados');
+//       return res.status(404).json({ err: 'No hay archivos guardados' });
+//     }
 
-    console.log('Devolviendo lista de archivos');
-    res.json(files);
+//     console.log('Devolviendo lista de archivos');
+//     res.json(files);
 
-  } catch (err) {
-    console.error('Error al obtener archivos:', err);
-    res.status(500).json({ err: 'Error al obtener archivos' });
-  }
-});
+//   } catch (err) {
+//     console.error('Error al obtener archivos:', err);
+//     res.status(500).json({ err: 'Error al obtener archivos' });
+//   }
+// });
 
 router.post('/users/disp_image', isAuthenticated, upload.none(), async (req, res) => {
   let filename = customId(req, false)
@@ -251,37 +251,37 @@ router.post('/users/disp_image', isAuthenticated, upload.none(), async (req, res
   }
 });
 
-router.get('/users/image/:id', isAuthenticated, async (req, res) => {
-  if (!gfsBucket) {
-    console.log('gfsBucket no está inicializado');
-    return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
-  }
+// router.get('/users/image/:id', isAuthenticated, async (req, res) => {
+//   if (!gfsBucket) {
+//     console.log('gfsBucket no está inicializado');
+//     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
+//   }
 
-  console.log('Obteniendo archivo de GridFS...', req.params.id);
+//   console.log('Obteniendo archivo de GridFS...', req.params.id);
 
-  try {
-    const fileImageCursor = await gfsBucket.find({ _id: req.params.id }).toArray();
+//   try {
+//     const fileImageCursor = await gfsBucket.find({ _id: req.params.id }).toArray();
 
-    if (!fileImageCursor || fileImageCursor.length === 0) {
-      console.log('No se encontró el archivo');
-      return res.status(404).json({ err: 'No se encontró el archivo' });
-    }
+//     if (!fileImageCursor || fileImageCursor.length === 0) {
+//       console.log('No se encontró el archivo');
+//       return res.status(404).json({ err: 'No se encontró el archivo' });
+//     }
 
-    const fileImage = fileImageCursor[0];
+//     const fileImage = fileImageCursor[0];
 
-    if (fileImage.contentType === 'image/jpeg' || fileImage.contentType === 'image/png' || fileImage.contentType === 'image/jpg') {
-      console.log('Es una imagen, devolviendo el stream');
-      const readstream = gfsBucket.openDownloadStream(fileImage._id);
-      readstream.pipe(res);
-    } else {
-      console.log('El archivo no es una imagen');
-      res.status(404).json({ err: 'No es una imagen' });
-    }
+//     if (fileImage.contentType === 'image/jpeg' || fileImage.contentType === 'image/png' || fileImage.contentType === 'image/jpg') {
+//       console.log('Es una imagen, devolviendo el stream');
+//       const readstream = gfsBucket.openDownloadStream(fileImage._id);
+//       readstream.pipe(res);
+//     } else {
+//       console.log('El archivo no es una imagen');
+//       res.status(404).json({ err: 'No es una imagen' });
+//     }
 
-  } catch (err) {
-    console.error('Error al obtener el archivo: ', err);
-    res.status(500).json({ err: 'Error al obtener archivos' });
-  }
-});
+//   } catch (err) {
+//     console.error('Error al obtener el archivo: ', err);
+//     res.status(500).json({ err: 'Error al obtener archivos' });
+//   }
+// });
 
 module.exports = router;

@@ -5,6 +5,7 @@
             <!-- <div class="extend-menu">dwad</div> -->
             <ul class="menu">
                 <li><a href="home"><i class="fa-solid fa-house"></i></a></li>
+                <% if (permissions['ALMACÉN']) { %>
                 <li class="menu-item"><i class="fa-solid fa-warehouse"></i>
                     <ul class="mini-menu">
                         <li><a href="consulProd">Visualizar productos</a></li>
@@ -12,6 +13,7 @@
                         <li><a>Registro de productos sacados</a></li>
                     </ul>
                 </li>
+                <% } %>
                 <% if (permissions['MOBILIARIO']) { %>
                     <a href="consulMob" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-couch"></i>
                         <ul class="mini-menu">

@@ -2,10 +2,10 @@ var Permisos = JSON.parse(localStorage.getItem('permisosModulos'));
 var pathname = window.location.pathname;
 var user = localStorage.getItem('user');
 
-if (!Permisos['ALMACÉN']) {
+if (!Permisos['PETICIONES']) {
     location.href = "index";
 } else {
-    if (pathname == "/users/peticiones" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
+    if (pathname == "/users/peticiones" && (Permisos['PETICIONES'].includes('1'))) {
         function agregarPet(e) {
             e.preventDefault()
 

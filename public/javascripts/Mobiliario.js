@@ -57,67 +57,67 @@ if (!Permisos['MOBILIARIO']) {
                 }
             });
         });
+        if (Permisos['MOBILIARIO'].includes('1')) {
+            function addImage(e) {
+                e.preventDefault()
 
-        function addImage(e) {
-            e.preventDefault()
+                const inputFile = document.getElementById('file');
+                const articulo = document.querySelector('.Fname').value;
+                const descripcion = document.querySelector('.DescM').value;
+                const cantidad = document.querySelector('.CantidadM').value;
+                const ubicacion = document.querySelector('.UbiM').value;
 
-            const inputFile = document.getElementById('file');
-            const articulo = document.querySelector('.Fname').value;
-            const descripcion = document.querySelector('.DescM').value;
-            const cantidad = document.querySelector('.CantidadM').value;
-            const ubicacion = document.querySelector('.UbiM').value;
-
-            if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '') {
-                Swal.fire({
-                    icon: "error",
-                    title: "Ocurrió un error",
-                    text: 'Debes llenar todos los datos para continuar.',
-                })
-            } else if (!inputFile.files || !inputFile.files[0]) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Ocurrió un error",
-                    text: 'Sube una imagen del mobiliario para poder continuar.',
-                })
-            } else {
-
-                const formData = new FormData();
-                formData.append('articulo', articulo);
-                formData.append('descripcion', descripcion);
-                formData.append('Cantidad', cantidad);
-                formData.append('Ubicacion', ubicacion);
-
-                // Agregar encargado o usuario
-                agregarEncargadoOUsuario(formData, Permisos, user);
-
-                fetch('/mobiliario/users/check-filename', {
-                    method: 'POST',
-                    body: formData  // Enviar el FormData sin especificar el Content-Type
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            formData.append('file', inputFile.files[0]);
-                            return fetch('/mobiliario/users/upload', {
-                                method: 'POST',
-                                body: formData  // Enviar el FormData sin especificar el Content-Type
-                            });
-                        } else {
-                            console.log('Todo mal');
-                            showErrorAlert(data.message);
-                        }
+                if (articulo === '' || descripcion === '' || cantidad === '' || ubicacion === '') {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Debes llenar todos los datos para continuar.',
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            showSuccessAlertReload(data.message);
-                        } else {
-                            showErrorAlert(data.message);
-                        }
-                    }).catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                } else if (!inputFile.files || !inputFile.files[0]) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Ocurrió un error",
+                        text: 'Sube una imagen del mobiliario para poder continuar.',
                     })
+                } else {
+
+                    const formData = new FormData();
+                    formData.append('articulo', articulo);
+                    formData.append('descripcion', descripcion);
+                    formData.append('Cantidad', cantidad);
+                    formData.append('Ubicacion', ubicacion);
+
+                    // Agregar encargado o usuario
+                    agregarEncargadoOUsuario(formData, Permisos, user);
+
+                    fetch('/mobiliario/users/check-filename', {
+                        method: 'POST',
+                        body: formData  // Enviar el FormData sin especificar el Content-Type
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                formData.append('file', inputFile.files[0]);
+                                return fetch('/mobiliario/users/upload', {
+                                    method: 'POST',
+                                    body: formData  // Enviar el FormData sin especificar el Content-Type
+                                });
+                            } else {
+                                showErrorAlert(data.message);
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message);
+                            } else {
+                                showErrorAlert(data.message);
+                            }
+                        }).catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                        })
+                }
             }
         }
 
@@ -128,46 +128,47 @@ if (!Permisos['MOBILIARIO']) {
 
         // Añadir mobiliario
         document.addEventListener('DOMContentLoaded', function () {
+            if (Permisos['MOBILIARIO'].includes('1')) {
+                const addF = $('.fa-circle-plus');
+                const inputP = $('.EditData');
 
-            const addF = $('.fa-circle-plus');
-            const inputP = $('.EditData');
+                addF.click(function (e) {
 
-            addF.click(function (e) {
+                    removeEmpM(); // Llamada a la función
+                    const image = $('.furniture-image');
 
-                removeEmpM(); // Llamada a la función
-                const image = $('.furniture-image');
+                    image.css('cursor', 'pointer');
+                    image.attr('src', "/images/add-image.png");
 
-                image.css('cursor', 'pointer');
-                image.attr('src', "/images/add-image.png");
+                    window.insertSelectForEmployees();
 
-                window.insertSelectForEmployees();
+                    // Habilitar inputs
+                    inputP.attr("disabled", false);
 
-                // Habilitar inputs
-                inputP.attr("disabled", false);
+                    // Agregar botones de Guardar y Cancelar
+                    var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
+                    var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); cancel(); dissapearImage();" name="Cancel" class="Cancel">';
 
-                // Agregar botones de Guardar y Cancelar
-                var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); cancel(); dissapearImage();" name="Cancel" class="Cancel">';
+                    addFunctions(add, cancel, 'Ingresa los datos del mobiliario');
 
-                addFunctions(add, cancel, 'Ingresa los datos del mobiliario');
-
-                // Hacer que la imagen sea clickeable
-                const imagen = document.getElementsByClassName('furniture-image')[0];
-                imagen.addEventListener('click', ImageFunction);
-            });
+                    // Hacer que la imagen sea clickeable
+                    const imagen = document.getElementsByClassName('furniture-image')[0];
+                    imagen.addEventListener('click', ImageFunction);
+                });
+            }
 
             // Función para manejar el botón "Cancelar"
             window.dissapear = function () {
                 // Volver a deshabilitar el input
                 inputP.attr("disabled", true);
-            
+
                 // Mostrar el botón "fa-circle-plus" de nuevo
                 addF.show();
-            
+
                 // Eliminar los botones "Guardar" y "Cancelar"
                 $('.Modify').remove();
                 $('.Cancel').remove();
-            
+
                 // Eliminar el select y su label si existen
                 const select = document.querySelector('#actionSelect');
                 const label = document.querySelector('label[for="actionSelect"]');
@@ -177,15 +178,14 @@ if (!Permisos['MOBILIARIO']) {
                 if (label) {
                     label.remove();
                 }
-            
+
                 // Ocultar los botones "edit" y "trash"
                 $('.edit').hide();
                 $('.trash').hide();
-            
+
                 // Mostrar otros elementos ocultos, si es necesario
                 $('.editE').css('display', 'inline');
             };
-            
         });
 
         function dissapearImage() {
@@ -196,110 +196,72 @@ if (!Permisos['MOBILIARIO']) {
             imagen.removeEventListener('click', ImageFunction);
             imagen.style.cursor = 'default';
         }
+        if (Permisos['MOBILIARIO'].includes('3')) {
+            function modify(oldName, oldDesc, oldUser, e) {
+                e.preventDefault()
 
-        function modify(oldName, oldDesc, oldUser, e) {
-            e.preventDefault()
+                const formData = new FormData();
+                formData.append('Narticulo', document.querySelector('.Fname').value);
+                formData.append('Ndescripcion', document.querySelector('.DescM').value);
 
-            const formData = new FormData();
-            formData.append('Narticulo', document.querySelector('.Fname').value);
-            formData.append('Ndescripcion', document.querySelector('.DescM').value);
+                // Agregar encargado o usuario
+                agregarEncargadoOUsuario(formData, Permisos, user);
 
-            // Agregar encargado o usuario
-            agregarEncargadoOUsuario(formData, Permisos, user);
+                formData.append('cantidad', document.querySelector('.CantidadM').value);
+                formData.append('ubicacion', document.querySelector('.UbiM').value);
+                formData.append('articulo', oldName);
+                formData.append('descripcion', oldDesc);
+                formData.append('oldUsuario', oldUser);
 
-            formData.append('cantidad', document.querySelector('.CantidadM').value);
-            formData.append('ubicacion', document.querySelector('.UbiM').value);
-            formData.append('articulo', oldName);
-            formData.append('descripcion', oldDesc);
-            formData.append('oldUsuario', oldUser);
-
-            fetch('/mobiliario/mod_mob', {
-                method: 'POST',
-                body: formData
-            }).then(response => response.json())
-                .then(data1 => {
-                    if (data1.type === 'success') {
-
-                        const inputFile = document.getElementById('file');
-
-                        if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
-                            fetch('/mobiliario/renameImage', {
-                                method: 'POST',
-                                body: formData
-                            }).then(response => response.json())
-                                .then(data => {
-                                    if (data.type === 'success') {
-                                        showSuccessAlertReload(data1.message)
-                                        console.log(data.message)
-                                    } else {
-                                        showErrorAlert(data.message)
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error en la solicitud:', error);
-                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                                });
-                        } else {
-                            formData.append('file', inputFile.files[0])
-
-                            fetch('/mobiliario/renew', {
-                                method: 'POST',
-                                body: formData
-                            }).then(response => response.json())
-                                .then(data => {
-                                    if (data.type === 'success') {
-                                        showSuccessAlertReload(data1.message)
-                                        console.log(data.message)
-                                    } else {
-                                        showErrorAlert(data.message)
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error en la solicitud:', error);
-                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                                });
-                        }
-
-                    } else {
-                        showErrorAlert(data1.message)
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                });
-        }
-
-        // FUNCIONALIDAD PÁGINA
-        const trash = $('.trash')
-        trash.click(function (e) {
-
-            var nombre_Articulo = $('.Fname').val();
-            var desc_Articulo = $('.DescM').val();
-
-            var formData = new FormData()
-            formData.append('articulo', nombre_Articulo)
-            formData.append('descripcion', desc_Articulo)
-
-            // Verificamos si el permiso es '5'
-            if (Permisos['MOBILIARIO'].includes('5')) {
-                var encargado = $('.EmpM').val();
-                formData.append('encargado', encargado);
-            } else {
-                formData.append('user', user);
-            }
-
-            if (nombre_Articulo !== '' && desc_Articulo !== '') {
-                fetch('/mobiliario/delMob', {
+                fetch('/mobiliario/mod_mob', {
                     method: 'POST',
                     body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'success') {
-                            showSuccessAlertReload(data.message)
+                }).then(response => response.json())
+                    .then(data1 => {
+                        if (data1.type === 'success') {
+
+                            const inputFile = document.getElementById('file');
+
+                            if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
+                                fetch('/mobiliario/renameImage', {
+                                    method: 'POST',
+                                    body: formData
+                                }).then(response => response.json())
+                                    .then(data => {
+                                        if (data.type === 'success') {
+                                            showSuccessAlertReload(data1.message)
+                                            console.log(data.message)
+                                        } else {
+                                            showErrorAlert(data.message)
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error en la solicitud:', error);
+                                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                    });
+                            } else {
+                                formData.append('file', inputFile.files[0])
+
+                                fetch('/mobiliario/renew', {
+                                    method: 'POST',
+                                    body: formData
+                                }).then(response => response.json())
+                                    .then(data => {
+                                        if (data.type === 'success') {
+                                            showSuccessAlertReload(data1.message)
+                                            console.log(data.message)
+                                        } else {
+                                            showErrorAlert(data.message)
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error en la solicitud:', error);
+                                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                    });
+                            }
+
                         } else {
-                            showErrorAlert(data.message)
+                            showErrorAlert(data1.message)
                         }
                     })
                     .catch(error => {
@@ -307,40 +269,81 @@ if (!Permisos['MOBILIARIO']) {
                         showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
                     });
             }
-        })
+        }
+        if (Permisos['MOBILIARIO'].includes('2')) {
 
-        const edit = $('.edit');
-        edit.click(function (e) {
+            // FUNCIONALIDAD PÁGINA
+            const trash = $('.trash')
+            trash.click(function (e) {
 
-            const nombre_Articulo = $('.Fname').val();
-            const desc_Articulo = $('.DescM').val();
-            const empleado = $('.EmpM').val(); // Obtener el nombre del empleado
-            removeEmpM(); // Llamada a la función
+                var nombre_Articulo = $('.Fname').val();
+                var desc_Articulo = $('.DescM').val();
 
-            const image = $('.furniture-image');
-            image.css('cursor', 'pointer');
+                var formData = new FormData()
+                formData.append('articulo', nombre_Articulo)
+                formData.append('descripcion', desc_Articulo)
 
-            const inputE = $('.EditData');
-            inputE.attr("disabled", false);
+                // Verificamos si el permiso es '5'
+                if (Permisos['MOBILIARIO'].includes('5')) {
+                    var encargado = $('.EmpM').val();
+                    formData.append('encargado', encargado);
+                } else {
+                    formData.append('user', user);
+                }
 
-            // Llama a la función insertSelectForEmployees con el nombre del empleado
-            window.insertSelectForEmployees(empleado);
+                if (nombre_Articulo !== '' && desc_Articulo !== '') {
+                    fetch('/mobiliario/delMob', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'success') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                        });
+                }
+            })
+        }
+        if (Permisos['MOBILIARIO'.includes('3')]) {
+            const edit = $('.edit');
+            edit.click(function (e) {
 
-            if (Permisos['MOBILIARIO'].includes('5')) {
-                var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${empleado}', event)" class="Modify">`;
-            } else {
-                var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${user}', event)" class="Modify">`;
-            }
+                const nombre_Articulo = $('.Fname').val();
+                const desc_Articulo = $('.DescM').val();
+                const empleado = $('.EmpM').val(); // Obtener el nombre del empleado
+                removeEmpM(); // Llamada a la función
 
-            var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
+                const image = $('.furniture-image');
+                image.css('cursor', 'pointer');
 
-            editsFunctions(modify, cancel);
+                const inputE = $('.EditData');
+                inputE.attr("disabled", false);
 
-            const imagen = document.getElementsByClassName('furniture-image')[0];
-            imagen.addEventListener('click', ImageFunction);
+                // Llama a la función insertSelectForEmployees con el nombre del empleado
+                window.insertSelectForEmployees(empleado);
 
-        });
+                if (Permisos['MOBILIARIO'].includes('5')) {
+                    var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${empleado}', event)" class="Modify">`;
+                } else {
+                    var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${user}', event)" class="Modify">`;
+                }
 
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
+
+                editsFunctions(modify, cancel);
+
+                const imagen = document.getElementsByClassName('furniture-image')[0];
+                imagen.addEventListener('click', ImageFunction);
+
+            });
+        }
         fetch('/mobiliario', {
             method: 'POST',
             headers: {
@@ -362,9 +365,9 @@ if (!Permisos['MOBILIARIO']) {
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${item.Articulo}</td>
-                        <td>${item.Cantidad}</td>
-                    `;
+                            <td>${item.Articulo}</td>
+                            <td>${item.Cantidad}</td>
+                        `;
                     $('.Mob').change(function () {
                         if ($(this).val() === item.Articulo) {
                             iconsLogic()
@@ -423,11 +426,11 @@ if (!Permisos['MOBILIARIO']) {
                                 const targetDiv = document.querySelector('.DF');
                                 if (!document.querySelector('#EmpM') && !document.querySelector('label[for="EmpM"]')) {
                                     const divHTML = `
-                                        <div class="DF">
-                                            <label>Encargado:</label>
-                                            <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
-                                                maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
-                                        </div>`;
+                                            <div class="DF">
+                                                <label>Encargado:</label>
+                                                <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
+                                                    maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                                            </div>`;
                                     targetDiv.insertAdjacentHTML('beforebegin', divHTML);
                                 }
 
@@ -474,7 +477,7 @@ if (!Permisos['MOBILIARIO']) {
             if (actionSelectDiv) {
                 actionSelectDiv.remove();
             }
-        } 
+        }
 
         // Pone en disabled el select de nombre de mobiliario
         function disableSelectMob() {
@@ -483,7 +486,5 @@ if (!Permisos['MOBILIARIO']) {
                 fnameSelect.disabled = true;
             }
         }
-        
-
     }
 }

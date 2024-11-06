@@ -7,7 +7,7 @@ const products = require('../bin/Productos');
 const addProduct = require('../bin/AddProductos');
 const modProduct = require('../bin/ProductosModify');
 const delProduct = require('../bin/deleteProductos');
-const { isAuthenticated } = require('../middleware/authMiddleware');
+const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
 
 const upload = require('../config/multerConfig'); 
 
@@ -20,7 +20,7 @@ router.post('/', isAuthenticated, (req, res) => {
     });
 });
 
-router.post('/new_prod', isAuthenticated, (req, res) => {
+router.post('/new_prod', isAuthenticated, subperm('ALMACÉN', [1]), (req, res) => {
     addProduct(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -29,7 +29,7 @@ router.post('/new_prod', isAuthenticated, (req, res) => {
     });
 });
 
-router.post('/mod_prod', isAuthenticated, upload.none(), async (req, res) => {
+router.post('/mod_prod', isAuthenticated, subperm('ALMACÉN', [3]), upload.none(), async (req, res) => {
     modProduct(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
@@ -38,7 +38,7 @@ router.post('/mod_prod', isAuthenticated, upload.none(), async (req, res) => {
     });
 });
 
-router.post('/del_prod', isAuthenticated, upload.none(), async (req, res) => {
+router.post('/del_prod', isAuthenticated, subperm('ALMACÉN', [2]), upload.none(), async (req, res) => {
     delProduct(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

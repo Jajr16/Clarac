@@ -5,7 +5,7 @@ var user = localStorage.getItem('user');
 if (!Permisos['ALMACÉN']) {
     location.href = "index";
 } else {
-    if (pathname == "/users/petalm" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
+    if (pathname == "/users/petalm" && (Permisos['ALMACÉN'].includes('4') && Permisos['ALMACÉN'].includes('2') && Permisos['ALMACÉN'].includes('1') && Permisos['ALMACÉN'].includes('3'))) {
         function initStatus() {
             fetch('/pet/viewStatusAlmacen', {
                 method: 'POST',

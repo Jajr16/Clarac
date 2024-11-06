@@ -30,11 +30,14 @@
         </table>
     </div>
     <div class="item2 data boxes-containers">
-        <i class="fa-solid fa-trash trash" aria-hidden="true"
+        <% if (permissions['MOBILIARIO'].includes('2')) { %>
+            <i class="fa-solid fa-trash trash" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
+        <% } %>
+        <% if (permissions['MOBILIARIO'].includes('3')) { %>
         <i class="fa fa-pencil-square-o edit" aria-hidden="true"
-            style="float: right; color: #001781; visibility: hidden;"></i>
-
+        style="float: right; color: #001781; visibility: hidden;"></i>
+        <% } %>
         <form method="POST" class="formulario" enctype="multipart/form-data">
             <div class="named-furniture">
                 <input type="file" id="file" name="file" class="fileInput" accept="image/*" style="display: none;"><img
@@ -65,7 +68,9 @@
             </div>
         </form>
     </div>
+    <% if (permissions['MOBILIARIO'].includes('1')) { %>
     <i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i>
+    <% } %>
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/furniture.css">
 <script type="text/javascript" src="/javascripts/Mobiliario.js"></script>

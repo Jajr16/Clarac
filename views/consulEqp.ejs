@@ -33,10 +33,14 @@
         <div class="subtitle-container">
             Detalles del equipo
         </div>
+        <% if (permissions['EQUIPOS'].includes('2')) { %>
         <i class="fa-solid fa-trash trash" aria-hidden="true"
-            style="float: right; color: #001781; visibility: hidden;"></i>
+        style="float: right; color: #001781; visibility: hidden;"></i>
+        <% } %>
+        <% if (permissions['EQUIPOS'].includes('3')) { %>
         <i class="fa fa-pencil-square-o edit" aria-hidden="true"
-            style="float: right; color: #001781; visibility: hidden;"></i>
+        style="float: right; color: #001781; visibility: hidden;"></i>
+        <% } %>
 
         <form method="POST" enctype="multipart/form-data">
             <div class="description-equipment">
@@ -94,7 +98,9 @@
             </div>
         </form>
     </div>
+    <% if (permissions['EQUIPOS'].includes('1')) { %>
     <i class="fa-solid fa-circle-plus" style="font-size: 25px;"></i>
+    <% } %>
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/equipments.css">
 <script type="text/javascript" src="/javascripts/Equipos.js"></script>

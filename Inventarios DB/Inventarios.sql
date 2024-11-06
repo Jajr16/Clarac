@@ -1507,41 +1507,7 @@ BEGIN
 END |
 DELIMITER ;
 CALL ActualizarRegEmp('813', 'editado', 'editado');
-####################### TRIGGERS ########################
-drop trigger EPE;
-DELIMITER | 
-CREATE TRIGGER EPE BEFORE INSERT ON salidas_productos
-	FOR EACH ROW BEGIN
-    
-    DECLARE current_stock INT;
-    -- Consultar la cantidad actual en el almacén
-    SELECT COALESCE(fp.total_entrada, 0) - COALESCE(sp.total_salida, 0)
-    as Existencia INTO current_stock FROM almacen a LEFT JOIN (SELECT Cod_Barras, SUM(Cantidad)
-    as total_entrada FROM factus_productos GROUP BY Cod_Barras) fp ON a.Cod_Barras = fp.Cod_Barras
-	LEFT JOIN (SELECT Cod_BarrasS, SUM(Cantidad_Salida) as total_salida FROM salidas_productos
-    GROUP BY Cod_BarrasS) sp ON a.Cod_Barras = sp.Cod_BarrasS where Cod_BarrasS = new.Cod_BarrasS;
-    
-    IF NEW.Cantidad_Salida > current_stock THEN
-        SIGNAL SQLSTATE '45000' 
-		SET MESSAGE_TEXT = 'No hay suficiente existencia para realizar la salida';
-	END IF;
-    END
-| DELIMITER;
 
-DELIMITER |
-CREATE TRIGGER ASEPSE BEFORE UPDATE ON status_soli
-	FOR EACH ROW BEGIN
-		IF NEW.delivered_ware = 1 AND NEW.delivered_soli = 1 THEN
-			UPDATE soli_car 
-			SET cerrada = 1
-			WHERE sol_id = NEW.sol_id;  
-		END IF;
-	END
-| DELIMITER ;
-
-select*from soli_Car;
-select*from status_soli;
-select*from empleado;
 
 -- Modificar Registro Usuarios
 DROP PROCEDURE IF EXISTS ActualizarRegUsu;
@@ -1645,5 +1611,46 @@ BEGIN
 END$$
 
 DELIMITER ;
+####################### TRIGGERS ########################
+drop trigger EPE;
+DELIMITER | 
+CREATE TRIGGER EPE BEFORE INSERT ON salidas_productos
+	FOR EACH ROW BEGIN
+    
+    DECLARE current_stock INT;
+    -- Consultar la cantidad actual en el almacén
+    SELECT COALESCE(fp.total_entrada, 0) - COALESCE(sp.total_salida, 0)
+    as Existencia INTO current_stock FROM almacen a LEFT JOIN (SELECT Cod_Barras, SUM(Cantidad)
+    as total_entrada FROM factus_productos GROUP BY Cod_Barras) fp ON a.Cod_Barras = fp.Cod_Barras
+	LEFT JOIN (SELECT Cod_BarrasS, SUM(Cantidad_Salida) as total_salida FROM salidas_productos
+    GROUP BY Cod_BarrasS) sp ON a.Cod_Barras = sp.Cod_BarrasS where Cod_BarrasS = new.Cod_BarrasS;
+    
+    IF NEW.Cantidad_Salida > current_stock THEN
+        SIGNAL SQLSTATE '45000' 
+		SET MESSAGE_TEXT = 'No hay suficiente existencia para realizar la salida';
+	END IF;
+    END
+| DELIMITER;
 
+DELIMITER |
+CREATE TRIGGER ASEPSE BEFORE UPDATE ON status_soli
+	FOR EACH ROW BEGIN
+		IF NEW.delivered_ware = 1 AND NEW.delivered_soli = 1 THEN
+			UPDATE soli_car 
+			SET cerrada = 1
+			WHERE sol_id = NEW.sol_id;  
+		END IF;
+	END
+| DELIMITER ;
+
+DELIMITER |
+CREATE TRIGGER AUAP BEFORE INSERT ON permisos
+	FOR EACH ROW BEGIN
+		INSERT INTO permisos VALUES (1, NEW.usuario,'PETICIONES');
+	END
+| DELIMITER ;
+
+select*from soli_Car;
+select*from status_soli;
+select*from empleado;
 select*from usuario;

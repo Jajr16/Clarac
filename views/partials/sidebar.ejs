@@ -6,50 +6,70 @@
             <ul class="menu">
                 <li><a href="home"><i class="fa-solid fa-house"></i></a></li>
                 <% if (permissions['ALMACÉN']) { %>
-                <li class="menu-item"><i class="fa-solid fa-warehouse"></i>
-                    <ul class="mini-menu">
-                        <li><a href="consulProd">Visualizar productos</a></li>
-                        <li><a href="productos_exist">Agregar productos existentes</a></li>
-                        <li><a>Registro de productos sacados</a></li>
-                    </ul>
-                </li>
-                <% } %>
-                <% if (permissions['MOBILIARIO']) { %>
-                    <a href="consulMob" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-couch"></i>
+                    <li class="menu-item"><i class="fa-solid fa-warehouse"></i>
                         <ul class="mini-menu">
-                            <li>Mobiliario</li>
+                            <li><a href="consulProd">Visualizar productos</a></li>
+                            <li><a href="productos_exist">Agregar productos existentes</a></li>
+                            <li><a>Registro de productos sacados</a></li>
+                            <% if (permissions['ALMACÉN'].includes('1') && permissions['ALMACÉN'].includes('2') 
+                            && permissions['ALMACÉN'].includes('3') && permissions['ALMACÉN'].includes('4')) { %>
+                                <li><a href="petalm">Peticiones de empleados</a></li>
+                            <% } %>
                         </ul>
-                    </li></a>
-                <% } %>
-                <% if (permissions['EQUIPOS']) { %>
-                    <a href="consulEqp" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-desktop"></i>
-                        <ul class="mini-menu">
-                            <li>Equipos</li>
-                        </ul>
-                    </li></a>
-                <% } %>
-                <% if (permissions['RESPONSIVAS']) { %>
-                    <a href="responsivas" class="ref-mini-menu"><li class="menu-item"><i class="fa-solid fa-clipboard-list"></i>
-                        <ul class="mini-menu">
-                            <li>Responsivas</li>
-                        </ul>
-                    </li></a>
-                <% } %>
-                <% if (permissions['USUARIOS']) { %>
-                    <li class="menu-item"><i class="fa-regular fa-address-card"></i>
-                      <ul class="mini-menu">
-                        <% if (permissions['USUARIOS'].includes('1')) { %>
-                          <li><a href="registros">Registros</a></li>
-                        <% } %>
-                        <% if (permissions['USUARIOS'].includes('3')) { %>
-                          <li><a href="modReg">Modificar Registros</a></li>
-                        <% } %>
-                        <% if (permissions['USUARIOS'].includes('3')) { %>
-                          <li><a href="modPer">Modificar Permisos</a></li>
-                        <% } %>
-                      </ul>
                     </li>
-                <% } %>
+                    <% } %>
+                        <% if (permissions['MOBILIARIO']) { %>
+                            <a href="consulMob" class="ref-mini-menu">
+                                <li class="menu-item"><i class="fa-solid fa-couch"></i>
+                                    <ul class="mini-menu">
+                                        <li>Mobiliario</li>
+                                    </ul>
+                                </li>
+                            </a>
+                            <% } %>
+                            <% if (permissions['EQUIPOS']) { %>
+                            <a href="consulEqp" class="ref-mini-menu">
+                                <li class="menu-item"><i class="fa-solid fa-desktop"></i>
+                                    <ul class="mini-menu">
+                                        <li>Equipos</li>
+                                    </ul>
+                                </li>
+                            </a>
+                            <% } %>
+                            <% if (permissions['RESPONSIVAS']) { %>
+                            <a href="responsivas" class="ref-mini-menu">
+                                <li class="menu-item"><i class="fa-solid fa-clipboard-list"></i>
+                                    <ul class="mini-menu">
+                                        <li>Responsivas</li>
+                                    </ul>
+                                </li>
+                            </a>
+                            <% } %>
+                            <% if (permissions['USUARIOS']) { %>
+                            <li class="menu-item"><i class="fa-regular fa-address-card"></i>
+                            <ul class="mini-menu">
+                            <% if (permissions['USUARIOS'].includes('1')) { %>
+                                <li><a href="registros">Registros</a></li>
+                            <% } %>
+                            <% if (permissions['USUARIOS'].includes('3')) { %>
+                                <li><a href="modReg">Modificar Registros</a></li>
+                            <% } %>
+                            <% if (permissions['USUARIOS'].includes('3')) { %>
+                                <li><a href="modPer">Modificar Permisos</a></li>
+                            <% } %>
+                            </ul>
+                            </li>
+                        <% } %>
+                        <% if (permissions['PETICIONES']) { %>
+                            <li class="menu-item"><i class="fa-solid fa-box"></i>
+                                <ul class="mini-menu">
+                                    <li><a href="Peticiones">Solicitar artículo</a></li>
+                                    <% if (area === 'DIRECCION GENERAL') { %> 
+                                    <li><a href="Solicitudes">Solucitudes de empleados</a></li>
+                                    <% } %>                       
+                                </ul>
+                            </li>
+                        <% } %>                       
             </ul>
         </div>
     </div>

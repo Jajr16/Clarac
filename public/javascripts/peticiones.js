@@ -5,7 +5,7 @@ var user = localStorage.getItem('user');
 if (!Permisos['PETICIONES']) {
     location.href = "index";
 } else {
-    if (pathname == "/users/peticiones" && (Permisos['PETICIONES'].includes('1'))) {
+    if ((pathname == "/users/peticiones" || pathname == "/users/Peticiones") && (Permisos['PETICIONES'].includes('1'))) {
         function agregarPet(e) {
             e.preventDefault()
 

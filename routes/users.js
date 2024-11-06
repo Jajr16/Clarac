@@ -101,7 +101,7 @@ router.get('/Solicitudes', isAuthenticated, permissions('PETICIONES'), valArea('
 });
 
 // Estatus de peticiones
-router.get('/Petalm', isAuthenticated, permissions('PETICIONES'), subperm('ALMACEN', [1,2,3,4]), function (req, res, next) {
+router.get('/Petalm', isAuthenticated, permissions('PETICIONES'), subperm('ALMACÉN', [1,2,3,4]), function (req, res, next) {
   res.render('almacenista', {
     title: 'Estatus de peticiones | CLARAC',
     layout: 'other_layout',

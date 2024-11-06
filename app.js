@@ -73,7 +73,7 @@ app.use((req, res, next) => {
 });
 
 function getArea(req) {
-  return req.session.area || {};
+  return req.session.area;
 }
 
 function getPermissions(req) {

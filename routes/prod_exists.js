@@ -6,7 +6,7 @@ const prodExistAdd = require('../bin/AddProd_exist');
 const prodExistExtract = require('../bin/ExtractProd_exist')
 const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
 
-router.post('/', isAuthenticated, subperm('ALMACÉN', [1,2,3,4]), (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
     prodExistConsul(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });

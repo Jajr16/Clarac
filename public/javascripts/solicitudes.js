@@ -299,7 +299,7 @@ if (area !== 'DIRECCION GENERAL') {
                     });
             }
             $(`
-                <div class="globalColumn principalContent">
+                <div class="globalColumn principalContent" style="position: relative;">
                     <div class="table-responsive item1" style="justify-content: center; align-items: center;">
                         <table class="data-prod info-table status-peti">
                             <thead>
@@ -365,7 +365,7 @@ if (area !== 'DIRECCION GENERAL') {
 
             enabledStructure()
             document.querySelector('.item1').style.marginRight = 0;
-            document.querySelector('.table-responsive').style.display = 'grid';
+            document.querySelector('.table-responsive').style.display = 'flex';
             initStatus()
         })
     }

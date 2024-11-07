@@ -77,10 +77,8 @@ function iconsLogic() {
         inputS.attr("disabled", true);
         $('.Modify').remove();
         $('.Cancel').remove();
-        console.log('CAcaca1')
     }
     if ($('.edit').css('display', 'none')) {
-        console.log('Caca2')
         $('.edit').css('display', 'block')
     }
     if ($('.trash').css('display', 'none')) {

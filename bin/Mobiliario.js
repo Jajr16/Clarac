@@ -2,53 +2,26 @@ var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de
 var Errores = require('./Error')
 
 function consulmob(req, callback) {
-    const { username } = req.body;
-
-    db.query('SELECT Área FROM empleado INNER JOIN usuario ON empleado.Num_emp = usuario.Num_emp WHERE usuario = ?', [username], function (err, res) {
-        if (err) {
-            Errores(err);
-            return callback(err);
-        }
-
-        if (res.length > 0) { // Si se encontró el usuario
-            if (!(res[0].Área === 'SISTEMAS')) {
-                db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
-                    if (err) {
-                        Errores(err);
-                        return callback(err);
-                    }
-
-                    const dataToSend = result.map(item => ({
-                        Articulo: item.Articulo,
-                        Descripcion: item.Descripcion,
-                        Ubicacion: item.Ubicacion,
-                        Cantidad: item.Cantidad,
-                        Area: item.Área,
-                        Nombre: item.Nom
-                    }));
-                    return callback(null, dataToSend);
-                });
+    const data = req.body;
+    console.log(data)
+    
+    db.query(`CALL showMob(?)`, [data.username], function (err2, result) {
+        if (err2) { Errores(err2); } // Se hace un control de errores
+        else {
+            if (result.length > 0) {
+                const dataToSend = result[0].map(item => ({
+                    Articulo: item.Articulo,
+                    Descripcion: item.Descripcion,
+                    Ubicacion: item.Ubicacion,
+                    Cantidad: item.Cantidad,
+                    Area: item.Área,
+                    Nombre: item.Nom,
+                    Usuario: item.Num_emp
+                }));
+                return callback(null, dataToSend);
             } else {
-                db.query('SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp', function (err, result) {
-                    if (err) {
-                        Errores(err);
-                        return callback(err);
-                    }
-
-                    const dataToSend = result.map(item => ({
-                        Articulo: item.Articulo,
-                        Descripcion: item.Descripcion,
-                        Ubicacion: item.Ubicacion,
-                        Cantidad: item.Cantidad,
-                        Area: item.Área,
-                        Nombre: item.Nom
-                    }));
-
-                    return callback(null, dataToSend);
-                });
+                return callback(null, []); 
             }
-        } else {
-            return callback(null, []); // Si no se encontró el usuario, devolver un arreglo vacío
         }
     });
 }

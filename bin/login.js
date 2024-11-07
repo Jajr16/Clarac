@@ -32,8 +32,7 @@ function Login(req, callback) {
                                 }
                                 permissions[row.modulo].push(row.permiso);
                             });
-                            console.log('ASdASD')
-                            return callback(null, { type: 'success', Usuario: result[0].Usuario, permissions, area: res1[0].Área, empleado: res1.Nom });
+                            return callback(null, { type: 'success', Usuario: result[0].Usuario, permissions, area: res1[0].Área, empleado: res1[0].Nom });
                         } else {
                             return callback(null, { type: 'logInError', message: 'No se encontró el área del empleado.' });
                         }

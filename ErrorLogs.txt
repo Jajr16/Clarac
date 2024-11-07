@@ -47,3 +47,6 @@ undefined | Error obtenido el -> 03/11/2024 23:37
 undefined | Error obtenido el -> 03/11/2024 23:37
 Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.ModificarUEMob does not exist | Error obtenido el -> 04/11/2024 11:39
 Error: ER_SP_DOES_NOT_EXIST: PROCEDURE inventarios.consulPE does not exist | Error obtenido el -> 04/11/2024 19:15
+Error: ER_BAD_FIELD_ERROR: Unknown column 'empleados.Nom' in 'field list' | Error obtenido el -> 06/11/2024 22:53
+undefined | Error obtenido el -> 06/11/2024 22:55
+Error: ER_SP_WRONG_NO_OF_ARGS: Incorrect number of arguments for PROCEDURE inventarios.ModificarUEMob; expected 9, got 10 | Error obtenido el -> 07/11/2024 0:10

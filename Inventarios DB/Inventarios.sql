@@ -280,7 +280,8 @@ insert into permisos values
 (1,"MNAVARRO","RESPONSIVAS"),#Altas
 (2,"MNAVARRO","RESPONSIVAS"),#Bajas
 (3,"MNAVARRO","RESPONSIVAS"),#Cambios
-(4,"MNAVARRO","RESPONSIVAS");#Consultas
+(4,"MNAVARRO","RESPONSIVAS"),
+(1,"MNAVARRO","PETICIONES");#Cambios;#Consultas
 
 insert into permisos values
 (1,"armando","ALMACÉN"),#Altas
@@ -991,6 +992,7 @@ DELIMITER ;
 
 CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', 'JIMENEZ RIVERA ARMANDO','Si', 1); -- Ejemplo
 
+DROP PROCEDURE IF EXISTS showMob;
 DELIMITER //
 CREATE PROCEDURE showMob(
     IN usu varchar(45))
@@ -1001,12 +1003,36 @@ BEGIN
         ROLLBACK;
         SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
     END;
-    
     -- Iniciar la transacción
     START TRANSACTION;
-	
-		SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp;
+		IF EXISTS (SELECT 1 FROM permisos WHERE usuario = usu AND permiso = 5 AND modulo = 'MOBILIARIO') THEN
+			SELECT m.*, e.Nom, u.usuario FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp INNER JOIN usuario u ON u.Num_Emp = m.Num_emp;
+		ELSE
+			SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
+		END IF;
+    -- Confirmar los cambios
+    COMMIT;
 
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
+END //
+DELIMITER ;
+CALL showMob('ajimenez');
+
+DROP PROCEDURE IF EXISTS getUserMob;
+DELIMITER //
+CREATE PROCEDURE getUserMob(
+    IN NomEnc varchar(45))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejo del error: devolver un mensaje de error y hacer rollback
+        ROLLBACK;
+        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
+    END;
+    -- Iniciar la transacción
+    START TRANSACTION;
+		SELECT Usuario FROM usuario WHERE Num_Emp = (SELECT num_emp FROM empleado WHERE Nom = NomEnc);
     -- Confirmar los cambios
     COMMIT;
 
@@ -1654,6 +1680,7 @@ CREATE TRIGGER AUAP AFTER INSERT ON usuario
 
 select*from soli_Car;
 select*from status_soli;
-select*from empleado;
+select*from permisos;
+delete from mobiliario;
 select*from usuario;
 select*from equipo;

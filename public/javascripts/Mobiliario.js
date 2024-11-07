@@ -8,14 +8,39 @@ if (!Permisos['MOBILIARIO']) {
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3') || Permisos['MOBILIARIO'].includes('5'))) {
 
-        function identificate(name) {
-            let nombre = ''
-            if (nom == name) {
-                nombre = user;
-            } else {
-                nombre = name
-            }
-            return nombre
+        function identificate(name, formData, oldUsuario) {
+            return new Promise((resolve, reject) => {
+                let nombre = '';
+                console.log(name)
+                console.log(nom)
+                if (nom == name) {
+                    nombre = user;
+                    formData.append('user', nombre);
+                    resolve(formData);
+                } else {
+                    fetch('/mobiliario/getName', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            nombre = data.Usuario;
+                            if (oldUsuario) {
+                                formData.append('oldUsuario', nombre);
+                            }else {
+                                formData.append('user', nombre);
+                            }
+                            resolve(formData);
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            reject(error);
+                        });
+                }
+            });
         }
 
         function agregarEncargadoOUsuario(formData, Permisos, user) {
@@ -86,36 +111,38 @@ if (!Permisos['MOBILIARIO']) {
                     formData.append('descripcion', descripcion);
                     formData.append('Cantidad', cantidad);
                     formData.append('Ubicacion', ubicacion);
+                    let encargado = Permisos['MOBILIARIO'].includes('5') ? document.querySelector('.actionSelect').value : nom;
 
                     // Agregar encargado o usuario
-                    agregarEncargadoOUsuario(formData, Permisos, user);
-
-                    fetch('/mobiliario/users/check-filename', {
-                        method: 'POST',
-                        body: formData  // Enviar el FormData sin especificar el Content-Type
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'success') {
-                                formData.append('file', inputFile.files[0]);
-                                return fetch('/mobiliario/users/upload', {
-                                    method: 'POST',
-                                    body: formData  // Enviar el FormData sin especificar el Content-Type
-                                });
-                            } else {
-                                showErrorAlert(data.message);
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'success') {
-                                showSuccessAlertReload(data.message);
-                            } else {
-                                showErrorAlert(data.message);
-                            }
-                        }).catch(error => {
-                            console.error('Error en la solicitud:', error);
-                            // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                    identificate(encargado, formData, false)
+                        .then(updatedFormData => {
+                            fetch('/mobiliario/users/check-filename', {
+                                method: 'POST',
+                                body: updatedFormData  // Enviar el FormData sin especificar el Content-Type
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.type === 'success') {
+                                        updatedFormData.append('file', inputFile.files[0]);
+                                        return fetch('/mobiliario/users/upload', {
+                                            method: 'POST',
+                                            body: updatedFormData  // Enviar el FormData sin especificar el Content-Type
+                                        });
+                                    } else {
+                                        showErrorAlert(data.message);
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.type === 'success') {
+                                        showSuccessAlertReload(data.message);
+                                    } else {
+                                        showErrorAlert(data.message);
+                                    }
+                                }).catch(error => {
+                                    console.error('Error en la solicitud:', error);
+                                    // showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                })
                         })
                 }
             }
@@ -125,7 +152,6 @@ if (!Permisos['MOBILIARIO']) {
             const inputFile = document.getElementById('file');
             inputFile.click();
         }
-
         // Añadir mobiliario
         document.addEventListener('DOMContentLoaded', function () {
             if (Permisos['MOBILIARIO'].includes('1')) {
@@ -147,7 +173,7 @@ if (!Permisos['MOBILIARIO']) {
 
                     // Agregar botones de Guardar y Cancelar
                     var add = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="addImage(event)" class="Modify">`;
-                    var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); cancel(); dissapearImage();" name="Cancel" class="Cancel">';
+                    var cancel = `<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">`;
 
                     addFunctions(add, cancel, 'Ingresa los datos del mobiliario');
 
@@ -165,6 +191,8 @@ if (!Permisos['MOBILIARIO']) {
 
             imagen.removeEventListener('click', ImageFunction);
             imagen.style.cursor = 'default';
+
+            $('.Fname').prop('disabled', true);
         }
         if (Permisos['MOBILIARIO'].includes('3')) {
             function modify(oldName, oldDesc, oldUser, e) {
@@ -175,69 +203,73 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('Ndescripcion', document.querySelector('.DescM').value);
 
                 // Agregar encargado o usuario
-                agregarEncargadoOUsuario(formData, Permisos, user);
-
                 formData.append('cantidad', document.querySelector('.CantidadM').value);
                 formData.append('ubicacion', document.querySelector('.UbiM').value);
                 formData.append('articulo', oldName);
                 formData.append('descripcion', oldDesc);
-                formData.append('oldUsuario', oldUser);
+                let encargado = Permisos['MOBILIARIO'].includes('5') ? document.querySelector('.actionSelect').value : nom;
+                // formData.append('oldUsuario', oldUser);
+                identificate(oldUser, formData, true)
+                .then(updatedFormData => {
 
-                fetch('/mobiliario/mod_mob', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                    .then(data1 => {
-                        if (data1.type === 'success') {
-
-                            const inputFile = document.getElementById('file');
-
-                            if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
-                                fetch('/mobiliario/renameImage', {
-                                    method: 'POST',
-                                    body: formData
-                                }).then(response => response.json())
-                                    .then(data => {
-                                        if (data.type === 'success') {
-                                            showSuccessAlertReload(data1.message)
-                                            console.log(data.message)
+                    identificate(encargado, updatedFormData, false)
+                        .then(updatedFormData => {
+    
+                            fetch('/mobiliario/mod_mob', {
+                                method: 'POST',
+                                body: updatedFormData
+                            }).then(response => response.json())
+                                .then(data1 => {
+                                    if (data1.type === 'success') {
+    
+                                        const inputFile = document.getElementById('file');
+    
+                                        if (!inputFile.files[0] || !inputFile.files || (inputFile.files.length === 0)) {
+                                            fetch('/mobiliario/renameImage', {
+                                                method: 'POST',
+                                                body: updatedFormData
+                                            }).then(response => response.json())
+                                                .then(data => {
+                                                    if (data.type === 'success') {
+                                                        showSuccessAlertReload(data1.message)
+                                                    } else {
+                                                        showErrorAlert(data.message)
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error en la solicitud:', error);
+                                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                                });
                                         } else {
-                                            showErrorAlert(data.message)
+                                            updatedFormData.append('file', inputFile.files[0])
+    
+                                            fetch('/mobiliario/renew', {
+                                                method: 'POST',
+                                                body: updatedFormData
+                                            }).then(response => response.json())
+                                                .then(data => {
+                                                    if (data.type === 'success') {
+                                                        showSuccessAlertReload(data1.message)
+                                                    } else {
+                                                        showErrorAlert(data.message)
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error en la solicitud:', error);
+                                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                                });
                                         }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error en la solicitud:', error);
-                                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                                    });
-                            } else {
-                                formData.append('file', inputFile.files[0])
-
-                                fetch('/mobiliario/renew', {
-                                    method: 'POST',
-                                    body: formData
-                                }).then(response => response.json())
-                                    .then(data => {
-                                        if (data.type === 'success') {
-                                            showSuccessAlertReload(data1.message)
-                                            console.log(data.message)
-                                        } else {
-                                            showErrorAlert(data.message)
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error en la solicitud:', error);
-                                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                                    });
-                            }
-
-                        } else {
-                            showErrorAlert(data1.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
-                    });
+    
+                                    } else {
+                                        showErrorAlert(data1.message)
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error en la solicitud:', error);
+                                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                                });
+                        })
+                })
             }
         }
         if (Permisos['MOBILIARIO'].includes('2')) {
@@ -305,7 +337,7 @@ if (!Permisos['MOBILIARIO']) {
                     var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${user}', event)" class="Modify">`;
                 }
 
-                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(event); dissapearImage();" name="Cancel" class="Cancel">';
+                var cancel = `<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(event); dissapearImage();" name="Cancel" class="Cancel">`;
 
                 editsFunctions(modify, cancel);
 
@@ -322,13 +354,8 @@ if (!Permisos['MOBILIARIO']) {
             body: JSON.stringify({ username: user })
         }).then(response => response.json())
             .then(data => {
-                console.log(data)
                 const tbody = document.querySelector(".data-mob tbody");
                 const selMob = $('.Mob')
-
-                if (data.length <= 0) {
-                    empty_table()
-                }
 
                 data.forEach(item => {
                     selMob.append($('<option>', { value: item.Articulo, text: item.Articulo }))
@@ -346,26 +373,44 @@ if (!Permisos['MOBILIARIO']) {
                             formData.append('articulo', item.Articulo)
                             formData.append('descripcion', item.Descripcion)
 
-                            formData.append('user', identificate(item.Nombre))
+                            identificate(item.Nombre, formData, false)
+                                .then(updatedFormData => {
+                                    fetch('/mobiliario/users/disp_image', {
+                                        method: 'POST',
+                                        body: updatedFormData
+                                    }).then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return response.blob();
+                                    }).then(blob => {
+                                        const url = URL.createObjectURL(blob); // Crear URL del blob
+                                        document.querySelector('.furniture-image').src = url;
+                                        $('.Fname').val(item.Articulo);
 
-                            fetch('/mobiliario/users/disp_image', {
-                                method: 'POST',
-                                body: formData
-                            }).then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.blob();
-                            }).then(blob => {
-                                const url = URL.createObjectURL(blob); // Crear URL del blob
-                                document.querySelector('.furniture-image').src = url;
-                                $('.Fname').val(item.Articulo);
-                                $('.UbiM').val(item.Ubicacion);
-                                $('.CantidadM').val(item.Cantidad);
-                                $('.DescM').val(item.Descripcion);
-                            }).catch(error => {
-                                console.error('Error en la solicitud:', error);
-                            });
+                                        if (Permisos['MOBILIARIO'].includes('5')) {
+                                            const targetDiv = document.querySelector('.DF');
+                                            if (!document.querySelector('#EmpM') && !document.querySelector('label[for="EmpM"]')) {
+                                                const divHTML = `
+                                                    <div class="DF">
+                                                        <label>Encargado:</label>
+                                                        <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
+                                                            maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                                                    </div>`;
+                                                targetDiv.insertAdjacentHTML('beforebegin', divHTML);
+                                            }
+
+                                            $('.EmpM').val(item.Nombre);
+                                        }
+
+                                        $('.UbiM').val(item.Ubicacion);
+                                        $('.CantidadM').val(item.Cantidad);
+                                        $('.DescM').val(item.Descripcion);
+                                    }).catch(error => {
+                                        console.error('Error en la solicitud:', error);
+                                    });
+
+                                });
                         }
                     })
 
@@ -377,47 +422,48 @@ if (!Permisos['MOBILIARIO']) {
                         formData.append('articulo', item.Articulo)
                         formData.append('descripcion', item.Descripcion)
 
-                        formData.append('user', identificate(item.Nombre))
+                        identificate(item.Nombre, formData, false)
+                            .then(updatedFormData => {
+                                fetch('/mobiliario/users/disp_image', {
+                                    method: 'POST',
+                                    body: updatedFormData
+                                }).then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.blob();
+                                }).then(blob => {
+                                    const url = URL.createObjectURL(blob); // Crear URL del blob
+                                    document.querySelector('.furniture-image').src = url;
+                                    $('.Fname').val(item.Articulo);
 
-                        fetch('/mobiliario/users/disp_image', {
-                            method: 'POST',
-                            body: formData
-                        }).then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.blob();
-                        }).then(blob => {
-                            const url = URL.createObjectURL(blob); // Crear URL del blob
-                            document.querySelector('.furniture-image').src = url;
-                            $('.Fname').val(item.Articulo);
+                                    if (Permisos['MOBILIARIO'].includes('5')) {
+                                        const targetDiv = document.querySelector('.DF');
+                                        if (!document.querySelector('#EmpM') && !document.querySelector('label[for="EmpM"]')) {
+                                            const divHTML = `
+                                                    <div class="DF">
+                                                        <label>Encargado:</label>
+                                                        <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
+                                                            maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                                                    </div>`;
+                                            targetDiv.insertAdjacentHTML('beforebegin', divHTML);
+                                        }
 
-                            if (Permisos['MOBILIARIO'].includes('5')) {
-                                const targetDiv = document.querySelector('.DF');
-                                if (!document.querySelector('#EmpM') && !document.querySelector('label[for="EmpM"]')) {
-                                    const divHTML = `
-                                            <div class="DF">
-                                                <label>Encargado:</label>
-                                                <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
-                                                    maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
-                                            </div>`;
-                                    targetDiv.insertAdjacentHTML('beforebegin', divHTML);
-                                }
+                                        $('.EmpM').val(item.Nombre);
+                                    }
 
-                                $('.EmpM').val(item.Nombre);
-                            }
+                                    $('.UbiM').val(item.Ubicacion);
+                                    $('.CantidadM').val(item.Cantidad);
+                                    $('.DescM').val(item.Descripcion);
+                                }).catch(error => {
+                                    console.error('Error en la solicitud:', error);
+                                });
 
-                            $('.UbiM').val(item.Ubicacion);
-                            $('.CantidadM').val(item.Cantidad);
-                            $('.DescM').val(item.Descripcion);
-                        }).catch(error => {
-                            console.error('Error en la solicitud:', error);
-                        });
-
-
+                            });
                     });
                     tbody.appendChild(tr);
                 });
+                empty_table('data-mob', 2)
                 sselect()
             })
             .catch(error => {

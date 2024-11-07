@@ -18,11 +18,12 @@ window.insertSelectForEmployees = function (defaultEmployee) {
             })
             .then(response => response.json())
             .then(data => {
-                employSelect.innerHTML = '<option value="">Encargado</option>';
+                employSelect.innerHTML = '<option disabled selected>Encargado...</option>';
                 data.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.employee;
                     option.textContent = item.employee;
+                    option.setAttribute('encargado', item.user);
                     employSelect.appendChild(option);
                 });
 
@@ -36,10 +37,14 @@ window.insertSelectForEmployees = function (defaultEmployee) {
                 showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
             });
 
-            employSelect.addEventListener('change', function (e) {
-                const selectedOption = e.target.value;
-                console.log('Empleado seleccionado:', selectedOption);
+            new SlimSelect({
+                select: '.actionSelect'
             });
+            $('.actionSelect').css('margin-bottom', '0')
+            $('.DF .actionSelect .ss-single-selected').css('margin-bottom', '0')
+            $('.DF .actionSelect .ss-single-selected').css('background-color', 'var(--light_gray)')
+            $('.DF .actionSelect .ss-single-selected').css('border-radius', '0.7rem')
+            $('.DF .actionSelect .ss-single-selected').css('color', 'black')
         }
     }
 };

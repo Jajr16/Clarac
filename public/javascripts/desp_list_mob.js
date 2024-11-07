@@ -2,15 +2,15 @@
 async function cargarMobilairio() {
     try {
         const response = await fetch('/javascripts/mobiliario_list.json');
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const mobiliarioJson = await response.json();
-        
+
         const selectFname = document.getElementById('Fname');
-        
+
         mobiliarioJson.forEach(item => {
             const option = document.createElement('option');
             option.value = item.ARTICULO;

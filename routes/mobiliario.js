@@ -7,6 +7,7 @@ const furnitures = require('../bin/Mobiliario');
 const addFurnit = require('../bin/AddMobiliario');
 const modFurnit = require('../bin/MobiliarioModify');
 const delFurnit = require('../bin/deleteMobiliario');
+const getName = require('../bin/getName');
 const upload = require('../config/multerConfig');
 const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
 
@@ -44,6 +45,15 @@ router.post('/', isAuthenticated, (req, res) => {
 
 router.post('/new_mob', isAuthenticated, subperm('MOBILIARIO', [1]), (req, res) => {
   addFurnit(req, (err, result) => {
+    if (err) {
+      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+    }
+    res.json(result);
+  });
+});
+
+router.post('/getName', isAuthenticated, (req, res) => {
+  getName(req, (err, result) => {
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }

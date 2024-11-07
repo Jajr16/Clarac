@@ -1643,10 +1643,11 @@ CREATE TRIGGER ASEPSE BEFORE UPDATE ON status_soli
 	END
 | DELIMITER ;
 
+DROP TRIGGER IF EXISTS AUAP;
 DELIMITER |
-CREATE TRIGGER AUAP BEFORE INSERT ON permisos
+CREATE TRIGGER AUAP AFTER INSERT ON usuario
 	FOR EACH ROW BEGIN
-		INSERT INTO permisos VALUES (1, NEW.usuario,'PETICIONES');
+		INSERT INTO permisos VALUES (1, NEW.Usuario,'PETICIONES');
 	END
 | DELIMITER ;
 
@@ -1654,3 +1655,4 @@ select*from soli_Car;
 select*from status_soli;
 select*from empleado;
 select*from usuario;
+select*from equipo;

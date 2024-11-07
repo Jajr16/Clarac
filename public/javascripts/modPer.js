@@ -15,7 +15,7 @@ function handleRowClick(item) {
 
     // Contenido HTML que deseas mostrar
     const moduleContent = `
-    <div class="subtitle-container">
+            <div class="subtitle-container">
                 Detalles de los Permisos del usuario: ${item.nombre}
             </div>
             <i class="fa-solid fa-trash trash" aria-hidden="true"
@@ -28,7 +28,7 @@ function handleRowClick(item) {
             </form>
     <div class="actions two-boxes" style="height: 60%;">
                                     <div class="module-section">
-                                <div class="subsubtitle-container">Almacén</div>
+                                <div class="subsubtitle-container" style="width: 10.5rem;">Almacén</div>
                                 <div class="module-category" id="Almacen">
                                     <div class="DPU">
                                         <label for="addalmacen">Altas</label>
@@ -47,7 +47,7 @@ function handleRowClick(item) {
                                         <input type="checkbox" id="conalmacen" name="conalmacen" class="EditData" value="4">
                                     </div>
                                 </div>
-                                <div class="subsubtitle-container">Mobiliario</div>
+                                <div class="subsubtitle-container" style="width: 10.5rem;">Mobiliario</div>
                                 <div class="module-category" id="Mobiliario">
                                     <div class="DPU">
                                         <label for="addmobiliario">Altas</label>
@@ -68,7 +68,7 @@ function handleRowClick(item) {
                                 </div>
                             </div>
                             <div class="module-section">
-                                <div class="subsubtitle-container">Equipos</div>
+                                <div class="subsubtitle-container" style="width: 10.5rem;">Equipos</div>
                                 <div class="module-category" id="Equipos">
                                     <div class="DPU">
                                         <label for="addequipos">Altas</label>
@@ -87,7 +87,7 @@ function handleRowClick(item) {
                                         <input type="checkbox" id="conequipos" name="conequipos" class="EditData" value="4">
                                     </div>
                                 </div>
-                                <div class="subsubtitle-container">Usuarios</div>
+                                <div class="subsubtitle-container" style="width: 10.5rem;">Usuarios</div>
                                 <div class="module-category" id="Usuarios">
                                     <div class="DPU">
                                         <label for="addusuario">Altas</label>
@@ -108,7 +108,7 @@ function handleRowClick(item) {
                                 </div>
                             </div>
                             <div class="module-section">
-                                <div class="subsubtitle-container">Empleados</div>
+                                <div class="subsubtitle-container" style="width: 10.5rem;">Empleados</div>
                                 <div class="module-category" id="Empleados">
                                     <div class="DPU">
                                         <label for="addempleado">Altas</label>
@@ -127,7 +127,7 @@ function handleRowClick(item) {
                                         <input type="checkbox" id="conempleado" name="conempleado" class="EditData" value="4">
                                     </div>
                                 </div>
-                                <div class="subsubtitle-container">Responsivas</div>
+                                <div class="subsubtitle-container" style="width: 10.5rem;">Responsivas</div>
                                 <div class="module-category" id="Responsivas">
                                     <div class="DPU">
                                         <label for="addresponsiva">Agregar</label>

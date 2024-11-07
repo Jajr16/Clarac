@@ -156,36 +156,6 @@ if (!Permisos['MOBILIARIO']) {
                     imagen.addEventListener('click', ImageFunction);
                 });
             }
-
-            // Función para manejar el botón "Cancelar"
-            window.dissapear = function () {
-                // Volver a deshabilitar el input
-                inputP.attr("disabled", true);
-
-                // Mostrar el botón "fa-circle-plus" de nuevo
-                addF.show();
-
-                // Eliminar los botones "Guardar" y "Cancelar"
-                $('.Modify').remove();
-                $('.Cancel').remove();
-
-                // Eliminar el select y su label si existen
-                const select = document.querySelector('#actionSelect');
-                const label = document.querySelector('label[for="actionSelect"]');
-                if (select) {
-                    select.remove();
-                }
-                if (label) {
-                    label.remove();
-                }
-
-                // Ocultar los botones "edit" y "trash"
-                $('.edit').hide();
-                $('.trash').hide();
-
-                // Mostrar otros elementos ocultos, si es necesario
-                $('.editE').css('display', 'inline');
-            };
         });
 
         function dissapearImage() {
@@ -311,7 +281,7 @@ if (!Permisos['MOBILIARIO']) {
                 }
             })
         }
-        if (Permisos['MOBILIARIO'.includes('3')]) {
+        if (Permisos['MOBILIARIO'].includes('3')) {
             const edit = $('.edit');
             edit.click(function (e) {
 
@@ -335,7 +305,7 @@ if (!Permisos['MOBILIARIO']) {
                     var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${user}', event)" class="Modify">`;
                 }
 
-                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">';
+                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(event); dissapearImage();" name="Cancel" class="Cancel">';
 
                 editsFunctions(modify, cancel);
 

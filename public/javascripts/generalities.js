@@ -128,6 +128,7 @@ function addFunctions(add, cancel, mensaje) {
 function dissapear() {
     const inputM = $('.EditData')
     const inputS = $('.EditSelect')
+    const select = $('.actionSelect')
 
     inputM.attr("placeholder", '')
     inputM.attr("readonly", true)
@@ -136,6 +137,9 @@ function dissapear() {
     inputS.val('')
     $('.Modify').remove()
     $('.Cancel').remove()
+    select.prev('label').remove()
+    select.closest("div").remove();
+    select.remove()
     $('.fa-circle-plus').css('display', 'block')
 
     const edit = $('.edit');

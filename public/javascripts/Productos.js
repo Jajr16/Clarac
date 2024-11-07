@@ -6,7 +6,7 @@ if (!Permisos['ALMACÉN']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulProd" && (Permisos['ALMACÉN'].includes('4') || Permisos['ALMACÉN'].includes('2') || Permisos['ALMACÉN'].includes('1') || Permisos['ALMACÉN'].includes('3'))) {
-        
+
         if (Permisos['ALMACÉN'].includes('1')) {
             function addProduct(e) {
 
@@ -83,54 +83,54 @@ if (!Permisos['ALMACÉN']) {
                     addFunctions(add, cancel, 'Ingresa los datos del producto')
                 })
             }
-        });
-        if (Permisos['ALMACÉN'].includes('3')) {
-            function modify(oldCodBarras, e) {
 
-                e.preventDefault()
-                const updatedData = {
-                    Cod_Barras: document.querySelector('.CodBarrasP').value,
-                    Categoria: document.querySelector('.CateP').value,
-                    Articulo: document.querySelector('.Pname').value,
-                    Marca: document.querySelector('.MarcaP').value,
-                    Descripcion: document.querySelector('.DescP').value,
-                    Unidad: document.querySelector('.UnidadP').value,
-                    dataOldCB: oldCodBarras,
-                    User: user
-                };
+            if (Permisos['ALMACÉN'].includes('3')) {
+                function modify(oldCodBarras, e) {
+                    console.log('Si entras')
+                    e.preventDefault()
+                    const updatedData = {
+                        Cod_Barras: document.querySelector('.CodBarrasP').value,
+                        Categoria: document.querySelector('.CateP').value,
+                        Articulo: document.querySelector('.Pname').value,
+                        Marca: document.querySelector('.MarcaP').value,
+                        Descripcion: document.querySelector('.DescP').value,
+                        Unidad: document.querySelector('.UnidadP').value,
+                        dataOldCB: oldCodBarras,
+                        User: user
+                    };
 
-                fetch('/producto/mod_prod', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updatedData)
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.type === 'RespDelProd') {
-                            showSuccessAlertReload(data.message)
-                        } else {
-                            showErrorAlert(data.message)
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error en la solicitud:', error);
-                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                    });
+                    fetch('/producto/mod_prod', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.type === 'RespDelProd') {
+                                showSuccessAlertReload(data.message)
+                            } else {
+                                showErrorAlert(data.message)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                        });
+                }
+                const edit = $('.edit');
+
+                edit.click(function (e) {
+                    console.log('Tmb entras')
+                    var Cod_Barras = $('.CodBarrasP').val();
+
+                    var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
+                    var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
+
+                    editsFunctions(modify, cancel)
+                });
             }
-
-            // FUNCIONALIDAD PÁGINA
-            const edit = $('.edit');
-
-            edit.click(function (e) {
-                var Cod_Barras = $('.CodBarrasP').val();
-
-                var modify = `<input type="submit" value="Guardar" id="modyProd" name="modyProd" onclick="modify('${Cod_Barras}', event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear()" name="Cancel" class="Cancel">';
-
-                editsFunctions(modify, cancel)
-            });
-        }
+        });
 
         window.addEventListener("load", function (event) {
             fetch('/producto', {

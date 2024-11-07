@@ -658,7 +658,7 @@ BEGIN
     BEGIN
         -- Manejo del error: devolver un mensaje de error y hacer rollback
         ROLLBACK;
-        SELECT 'Error: Ocurrió un error al insertar el usuario' AS status;
+        SELECT 'Error: El nombre del usuario ya esta siendo utilizado' AS status;
     END;
 
     -- Iniciar la transacción
@@ -1608,6 +1608,7 @@ BEGIN
 
     -- Commit the transaction
     COMMIT;
+    SELECT 'Success' AS status;
 END$$
 
 DELIMITER ;

@@ -65,6 +65,10 @@ function handleRowClick(item) {
                                         <label for="conmobiliario">Consultas</label>
                                         <input type="checkbox" id="conmobiliario" name="conmobiliario" class="EditData" value="4">
                                     </div>
+                                    <div class="DPU">
+                                        <label for="adminmobiliario">Administrador</label>
+                                        <input type="checkbox" id="adminmobiliario" name="adminmobiliario" value="5">
+                                    </div>
                                 </div>
                             </div>
                             <div class="module-section">
@@ -105,6 +109,10 @@ function handleRowClick(item) {
                                         <label for="conusuario">Consultas</label>
                                         <input type="checkbox" id="conusuario" name="conusuario" class="EditData" value="4">
                                     </div>
+                                    <div class="DPU hidden">
+                                        <label for="b">Bajas</label>
+                                        <input type="checkbox" id="b" name="">
+                                    </div>
                                 </div>
                             </div>
                             <div class="module-section">
@@ -144,6 +152,10 @@ function handleRowClick(item) {
                                     <div class="DPU hidden">   
                                         <label for="d">Consultas</label>
                                         <input type="checkbox" id="d" name="">
+                                    </div>
+                                    <div class="DPU hidden">
+                                        <label for="b">Bajas</label>
+                                        <input type="checkbox" id="b" name="">
                                     </div>
                                 </div>
                             </div>
@@ -284,7 +296,8 @@ function getCheckboxId(modulo, permiso) {
         1: 'add',
         2: 'del',
         3: 'mod',
-        4: 'con'
+        4: 'con',
+        5: 'admin'
     };
 
     // Return the constructed checkbox ID

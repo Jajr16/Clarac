@@ -220,8 +220,9 @@ function modifyRegPer(req, res) {
             console.error('Error en la consulta:', err);
             return res.status(500).json({ message: 'Error al modificar los permisos', details: err });
         }
-
-        return res.status(200).json({ type: 'RespDelEqp', message: 'Permisos modificados exitosamente.' });
+        if (response.status === 'Success') {
+            return res.status(200).json({ type: 'RespDelEqp', message: 'Permisos modificados exitosamente.' });
+        }
     });
 }
 

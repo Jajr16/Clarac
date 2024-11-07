@@ -309,6 +309,10 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                                 <label for="conmobiliario">Consultas</label>
                                 <input type="checkbox" id="conmobiliario" name="conmobiliario" value="4">
                             </div>
+                            <div class="DPU">
+                                <label for="adminmobiliario">Administrador</label>
+                                <input type="checkbox" id="adminmobiliario" name="adminmobiliario" value="5">
+                            </div>
                         </div>
                         <div class="module-category" id="Equipos">
                             <div class="subsubtitle-container">Equipos</div>
@@ -615,6 +619,10 @@ else if (Permisos && Permisos['USUARIOS'] && Permisos['USUARIOS'].includes('1') 
                             <div class="DPU">
                                 <label for="conmobiliario">Consultas</label>
                                 <input type="checkbox" id="conmobiliario" name="conmobiliario" value="4">
+                            </div>
+                            <div class="DPU">
+                                <label for="adminmobiliario">Administrador</label>
+                                <input type="checkbox" id="adminmobiliario" name="adminmobiliario" value="5">
                             </div>
                         </div>
                         <div class="module-category" id="Equipos">

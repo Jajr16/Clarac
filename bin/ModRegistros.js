@@ -213,7 +213,6 @@ function modifyRegPer(req, res) {
 
     // Convert Permissions array to a JSON string
     const permisosJson = JSON.stringify(Permissions);
-
     // Call the stored procedure
     db.query(`CALL ModificarPermisos(?, ?)`, [Usuario, permisosJson], (err, result) => {
         if (err) {

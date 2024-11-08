@@ -11,38 +11,38 @@ function obtenerEmpleados() {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la red');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // console.log("Datos recibidos:", data);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta de la red');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // console.log("Datos recibidos:", data);
 
-            const selectElement = document.getElementById('Nombre');
+                const selectElement = document.getElementById('Nombre');
 
-            // Limpiar las opciones existentes
-            selectElement.innerHTML = '<option value=""></option>';
+                // Limpiar las opciones existentes
+                selectElement.innerHTML = '<option value=""></option>';
 
-            // Verificar si los datos están en el formato correcto
-            if (Array.isArray(data)) {
-                data.forEach(empleado => {
-                    const option = document.createElement('option');
-                    option.value = empleado;
-                    option.textContent = empleado;
-                    selectElement.appendChild(option);
-                });
-            } else {
-                console.error("Datos recibidos no son un array:", data);
-            }
+                // Verificar si los datos están en el formato correcto
+                if (Array.isArray(data)) {
+                    data.forEach(empleado => {
+                        const option = document.createElement('option');
+                        option.value = empleado;
+                        option.textContent = empleado;
+                        selectElement.appendChild(option);
+                    });
+                } else {
+                    console.error("Datos recibidos no son un array:", data);
+                }
 
-            resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
-        })
-        .catch(error => {
-            console.error('Error en la solicitud:', error);
-            reject(error);
-        });
+                resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                reject(error);
+            });
     });
 }
 
@@ -63,13 +63,13 @@ function clearContent() {
     slimSelectInstances = [];
 }
 
-$(document).off('click', '.meter').on('click', '.meter', function(e) {
+$(document).off('click', '.meter').on('click', '.meter', function (e) {
     clearContent();
     obtenerRegistrosEmpleados();
     setTimeout(sselect2, 100);
 });
 
-$(document).off('click', '.sacar').on('click', '.sacar', function(e) {
+$(document).off('click', '.sacar').on('click', '.sacar', function (e) {
     clearContent();
     obtenerRegistrosUsuarios();
     setTimeout(sselect2, 100);
@@ -103,7 +103,7 @@ function sselect2() {
     // Crear nuevas instancias de SlimSelect
     searchs.forEach(element => {
         // Verificar que el elemento esté visible y tenga opciones
-        if ($(element).is(':visible') && element.options && element.options.length > 1) { 
+        if ($(element).is(':visible') && element.options && element.options.length > 1) {
             try {
                 const instance = new SlimSelect({
                     select: element
@@ -127,30 +127,30 @@ function obtenerRegistros(url) {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        const selEqp = $('#mySelect');
-        selEqp.empty();  // Limpiar opciones previas
-        selEqp.append(new Option("Buscar...", "")).attr("disabled", true);
+        .then(response => response.json())
+        .then(data => {
+            const selEqp = $('#mySelect');
+            selEqp.empty();  // Limpiar opciones previas
+            selEqp.append(new Option("Buscar...", "")).attr("disabled", true);
 
-        if (data.length === 0) {
-            console.warn("No se encontraron datos para mostrar.");
-        } else {
-            data.forEach(item => {
-                selEqp.append(new Option(item.nombre, item.nombre));
-            });
-            sselect2(); // Llamar a SlimSelect después de cargar las opciones
-        }
-    })
-    .catch(error => {
-        console.error('Error en la solicitud:', error);
-    });
+            if (data.length === 0) {
+                console.warn("No se encontraron datos para mostrar.");
+            } else {
+                data.forEach(item => {
+                    selEqp.append(new Option(item.nombre, item.nombre));
+                });
+                sselect2(); // Llamar a SlimSelect después de cargar las opciones
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+        });
 }
 
 if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
     location.href = "index";
 } else {
-    if (pathname == "/users/modReg" && (Permisos['EMPLEADOS'].includes('3'))){
+    if (pathname == "/users/modReg" && (Permisos['EMPLEADOS'].includes('3'))) {
 
         function modifyRegUsuario(oldNombre, num_emp, e) {
 
@@ -172,24 +172,24 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 },
                 body: JSON.stringify(updatedData)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Manejar la respuesta
-                if (data.type === 'RespDelEqp') {
-                    showSuccessAlertReload(data.message);
-                } else {
-                    showErrorAlert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Manejar la respuesta
+                    if (data.type === 'RespDelEqp') {
+                        showSuccessAlertReload(data.message);
+                    } else {
+                        showErrorAlert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                });
         }
 
         function modifyRegEmp(oldNombre, num_emp, e) {
@@ -280,35 +280,35 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            const selEqp = $('#mySelect');
-            // selEqp.empty();  // Limpiar opciones previas
+            .then(response => response.json())
+            .then(data => {
+                const selEqp = $('#mySelect');
+                // selEqp.empty();  // Limpiar opciones previas
 
-            if (data.length === 0) {
-                console.warn("No se encontraron datos para mostrar.");
-            } else {
-                // Cargar las opciones en el select
-                data.forEach(item => {
-                    selEqp.append(new Option(item.nombre, item.nombre));
-                });
+                if (data.length === 0) {
+                    console.warn("No se encontraron datos para mostrar.");
+                } else {
+                    // Cargar las opciones en el select
+                    data.forEach(item => {
+                        selEqp.append(new Option(item.nombre, item.nombre));
+                    });
 
-                // Llamar a SlimSelect después de cargar las opciones
-                sselect();
-            }
-        })
-        .catch(error => {
-            console.error('Error en la solicitud:', error);
-            const errorMessageElement = document.getElementById('errorMessage');
-            if (errorMessageElement) {
-                errorMessageElement.innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-            }
-        });
+                    // Llamar a SlimSelect después de cargar las opciones
+                    sselect();
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                }
+            });
 
 
         function cancel() {
             // clearContent();
-        
+
             // Restaurar el contenido inicial de los botones
             $('.description-product').html(`
                 <div class="actions two-boxes" style="height: 60%;">
@@ -324,7 +324,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
             // Volver a configurar los eventos para los botones
             CRUDButtons();
         }
-        
+
         function CRUDButtons() {
             // Evento de clic en el botón "Modificar Empleado"
             $('.meter').click((e) => {
@@ -337,7 +337,24 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                         </div>
                         <div class="DP">
                             <label>Área</label>
-                            <select id="Area" class="Area EditSelect EditData2" name="Area" required></select>
+                            <select id="Area" class="Area EditSelect EditData2" name="Area" required>
+                                <option></option>
+                                <option value="ADMINISTRACION">ADMINISTRACION</option>
+                                <option value="PRIMARIA">PRIMARIA</option>
+                                <option value="SECUNDARIA">SECUNDARIA</option>
+                                <option value="SERVICIOS GENERALES">SERVICIOS GENERALES</option>
+                                <option value="SERVICIOS GENERALES Y REC. MATERIALES">SERVICIOS GENERALES Y REC. MATERIALES</option>
+                                <option value="COMPRAS">COMPRAS</option>
+                                <option value="PREESCOLAR">PREESCOLAR</option>
+                                <option value="DIRECCION ADMINISTRATIVA">DIRECCION ADMINISTRATIVA</option>
+                                <option value="DIRECCION ACADEMICA">DIRECCION ACADEMICA</option>
+                                <option value="PREPARATORIA">PREPARATORIA</option>
+                                <option value="CONTROL ADMINISTRATIVO">CONTROL ADMINISTRATIVO</option>
+                                <option value="APOYO ACADEMICO">APOYO ACADEMICO</option>
+                                <option value="DIRECCION GENERAL">DIRECCION GENERAL</option>
+                                <option value="RECURSOS HUMANOS Y CONTABILIDAD">RECURSOS HUMANOS Y CONTABILIDAD</option>
+                                <option value="SISTEMAS">SISTEMAS</option>
+                            </select>
                         </div>
                         <div class="DP">
                             <label>Jefe</label>
@@ -349,10 +366,10 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                         <input type="submit" value="Cancelar" id="cancelEqp" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
                 `, e);
-        
+
                 colortable();
             });
-        
+
             // Evento de clic en el botón "Sacar productos"
             $('.sacar').click((e) => {
                 obtenerRegistros('/registro/getRegistrosUsuarios');
@@ -380,44 +397,44 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     // Llamar a sselect después de llenar el select con empleados
                     sselect2();
                 });
-        
+
                 colortable();
-                
+
             });
         }
         function populateInputs(item) {
             console.log("Datos de item:", item); // Verificar el contenido de item
-        
+
             const nombreSelect = $('.Nombre');
             if (nombreSelect.find(`option[value="${item.nombre}"]`).length) {
                 nombreSelect.val(item.nombre);
             } else {
                 nombreSelect.append(new Option(item.nombre, item.nombre, true, true));
             }
-        
+
             $('.Usuario').val(item.usuario);
             $('.Password').val(item.password);
-        
+
             // Asegúrate de que el select de nombre esté deshabilitado
             $('.Nombre').prop('disabled', true);
-        
+
             // Asigna num_emp al evento de clic
             $('#modyEqp').attr('onclick', `modifyRegUsuario('${item.nombre}', '${item.numemp}', event)`);
         }
-        
-        
+
+
         function populateInputs2(item) {
             const nombreSelect = $('.Nombre2');
             const areaSelect = $('.Area');
             const jefeSelect = $('.Jefe');
-        
+
             // Limpiar y agregar el nombre
             nombreSelect.empty(); // Limpiar opciones previas
             nombreSelect.append(new Option(item.nombre, item.nombre, true, true));
             nombreSelect.val(item.nombre);
-        
+
             // Limpiar y agregar el área
-            areaSelect.empty(); 
+            areaSelect.empty();
 
             // Crear un conjunto para rastrear las opciones únicas
             const uniqueAreas = new Set();
@@ -445,20 +462,20 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 areaSelect.append(new Option(item.area, item.area, true, true));
             }
             areaSelect.val(item.area);
-        
+
             // Asignar el valor fijo "Navarro Jimenez Martha Lidia" al campo de Jefe
             jefeSelect.empty(); // Limpiar opciones previas
-            jefeSelect.append(new Option("Navarro Jimenez Martha Lidia", "Navarro Jimenez Martha Lidia", true, true));
-            jefeSelect.val("Navarro Jimenez Martha Lidia");
-            jefeSelect.prop('disabled', true); 
-        
+            jefeSelect.append(new Option("NAVARRO JIMENEZ MARTHA LIDIA", "NAVARRO JIMENEZ MARTHA LIDIA", true, true));
+            jefeSelect.val("NAVARRO JIMENEZ MARTHA LIDIA");
+            jefeSelect.prop('disabled', true);
+
             // Habilitar los campos de nombre y área
             nombreSelect.prop('disabled', false);
             areaSelect.prop('disabled', false);
-        
+
             $('#modyEqp').attr('onclick', `modifyRegEmp('${item.nombre}', '${item.numemp}', event)`);
         }
-        
+
         // Función para obtener los datos de los usuarios y mostrarlos en la tabla
         function obtenerRegistrosUsuarios() {
             fetch('/registro/getRegistrosUsuarios')
@@ -468,27 +485,27 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     const tbody = document.querySelector(".data-prod tbody");
                     const headers = document.getElementById('table-headers');
                     const selEqp = $('#mySelect');  // Assume `#mySelect` is the target select element
-        
+
                     // Clear any existing content in table headers and body
                     headers.innerHTML = '';
                     tbody.innerHTML = '';
-        
+
                     // Set table headers for users
                     headers.innerHTML = `
                         <th>Empleado</th>
                         <th>Usuario</th>
                     `;
-        
+
                     // Clear and add default option to select
                     selEqp.empty();
                     selEqp.append(new Option("Buscar...", "")).attr("disabled", true);
-        
+
                     // Populate table and select with new data
                     data.forEach(item => {
                         console.log("Item actual:", item);
                         // Populate select options
                         selEqp.append(new Option(item.nombre, item.nombre));
-        
+
                         // Populate table rows
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -497,22 +514,22 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                             <td class="hidden-column">${item.numemp})</td>
 
                         `;
-                        
+
                         // Attach click event listener to row
                         tr.addEventListener('click', () => populateInputs(item));
                         tbody.appendChild(tr);
                     });
-        
+
                     // Attach a single change event listener to the select
                     selEqp.off('change').on('change', function () {
                         const selectedOption = $(this).val();
                         const selectedItem = data.find(item => item.nombre === selectedOption);
-                        
+
                         if (selectedItem) {
                             populateInputs(selectedItem);
                         }
                     });
-        
+
                     // Make table visible
                     showTable();
                 })
@@ -521,7 +538,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     document.getElementById('errorMessage').innerText = 'Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.';
                 });
         }
-        
+
         function obtenerRegistrosEmpleados() {
             fetch('/registro/getRegistrosEmpleados')
                 .then(response => response.json())
@@ -533,17 +550,17 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     // Limpiar cualquier contenido existente
                     headers.innerHTML = '';
                     tbody.innerHTML = '';
-        
+
                     // Configurar los encabezados de la tabla solo para Nombre y Usuario
                     headers.innerHTML = `
                         <th>Nombre</th>
                         <th>Área</th>
                     `;
-                    
+
                     // Clear and add default option to select
                     selEqp.empty();
                     selEqp.append(new Option("Buscar...", "")).attr("disabled", true);
-        
+
                     // Populate table and select with new data
 
                     // Llenar la tabla con los datos obtenidos
@@ -564,7 +581,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     selEqp.off('change').on('change', function () {
                         const selectedOption = $(this).val();
                         const selectedItem = data.find(item => item.nombre === selectedOption);
-                        
+
                         if (selectedItem) {
                             populateInputs2(selectedItem);
                         }
@@ -583,7 +600,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         window.addEventListener('load', function (event) {
             obtenerRegistrosUsuarios();
             sselect2();
-            CRUDButtons(); 
+            CRUDButtons();
         });
 
     }

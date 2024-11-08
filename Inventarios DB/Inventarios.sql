@@ -217,7 +217,6 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-drop table permisos;
 create table permisos(
 permiso enum("1","2","3","4", "5") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
@@ -225,144 +224,6 @@ modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEA
 primary key(permiso, usuario, modulo),
 foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
-
--- Para añadir permiso
-ALTER TABLE permisos MODIFY permiso ENUM('1', '2', '3', '4', '5') NOT NULL;
-
-insert into permisos values
-(1,"ajimenez","ALMACÉN"),#Altas
-(2,"ajimenez","ALMACÉN"),#Bajas
-(3,"ajimenez","ALMACÉN"),#Cambios
-(4,"ajimenez","ALMACÉN"),#Consultas
-(1,"ajimenez","MOBILIARIO"),#Altas
-(2,"ajimenez","MOBILIARIO"),#Bajas
-(3,"ajimenez","MOBILIARIO"),#Cambios
-(4,"ajimenez","MOBILIARIO"),#Consultas
-(1,"ajimenez","EQUIPOS"),#Altas
-(2,"ajimenez","EQUIPOS"),#Bajas
-(3,"ajimenez","EQUIPOS"),#Cambios
-(4,"ajimenez","EQUIPOS"),#Consultas
-(1,"ajimenez","EMPLEADOS"),#Altas
-(2,"ajimenez","EMPLEADOS"),#Bajas
-(3,"ajimenez","EMPLEADOS"),#Cambios
-(4,"ajimenez","EMPLEADOS"),#Consultas
-(1,"ajimenez","USUARIOS"),#Altas
-(2,"ajimenez","USUARIOS"),#Bajas
-(3,"ajimenez","USUARIOS"),#Cambios
-(4,"ajimenez","USUARIOS"),#Consultas
-(1,"ajimenez","RESPONSIVAS"),#Altas
-(2,"ajimenez","RESPONSIVAS"),#Bajas
-(3,"ajimenez","RESPONSIVAS"),#Cambios
-(4,"ajimenez","RESPONSIVAS"),
-(1, "ajimenez", "PETICIONES");#Consultas
-
-insert into permisos values
-(1,"MNAVARRO","ALMACÉN"),#Altas
-(2,"MNAVARRO","ALMACÉN"),#Bajas
-(3,"MNAVARRO","ALMACÉN"),#Cambios
-(4,"MNAVARRO","ALMACÉN"),#Consultas
-(1,"MNAVARRO","MOBILIARIO"),#Altas
-(2,"MNAVARRO","MOBILIARIO"),#Bajas
-(3,"MNAVARRO","MOBILIARIO"),#Cambios
-(4,"MNAVARRO","MOBILIARIO"),#Consultas
-(1,"MNAVARRO","EQUIPOS"),#Altas
-(2,"MNAVARRO","EQUIPOS"),#Bajas
-(3,"MNAVARRO","EQUIPOS"),#Cambios
-(4,"MNAVARRO","EQUIPOS"),#Consultas
-(1,"MNAVARRO","USUARIOS"),#Altas
-(2,"MNAVARRO","USUARIOS"),#Bajas
-(3,"MNAVARRO","USUARIOS"),#Cambios
-(4,"MNAVARRO","USUARIOS"),#Consultas
-(1,"MNAVARRO","EMPLEADOS"),#Altas
-(2,"MNAVARRO","EMPLEADOS"),#Bajas
-(3,"MNAVARRO","EMPLEADOS"),#Cambios
-(4,"MNAVARRO","EMPLEADOS"),#Consultas
-(1,"MNAVARRO","RESPONSIVAS"),#Altas
-(2,"MNAVARRO","RESPONSIVAS"),#Bajas
-(3,"MNAVARRO","RESPONSIVAS"),#Cambios
-(4,"MNAVARRO","RESPONSIVAS"),
-(1,"MNAVARRO","PETICIONES");#Cambios;#Consultas
-
-insert into permisos values
-(1,"armando","ALMACÉN"),#Altas
-(2,"armando","ALMACÉN"),#Bajas
-(3,"armando","ALMACÉN"),#Cambios
-(4,"armando","ALMACÉN"),#Consultas
-(1,"armando","MOBILIARIO"),#Altas
-(2,"armando","MOBILIARIO"),#Bajas
-(3,"armando","MOBILIARIO"),#Cambios
-(4,"armando","MOBILIARIO"),#Consultas
-(1,"armando","EQUIPOS"),#Altas
-(2,"armando","EQUIPOS"),#Bajas
-(3,"armando","EQUIPOS"),#Cambios
-(4,"armando","EQUIPOS"),#Consultas
-(1,"armando","USUARIOS"),#Altas
-(2,"armando","USUARIOS"),#Bajas
-(3,"armando","USUARIOS"),#Cambios
-(4,"armando","USUARIOS"),#Consultas
-(1,"armando","EMPLEADOS"),#Altas
-(2,"armando","EMPLEADOS"),#Bajas
-(3,"armando","EMPLEADOS"),#Cambios
-(4,"armando","EMPLEADOS"),#Consultas
-(1,"armando","RESPONSIVAS"),#Altas
-(2,"armando","RESPONSIVAS"),#Bajas
-(3,"armando","RESPONSIVAS"),#Cambios
-(4,"armando","RESPONSIVAS"),#Consultas
-(1,"armando","PETICIONES");#Consultas
-
-insert into permisos values
-(1,"martha","ALMACÉN"),#Altas
-(2,"martha","ALMACÉN"),#Bajas
-(3,"martha","ALMACÉN"),#Cambios
-(4,"martha","ALMACÉN"),#Consultas
-(1,"martha","MOBILIARIO"),#Altas
-(2,"martha","MOBILIARIO"),#Bajas
-(3,"martha","MOBILIARIO"),#Cambios
-(4,"martha","MOBILIARIO"),#Consultas
-(1,"martha","EQUIPOS"),#Altas
-(2,"martha","EQUIPOS"),#Bajas
-(3,"martha","EQUIPOS"),#Cambios
-(4,"martha","EQUIPOS"),#Consultas
-(1,"martha","USUARIOS"),#Altas
-(2,"martha","USUARIOS"),#Bajas
-(3,"martha","USUARIOS"),#Cambios
-(4,"martha","USUARIOS"),#Consultas
-(1,"martha","EMPLEADOS"),#Altas
-(2,"martha","EMPLEADOS"),#Bajas
-(3,"martha","EMPLEADOS"),#Cambios
-(4,"martha","EMPLEADOS"),#Consultas
-(1,"martha","RESPONSIVAS"),#Altas
-(2,"martha","RESPONSIVAS"),#Bajas
-(3,"martha","RESPONSIVAS"),#Cambios
-(4,"martha","RESPONSIVAS"),#Consultas
-(1,"martha","PETICIONES");#Consultas
-
-insert into permisos values
-(1,"Moises","ALMACÉN"),#Altas
-(2,"Moises","ALMACÉN"),#Bajas
-(3,"Moises","ALMACÉN"),#Cambios
-(4,"Moises","ALMACÉN"),#Consultas
-(1,"Moises","MOBILIARIO"),#Altas
-(2,"Moises","MOBILIARIO"),#Bajas
-(3,"Moises","MOBILIARIO"),#Cambios
-(4,"Moises","MOBILIARIO"),#Consultas
-(1,"Moises","EQUIPOS"),#Altas
-(2,"Moises","EQUIPOS"),#Bajas
-(3,"Moises","EQUIPOS"),#Cambios
-(4,"Moises","EQUIPOS"),#Consultas
-(1,"Moises","USUARIOS"),#Altas
-(2,"Moises","USUARIOS"),#Bajas
-(3,"Moises","USUARIOS"),#Cambios
-(4,"Moises","USUARIOS"),#Consultas
-(1,"Moises","EMPLEADOS"),#Altas
-(2,"Moises","EMPLEADOS"),#Bajas
-(3,"Moises","EMPLEADOS"),#Cambios
-(4,"Moises","EMPLEADOS"),#Consultas
-(1,"Moises","RESPONSIVAS"),#Altas
-(2,"Moises","RESPONSIVAS"),#Bajas
-(3,"Moises","RESPONSIVAS"),#Cambios
-(4,"Moises","RESPONSIVAS"),#Consultas
-(1,"Moises","PETICIONES");#Consultas
 
 create table factus_Productos(
 Cod_Barras nvarchar(45) not null,
@@ -391,12 +252,7 @@ on delete cascade on update cascade
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'n0m3l0';
 flush privileges;
 
-update empleado set Num_Jefe = 663;
-insert into usuario values(
-758, "ajimenez", "Clarac2017", '4dnM3k0nl9s'
-);
 
-drop table if exists soli_car;
 CREATE TABLE soli_car (
 	sol_id int auto_increment not null primary key,
     Cod_Barras_SC VARCHAR(45),
@@ -410,7 +266,7 @@ CREATE TABLE soli_car (
     on update cascade on delete cascade
 );
 
-drop table if exists status_soli;
+
 CREATE TABLE status_soli(
 	sol_id int not null,
     delivered_ware tinyint(1) DEFAULT 0,
@@ -422,7 +278,6 @@ CREATE TABLE status_soli(
 
 -- PROCEDURES Y TRANSACTIONS
 -- Para dar de alta los equipos
-DROP PROCEDURE IF EXISTS AgregarEquipos;
 DELIMITER |
 CREATE PROCEDURE AgregarEquipos(
     IN NS VARCHAR(45), 
@@ -502,7 +357,6 @@ DELIMITER ;
 call test_error();
 
 -- Para actualizar los equipos
-DROP PROCEDURE IF EXISTS ActualizarEquipos;
 DELIMITER |
 CREATE PROCEDURE ActualizarEquipos(
     IN NSN VARCHAR(45), 
@@ -607,53 +461,6 @@ END |
 
 DELIMITER ;
 
-select*from usuario;
-select*from mobiliario;
-select*from soli_car;
-select*from soli_com;
-select*from almacen;
-select*from facturas_almacen;
-select*from factus_productos;
-select*from almacen;
-select*from equipo;
-select*from permisos;
-
-delete from equipo where N_Inventario = 11;
-
-CREATE TABLE soli_com (
-    Cod_Barras_SCom VARCHAR(45),
-    emp_SCom int,
-    request_date_SCom datetime,
-    Acept BOOLEAN, -- Si la solicitud fue aceptada o no
-    recibida tinyint(1), -- Si ya se recibió el pedido
-    almacenada tinyint(1) -- Si el pedido ya fue almacenado
-);
-
--- Modify table soli_com
-alter table soli_com add constraint SoliComPK primary key(Cod_Barras_SCom, emp_SCom, request_date_SCom);
-alter table soli_com add constraint CodBFK foreign key(Cod_Barras_SCom) references almacen(Cod_Barras);
-alter table soli_com add constraint EmpFK foreign key(emp_SCom) references empleado(Num_emp);
-
-select*from equipo;
-select*from monitor;
-select*from pcs;
-select*from teclado;
-select*from mouse;
-select*from accesorio;
-delete from equipo where Num_Serie = 'DWA1';
-delete from monitor where Num_Serie_Monitor = 'DWA1';
-
-update soli_car set delivered_soli = 0, delivered_ware = 0;
-select soli_car.request_date, soli_car.Cod_Barras_SC, almacen.Articulo, soli_car.cantidad_SC, almacen.Marca, empleado.Nom, soli_car.cerrada, soli_car.Acept from soli_car inner join almacen on soli_car.Cod_Barras_SC = almacen.Cod_Barras inner join empleado on empleado.Num_emp = soli_car.emp_SC order by cerrada, Acept;
-
-select equipo.Num_Serie, pcs.Hardware, pcs.Software, monitor.Num_Serie_CPU, mouse.Mouse, teclado.Teclado, accesorio.Accesorio from equipo left join monitor on equipo.Num_Serie = monitor.Num_Serie_CPU left join mouse on equipo.Num_Serie = mouse.Num_Serie left join pcs on equipo.Num_Serie = pcs.Num_Serie left join Teclado on equipo.Num_Serie = teclado.Num_Serie left join accesorio on equipo.Num_Serie = accesorio.Num_Serie where equipo = "CPU";
-SELECT eqp.*, e.Nom FROM equipo eqp JOIN empleado e ON eqp.Num_emp = e.Num_emp;
-
-SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Monitor.Num_Serie_Monitor = Equipo.Num_Serie LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
-SELECT DISTINCT Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo, Equipo.Ubi, Equipo.Num_emp, PCs.Hardware, PCs.Software, Monitor.Num_Serie_CPU, Mouse.Mouse, Teclado.Teclado, Accesorio.Accesorio, e.Nom FROM Equipo LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie join empleado e on Equipo.Num_emp = e.Num_emp;
-
-
-DROP PROCEDURE IF EXISTS AgregarEmpleados;
 DELIMITER //
 
 CREATE PROCEDURE AgregarEmpleados(
@@ -684,7 +491,6 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS AgregarUsuarios;
 DELIMITER //
 
 CREATE PROCEDURE AgregarUsuarios(
@@ -717,15 +523,13 @@ BEGIN
         VALUES (NumEmp, Usuario, Pass);
 
         -- Confirmar los cambios si todo fue exitoso
-        COMMIT;
         SELECT 'Success' AS status;
+        COMMIT;
     END IF;
 END //
 
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS AgregarPermisos;
 DELIMITER //
 
 CREATE PROCEDURE AgregarPermisos(
@@ -746,17 +550,17 @@ BEGIN
     -- Insertar el permiso en la tabla de permisos
     INSERT INTO permisos (permiso, usuario, modulo) 
     VALUES (permiso, usuario, modulo);
-
+	
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS AgregarPeticiones;
 DELIMITER //
 
 CREATE PROCEDURE AgregarPeticiones(
@@ -777,11 +581,12 @@ BEGIN
     INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario
     WHERE Usuario = USR), NOW(), 0);
 
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 
 DELIMITER ;
@@ -805,17 +610,16 @@ BEGIN
 
     INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario WHERE Usuario = USR), NOW());
 
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 
 DELIMITER ;
 
-
-drop procedure extractPE;
 DELIMITER | 
 CREATE PROCEDURE extractPE(
     IN CBSP VARCHAR(45),
@@ -854,7 +658,6 @@ BEGIN
 END |
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS AgregarProdExistentes;
 DELIMITER | 
 CREATE PROCEDURE AgregarProdExistentes(
 	IN NFP VARCHAR(10),
@@ -929,7 +732,6 @@ BEGIN
 END |
 DELIMITER ;
 
-drop procedure if exists consulPet;
 DELIMITER | 
 CREATE PROCEDURE consulPet(
 	IN USR VARCHAR(45)
@@ -986,7 +788,6 @@ BEGIN
 END |
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS AgregarUEMob;
 DELIMITER //
 CREATE PROCEDURE AgregarUEMob(
 	IN arti varchar(100),
@@ -1020,17 +821,15 @@ BEGIN
 
     END IF;
 
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
-CALL AgregarUEMob('SILLAS', 'SI', 'Prueba', 'JIMENEZ RIVERA ARMANDO','Si', 1); -- Ejemplo
-
-DROP PROCEDURE IF EXISTS showMob;
 DELIMITER //
 CREATE PROCEDURE showMob(
     IN usu varchar(45))
@@ -1048,16 +847,16 @@ BEGIN
 		ELSE
 			SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
 		END IF;
+        
+	 -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+   
 END //
 DELIMITER ;
-CALL showMob('ajimenez');
 
-DROP PROCEDURE IF EXISTS getUserMob;
 DELIMITER //
 CREATE PROCEDURE getUserMob(
     IN NomEnc varchar(45))
@@ -1071,15 +870,16 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 		SELECT Usuario FROM usuario WHERE Num_Emp = (SELECT num_emp FROM empleado WHERE Nom = NomEnc);
+        
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS EliminarUEMob;
 DELIMITER //
 CREATE PROCEDURE EliminarUEMob(
     IN arti VARCHAR(100),
@@ -1112,15 +912,15 @@ BEGIN
         );
     END IF;
 
+	-- Confirmar si la eliminación fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la eliminación fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS ModificarUEMob;
 DELIMITER //
 CREATE PROCEDURE ModificarUEMob(
     IN nuevoArticulo VARCHAR(100),
@@ -1175,15 +975,14 @@ BEGIN
             AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
     END IF;
 
+	-- Confirmar si la modificación fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
-
-    -- Confirmar si la modificación fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
-drop procedure if exists ConfirmPet;
 DELIMITER //
 CREATE PROCEDURE ConfirmPet(
     IN usu VARCHAR(45),
@@ -1232,7 +1031,6 @@ BEGIN
 END //
 DELIMITER ;
 
-drop procedure if exists consulPetDir;
 DELIMITER //
 CREATE PROCEDURE consulPetDir(
 	IN usu varchar(45))
@@ -1262,7 +1060,6 @@ BEGIN
 END //
 DELIMITER ;
 
-drop procedure if exists ConfirmPetDir;
 DELIMITER //
 CREATE PROCEDURE ConfirmPetDir(
     IN CBD VARCHAR(45),
@@ -1303,15 +1100,13 @@ BEGIN
         UPDATE soli_car SET cerrada = 1 WHERE sol_id = solID;
     END IF;
 
+	-- Devolver el estado de éxito solo si la transacción fue exitosa
+    SELECT 'Success' AS status, 'Operación exitosa' AS message;
     -- Confirmar los cambios si no hay errores
     COMMIT;
-
-    -- Devolver el estado de éxito solo si la transacción fue exitosa
-    SELECT 'Success' AS status, 'Operación exitosa' AS message;
 END //
 DELIMITER ;
 
-drop procedure if exists statusSolicitudesDir;
 DELIMITER //
 CREATE PROCEDURE statusSolicitudesDir(
 IN usu VARCHAR(45))
@@ -1353,7 +1148,6 @@ BEGIN
 END //
 DELIMITER ;
 
-drop procedure if exists HistorySolicitudesDir;
 DELIMITER //
 CREATE PROCEDURE HistorySolicitudesDir(
 IN usu VARCHAR(45))
@@ -1392,7 +1186,6 @@ BEGIN
 END //
 DELIMITER ;
 
-drop procedure if exists confirmpetalmacen;
 DELIMITER //
 CREATE PROCEDURE ConfirmPetAlmacen(
     IN FECHA DATETIME,
@@ -1441,7 +1234,6 @@ BEGIN
 END //
 DELIMITER ;
 
-drop procedure if exists statusSolicitudesAlmacen;
 DELIMITER //
 CREATE PROCEDURE statusSolicitudesAlmacen()
 BEGIN
@@ -1480,7 +1272,6 @@ BEGIN
 END //
 DELIMITER ;
 
-drop procedure if exists HistorySolicitudesAlmacen;
 DELIMITER //
 CREATE PROCEDURE HistorySolicitudesAlmacen()
 BEGIN
@@ -1516,7 +1307,6 @@ END //
 DELIMITER ;
 
 -- Modificar Registro Usuarios
-DROP PROCEDURE IF EXISTS ActualizarRegUsu;
 DELIMITER |
 CREATE PROCEDURE ActualizarRegUsu(
     IN emp_num VARCHAR(45),
@@ -1537,15 +1327,12 @@ BEGIN
     SET Usuario = usuario, Pass = contra
     WHERE Num_emp = emp_num;
 
-    COMMIT;
     SELECT 'Success' AS status;
+    COMMIT;
 END |
 DELIMITER ;
 
-CALL ActualizarRegUsu('797', 'NuevoUsuario', 'NuevaContrasena');
-
 -- Modificar Registro Empleados
-DROP PROCEDURE IF EXISTS ActualizarRegEmp;
 DELIMITER |
 CREATE PROCEDURE ActualizarRegEmp(
     IN emp_num VARCHAR(45),
@@ -1566,72 +1353,13 @@ BEGIN
     SET Nom = nombre, Área = area
     WHERE Num_emp = emp_num;
 
-    COMMIT;
     SELECT 'Success' AS status;
+    COMMIT;
 END |
 DELIMITER ;
-CALL ActualizarRegEmp('813', 'editado', 'editado');
-
-
--- Modificar Registro Usuarios
-DROP PROCEDURE IF EXISTS ActualizarRegUsu;
-DELIMITER |
-CREATE PROCEDURE ActualizarRegUsu(
-    IN emp_num VARCHAR(45),
-    IN usuario VARCHAR(45),
-    IN contra VARCHAR(45)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error' AS status, 'Transaction failed' AS message;
-    END;
-
-    START TRANSACTION;
-    
-    -- Actualiza el usuario y la contraseña en la tabla usuario
-    UPDATE usuario 
-    SET Usuario = usuario, Pass = contra
-    WHERE Num_emp = emp_num;
-
-    COMMIT;
-    SELECT 'Success' AS status;
-END |
-DELIMITER ;
-
-CALL ActualizarRegUsu('797', 'NuevoUsuario', 'NuevaContrasena');
-
--- Modificar Registro Empleados
-DROP PROCEDURE IF EXISTS ActualizarRegEmp;
-DELIMITER |
-CREATE PROCEDURE ActualizarRegEmp(
-    IN emp_num VARCHAR(45),
-    IN nombre VARCHAR(45),
-    IN area VARCHAR(45)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error' AS status, 'Transaction failed' AS message;
-    END;
-
-    START TRANSACTION;
-    
-    -- Actualiza el usuario y la contraseña en la tabla usuario
-    UPDATE empleado
-    SET Nom = nombre, Área = area
-    WHERE Num_emp = emp_num;
-
-    COMMIT;
-    SELECT 'Success' AS status;
-END |
-DELIMITER ;
-CALL ActualizarRegEmp('813', 'editado', 'editado');
 
 -- Modificar Permisos
-DROP PROCEDURE IF EXISTS ModificarPermisos;
+drop procedure ModificarPermisos;
 DELIMITER $$
 CREATE PROCEDURE ModificarPermisos(
     IN user VARCHAR(255),
@@ -1669,12 +1397,11 @@ BEGIN
     END WHILE;
 
     -- Commit the transaction
-    COMMIT;
     SELECT 'Success' AS status;
+    COMMIT;
 END$$
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS showEqp;
 DELIMITER $$
 CREATE PROCEDURE showEqp(
     IN usu VARCHAR(255)
@@ -1730,13 +1457,12 @@ BEGIN
     END IF;
 
     -- Commit the transaction
-    COMMIT;
     SELECT 'Success' AS status;
+    COMMIT;
 END$$
 DELIMITER ;
 
 ####################### TRIGGERS ########################
-drop trigger EPE;
 DELIMITER | 
 CREATE TRIGGER EPE BEFORE INSERT ON salidas_productos
 	FOR EACH ROW BEGIN
@@ -1767,36 +1493,9 @@ CREATE TRIGGER ASEPSE BEFORE UPDATE ON status_soli
 	END
 | DELIMITER ;
 
-DROP TRIGGER IF EXISTS AUAP;
 DELIMITER |
 CREATE TRIGGER AUAP AFTER INSERT ON usuario
 	FOR EACH ROW BEGIN
 		INSERT INTO permisos VALUES (1, NEW.Usuario,'PETICIONES');
 	END
 | DELIMITER ;
-
-select*from soli_Car;
-select*from status_soli;
-select*from permisos;
-delete from mobiliario;
-select*from usuario;
-select*from almacen;
-select*from equipo;
-select*from monitor;
-SELECT DISTINCT 
-	Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
-	empleado.Nom, 
-	pcs.Hardware,
-	pcs.Software,
-	Monitor.Num_Serie_CPU,
-	mouse.Mouse,
-	teclado.Teclado,
-	accesorio.Accesorio
-FROM Equipo
-LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
-LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
-LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
-LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
-LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie 
-JOIN empleado ON Equipo.Num_emp = empleado.Num_emp;
-select*from pcs;

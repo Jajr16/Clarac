@@ -7,7 +7,7 @@ function delEquip(req, callback) {
         if (err) { Errores(err); return callback(err) } // Se hace un control de errores
         else {
             if (result.length > 0) { //Si sí hizo una búsqueda
-                db.query('delete from equipo where Num_Serie = ? and Num_emp in (select Num_Emp from usuario where Usuario = ?)', [data.Num_Serie, data.user], function (err, result) {
+                db.query('delete from equipo where Num_Serie = ? and Num_emp in (select Num_Emp from empleado where Nom = ?)', [data.Num_Serie, data.user], function (err, result) {
                     if (err) { Errores(err); return callback(err) } // Se hace un control de errores
                     else {
                         if (result.affectedRows > 0) {

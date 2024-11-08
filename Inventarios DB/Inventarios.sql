@@ -429,7 +429,7 @@ CREATE PROCEDURE AgregarEquipos(
     IN EQP VARCHAR(45),
     IN MRC VARCHAR(45), 
     IN MDO VARCHAR(45),
-    IN USU VARCHAR(45),
+    IN ENC VARCHAR(45),
     IN UB VARCHAR(50),
     IN HDW VARCHAR(100),
     IN SFT VARCHAR(100), 
@@ -447,9 +447,9 @@ BEGIN
 
     START TRANSACTION;
 		-- INICIAR INSERCIÓN
-		insert into equipo values (NULL,NS,EQP,MRC,MDO,
+		INSERT INTO equipo VALUES (NULL,NS,EQP,MRC,MDO,
         (SELECT empleado.Num_Emp FROM empleado 
-        where empleado.Num_Emp = (select Num_Emp from Usuario where Usuario = USU)),UB);
+        WHERE empleado.Num_Emp = (SELECT Num_Emp FROM empleado WHERE Nom = ENC)),UB);
         -- INICIAR CONDICIONALES
         IF EQP = 'CPU' THEN
 			IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
@@ -502,7 +502,7 @@ DELIMITER ;
 call test_error();
 
 -- Para actualizar los equipos
--- DROP PROCEDURE IF EXISTS ActualizarEquipos;
+DROP PROCEDURE IF EXISTS ActualizarEquipos;
 DELIMITER |
 CREATE PROCEDURE ActualizarEquipos(
     IN NSN VARCHAR(45), 
@@ -511,7 +511,8 @@ CREATE PROCEDURE ActualizarEquipos(
     IN MDO VARCHAR(45),
     IN UB VARCHAR(50),
     IN NSO VARCHAR(45),
-    IN usu VARCHAR(45),
+    IN ENCAR VARCHAR(45),
+    IN OLDENCAR VARCHAR(45),
     IN HDW VARCHAR(100),
     IN SFT VARCHAR(100), 
     IN NSCPU VARCHAR(45),
@@ -519,47 +520,84 @@ CREATE PROCEDURE ActualizarEquipos(
     IN TLD VARCHAR(45), 
     IN ACS VARCHAR(45))
 BEGIN
+	DECLARE exit_msg VARCHAR(255) DEFAULT '';
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
+        IF exit_msg != '' THEN
+            SELECT exit_msg AS Error;
+        ELSE
+            SELECT 'Se produjo un error inesperado.' AS Error;
+        END IF;
     END;
 
 	START TRANSACTION;
+    SELECT NSN, Eqp, MRC, MDO, UB, NSO, ENCAR, OLDENCAR, HDW, SFT, NSCPU, MSE, TLD, ACS;
     UPDATE equipo SET 
         Num_Serie = NSN, Equipo = Eqp, Marca = MRC,
-        Modelo = MDO, Ubi = UB 
+        Modelo = MDO, Ubi = UB, Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = ENCAR)
     WHERE 
-        Num_Serie = NSO AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usu);
-    
+        Num_Serie = NSO AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = OLDENCAR);
     SELECT ROW_COUNT() AS Filas_Afectadas_Equipo;
     
     IF Eqp = 'CPU' THEN
         IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
-            UPDATE pcs SET Num_Serie = NSN, Hardware = HDW, Software = SFT WHERE Num_Serie = NSO;
+			IF EXISTS (SELECT 1 FROM pcs WHERE Num_Serie = NSO) THEN
+				UPDATE pcs SET Num_Serie = NSN, Hardware = HDW, Software = SFT WHERE Num_Serie = NSO;
+			ELSE 
+				INSERT INTO pcs VALUES (NSN, HDW, SFT);
+            END IF;
 			SELECT ROW_COUNT() AS Filas_Afectadas_PCS;
         END IF;
         
         IF MSE IS NOT NULL THEN
-            UPDATE Mouse SET Num_Serie = NSN, Mouse = MSE WHERE Num_Serie = NSO;
-            SELECT ROW_COUNT() AS Filas_Afectadas_Mouse;
+			IF EXISTS (SELECT 1 FROM Mouse WHERE Num_Serie = NSO) THEN
+				UPDATE Mouse SET Num_Serie = NSN, Mouse = MSE WHERE Num_Serie = NSO;
+			ELSE 
+				INSERT INTO Mouse VALUES (NSN, MSE);
+            END IF;
+			SELECT ROW_COUNT() AS Filas_Afectadas_Mouse;
         END IF;
         
         IF TLD IS NOT NULL THEN
-            UPDATE Teclado SET Num_Serie = NSN, Teclado = TLD WHERE Num_Serie = NSO;
-            SELECT ROW_COUNT() AS Filas_Afectadas_Teclado;
+			IF EXISTS (SELECT 1 FROM Teclado WHERE Num_Serie = NSO) THEN
+				UPDATE Teclado SET Num_Serie = NSN, Teclado = TLD WHERE Num_Serie = NSO;
+			ELSE 
+				INSERT INTO Teclado VALUES (NSN, TLD);
+            END IF;
+			SELECT ROW_COUNT() AS Filas_Afectadas_Teclado;
         END IF;
         
         IF ACS IS NOT NULL THEN
-            UPDATE Accesorio SET Num_Serie = NSN, Accesorio = ACS WHERE Num_Serie = NSO;
-			SELECT ROW_COUNT() AS Filas_Afectadas_Accesorio;
+			IF EXISTS (SELECT 1 FROM Accesorio WHERE Num_Serie = NSO) THEN
+				UPDATE Accesorio SET Num_Serie = NSN, Accesorio = ACS WHERE Num_Serie = NSO;
+			ELSE 
+				INSERT INTO Accesorio VALUES (NSN, ACS);
+            END IF;
+            SELECT ROW_COUNT() AS Filas_Afectadas_Accesorio;
         END IF;
     END IF;
     
     IF Eqp = 'MONITOR' THEN
         IF NSCPU IS NOT NULL THEN
-            UPDATE monitor SET Num_Serie = NSN, Num_Serie_CPU = NSCPU WHERE Num_Serie = NSO;
-			SELECT ROW_COUNT() AS Filas_Afectadas_Monitor;
+			IF EXISTS (SELECT 1 FROM equipo WHERE Num_Serie = NSCPU AND Equipo = 'CPU') THEN
+                IF EXISTS (SELECT 1 FROM monitor WHERE Num_Serie_CPU = NSCPU AND Num_Serie_Monitor != NSO) THEN
+					SET exit_msg = 'El número de serie del CPU ya está asociado a otro monitor, 
+                    intente con otro número de serie';
+					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = exit_msg;
+				ELSE
+					IF EXISTS (SELECT 1 FROM monitor WHERE Num_Serie_Monitor = NSO) THEN
+						UPDATE monitor SET Num_Serie_Monitor = NSN, Num_Serie_CPU = NSCPU WHERE Num_Serie_Monitor = NSO;
+                    ELSE
+						INSERT INTO monitor VALUES (NSN, NSCPU);
+                    END IF;
+                END IF;
+				SELECT ROW_COUNT() AS Filas_Afectadas_Monitor;
+            ELSE
+				SET exit_msg = 'No hay un CPU con ese número de serie, inténtalo de nuevo';
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = exit_msg;
+            END IF;
         END IF;
     END IF;
 	
@@ -1594,9 +1632,7 @@ CALL ActualizarRegEmp('813', 'editado', 'editado');
 
 -- Modificar Permisos
 DROP PROCEDURE IF EXISTS ModificarPermisos;
-
 DELIMITER $$
-
 CREATE PROCEDURE ModificarPermisos(
     IN user VARCHAR(255),
     IN permisos JSON
@@ -1636,8 +1672,69 @@ BEGIN
     COMMIT;
     SELECT 'Success' AS status;
 END$$
-
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS showEqp;
+DELIMITER $$
+CREATE PROCEDURE showEqp(
+    IN usu VARCHAR(255)
+)
+BEGIN
+    DECLARE areaEmp VARCHAR(45);
+    
+    -- Error handler to rollback on exception
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error' AS status, 'Transaction failed' AS message;
+    END;
+    START TRANSACTION;
+    
+	SELECT Área INTO areaEmp FROM empleado INNER JOIN usuario ON empleado.Num_emp = usuario.Num_emp 
+    WHERE usuario = usu;
+    
+    IF areaEmp = 'SISTEMAS' THEN
+		SELECT DISTINCT 
+			Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
+			empleado.Nom,
+            equipo.Ubi,
+			pcs.Hardware,
+			pcs.Software,
+			Monitor.Num_Serie_CPU,
+			mouse.Mouse,
+			teclado.Teclado,
+			accesorio.Accesorio
+		FROM Equipo
+		LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
+		LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
+		LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
+		LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
+		LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie 
+		JOIN empleado ON Equipo.Num_emp = empleado.Num_emp;
+	ELSE
+		SELECT DISTINCT 
+			Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
+            equipo.Ubi,
+			pcs.Hardware,
+			pcs.Software,
+			Monitor.Num_Serie_CPU,
+			mouse.Mouse,
+			teclado.Teclado,
+			accesorio.Accesorio
+		FROM Equipo
+		LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
+		LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
+		LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
+		LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
+		LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
+    END IF;
+
+    -- Commit the transaction
+    COMMIT;
+    SELECT 'Success' AS status;
+END$$
+DELIMITER ;
+
 ####################### TRIGGERS ########################
 drop trigger EPE;
 DELIMITER | 
@@ -1683,4 +1780,23 @@ select*from status_soli;
 select*from permisos;
 delete from mobiliario;
 select*from usuario;
+select*from almacen;
 select*from equipo;
+select*from monitor;
+SELECT DISTINCT 
+	Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
+	empleado.Nom, 
+	pcs.Hardware,
+	pcs.Software,
+	Monitor.Num_Serie_CPU,
+	mouse.Mouse,
+	teclado.Teclado,
+	accesorio.Accesorio
+FROM Equipo
+LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
+LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
+LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
+LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
+LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie 
+JOIN empleado ON Equipo.Num_emp = empleado.Num_emp;
+select*from pcs;

@@ -6,7 +6,6 @@ if (!Permisos['EQUIPOS']) {
     location.href = "index";
 } else {
     if (pathname == "/users/consulEqp" && (Permisos['EQUIPOS'].includes('4') || Permisos['EQUIPOS'].includes('2') || Permisos['EQUIPOS'].includes('1') || Permisos['EQUIPOS'].includes('3'))) {
-
         const Asignacion = $('.AsignCPU')
         const Hardware = $('.Hardware')
         const Software = $('.Software')
@@ -17,52 +16,61 @@ if (!Permisos['EQUIPOS']) {
         const Components_CPU = $('.Components_CPU')
         const div_Asignacion = $('.Asignation')
 
+        let selectEmploy = new SlimSelect({
+            select: '#Employees'
+        })
+        
+        function disabledSelect() {
+            selectEmploy.setSelected('')
+            selectEmploy.disable();
+        }
+
         if (Permisos['EQUIPOS'].includes('1')) {
             function addEquipment(e) {
                 e.preventDefault();
-    
+
                 const addData = {
                     Num_Serie: document.querySelector('.NumSerieE').value,
                     Equipo: document.querySelector('.Ename').value,
                     Marca: document.querySelector('.MarcaE').value,
                     Modelo: document.querySelector('.ModeloE').value,
                     Ubi: document.querySelector('.UbiE').value,
-                    User: user
+                    Encargado: $('.Employees').val()
                 };
-    
+
                 if (Asignacion && Asignacion.val().trim() !== '') {
                     addData.Num_Serie_CPU = Asignacion.val()
                 }
-    
+
                 if (Hardware && Hardware.val().trim() !== '') {
                     addData.Hardware = Hardware.val()
                 }
-    
+
                 if (Software && Software.val().trim() !== '') {
                     addData.Software = Software.val()
                 }
-    
+
                 if (Mouse && Mouse.val().trim() !== '') {
                     addData.Mouse = Mouse.val()
                 }
-    
+
                 if (Teclado && Teclado.val().trim() !== '') {
                     addData.Teclado = Teclado.val()
                 }
-    
+
                 if (Accesorio && Accesorio.val().trim() !== '') {
                     addData.Accesorio = Accesorio.val()
                 }
-    
+
                 if (document.querySelector('.Ename').value === 'CPU' && ((Hardware.val().trim() === '') || (Software.val().trim() === ''))) {
                     Swal.fire({
                         icon: "error",
                         title: "Ocurrió un error",
                         text: 'Debes llenar todos los datos para continuar.',
                     })
-    
+
                 }
-    
+
                 if (!checkEmptyFields(addData)) {
                     Swal.fire({
                         icon: "error",
@@ -140,59 +148,75 @@ if (!Permisos['EQUIPOS']) {
             if (Permisos['EQUIPOS'].includes('1')) {
                 const addP = $('.fa-circle-plus')
                 addP.click(function (e) {
-    
+                    selectEmploy.setSelected('')
+                    selectEmploy.enable();
+
                     var add = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="addEquipment(event)" class="Modify">`;
-                    var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-    
+                    var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear(); disabledSelect();" name="cancelEqp" class="Cancel">';
+
                     addFunctions(add, cancel, 'Ingresa los datos del equipo')
                 })
             }
 
+            const employ = $('.Employees')
+            fetch('../responsiva/getEmploys', {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        employ.append($('<option>', { value: item.employee, text: item.employee }))
+                    })
+                    eliminarOpcionesSueltas('.ss-main.Employees')
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.')
+                });
         });
         if (Permisos['EQUIPOS'].includes('3')) {
-            function modify(oldNum_Serie, e) {
-    
+            function modify(oldNum_Serie, oldEmp, e) {
                 e.preventDefault()
+
                 const updatedData = {
-    
                     Num_Serie: document.querySelector('.NumSerieE').value,
                     Equipo: document.querySelector('.Ename').value,
                     Marca: document.querySelector('.MarcaE').value,
                     Modelo: document.querySelector('.ModeloE').value,
                     Ubi: document.querySelector('.UbiE').value,
-                    dataOldNS: oldNum_Serie,
-                    User: user
-    
+                    Encargado: $('.Employees').val(),
+                    EncargadoOld: oldEmp,
+                    dataOldNS: oldNum_Serie
                 };
-    
+
                 if (Asignacion && Asignacion.val().trim() !== '') {
                     updatedData.Num_Serie_CPU = Asignacion.val()
                 }
-    
+
                 if (Hardware && Hardware.val().trim() !== '') {
                     updatedData.Hardware = Hardware.val()
                 }
-    
+
                 if (Software && Software.val().trim() !== '') {
                     updatedData.Software = Software.val()
                 }
-    
+
                 if (Mouse && Mouse.val().trim() !== '') {
                     updatedData.Mouse = Mouse.val()
                 }
-    
+
                 if (Teclado && Teclado.val().trim() !== '') {
                     updatedData.Teclado = Teclado.val()
                 }
-    
+
                 if (Accesorio && Accesorio.val().trim() !== '') {
                     updatedData.Accesorio = Accesorio.val()
                 }
-    
+
                 if (Asignacion.val() !== '' || Asignacion.val() !== null || Asignacion.val() || undefined) {
                     updatedData.Num_Serie_CPU = Asignacion.val()
                 }
-    
+
                 fetch('/equipo/mod_eqp', {
                     method: 'POST',
                     headers: {
@@ -218,13 +242,13 @@ if (!Permisos['EQUIPOS']) {
             const trash = $('.trash')
             trash.click(function (e) {
                 var NumSerie = $('.NumSerieE').val()
-    
+
                 if (NumSerie !== '') {
-    
+
                     const formData = new FormData()
                     formData.append('Num_Serie', NumSerie)
-                    formData.append('user', user)
-    
+                    formData.append('user', $('.Employees').val(),)
+
                     fetch('/equipo/del_eqp', {
                         method: 'POST',
                         body: formData
@@ -246,14 +270,16 @@ if (!Permisos['EQUIPOS']) {
         if (Permisos['EQUIPOS'].includes('3')) {
             // FUNCIONALIDAD PÁGINA
             const edit = $('.edit');
-    
+
             edit.click(function (e) {
-    
+                selectEmploy.enable();
+                
                 var Num_Serie = $('.NumSerieE').val();
-    
-                var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', event)" class="Modify">`;
-                var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear()" name="cancelEqp" class="Cancel">';
-    
+                var encargadOld = $('.Employees').val();
+
+                var modify = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="modify('${Num_Serie}', '${encargadOld}', event)" class="Modify">`;
+                var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear(); disabledSelect();" name="cancelEqp" class="Cancel">';
+
                 editsFunctions(modify, cancel)
             });
         }
@@ -268,11 +294,10 @@ if (!Permisos['EQUIPOS']) {
             .then(data => {
                 const tbody = document.querySelector(".data-eqp tbody");
                 const selEqp = $('.Eqp')
-                
+
                 if (data.length <= 0) {
                     empty_table()
                 }
-                console.log(data)
 
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
@@ -292,6 +317,7 @@ if (!Permisos['EQUIPOS']) {
                             $('.ModeloE').val(item.Modelo);
                             $('.UbiE').val(item.Ubi);
                             $('.AsignCPU').val('')
+                            selectEmploy.setSelected('')
                             $('.Hardware').val('')
                             $('.Software').val('')
                             $('.Mouse').val('')
@@ -322,6 +348,11 @@ if (!Permisos['EQUIPOS']) {
                                 $('.Accesorio').val(item.Accesorio)
                             }
 
+                            if (item.Nom) {
+                                selectEmploy.setSelected(item.Nom)
+                                console.log(selectEmploy.getSelected())
+                            }
+
                             if (item.Equipo === 'CPU') {
                                 Components.slideDown()
                             } else {
@@ -337,6 +368,17 @@ if (!Permisos['EQUIPOS']) {
                     })
 
                     tr.addEventListener('click', () => {
+                        if (item.Equipo === 'CPU') {
+                            Components.slideDown()
+                        } else {
+                            Components.slideUp()
+                        }
+
+                        if (item.Equipo === 'MONITOR') {
+                            div_Asignacion.slideDown()
+                        } else {
+                            div_Asignacion.slideUp()
+                        }
 
                         $('.NumSerieE').val(item.Num_Serie);
                         $('.Ename').val(item.Equipo);
@@ -345,6 +387,7 @@ if (!Permisos['EQUIPOS']) {
                         $('.UbiE').val(item.Ubi);
                         $('.AsignCPU').val('')
                         $('.Hardware').val('')
+                        selectEmploy.setSelected('')
                         $('.Software').val('')
                         $('.Mouse').val('')
                         $('.Teclado').val('')
@@ -368,24 +411,16 @@ if (!Permisos['EQUIPOS']) {
                             $('.Mouse').val(item.Mouse)
                         }
 
+                        if (item.Nom) {
+                            selectEmploy.setSelected(item.Nom)
+                        }
+
                         if (item.Teclado) {
                             $('.Teclado').val(item.Teclado)
                         }
 
                         if (item.Accesorio) {
                             $('.Accesorio').val(item.Accesorio)
-                        }
-
-                        if (item.Equipo === 'CPU') {
-                            Components.slideDown()
-                        } else {
-                            Components.slideUp()
-                        }
-
-                        if (item.Equipo === 'MONITOR') {
-                            div_Asignacion.slideDown()
-                        } else {
-                            div_Asignacion.slideUp()
                         }
                     });
 

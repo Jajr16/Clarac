@@ -6,7 +6,7 @@
         <div class="content-container">
             <form name="crearRespon" id="crearRespon">
                 <div class="FTB">
-                    <select id="mySelect" class="Eqp searchInput" required>
+                    <select id="Eqp" class="Eqp searchInput" required>
                         <option disabled selected>Buscar equipo...</option>
                     </select>
                 </div>
@@ -67,6 +67,12 @@
                     <label>Ubicación:</label>
                     <input autocomplete="off" type="text" id="UbiE" name="UbiE" class="UbiE EditData" required
                         maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                </div>
+                <div class="DE">
+                    <label>Encargado:</label>
+                    <select id="Employees" class="Employees" required disabled>
+                        <option disabled selected></option>
+                    </select>
                 </div>
                 <div class="DE Asignation">
                     <label hidden>CPU asignada:</label>

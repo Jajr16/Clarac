@@ -6,6 +6,10 @@ a {
     text-decoration: none;
 }
 
+a:visited {
+    color: inherit;
+}
+
 i {
     color: #fff;
 }

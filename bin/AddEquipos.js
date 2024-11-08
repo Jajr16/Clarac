@@ -12,7 +12,7 @@ function addEquipo(req, callback) {
     const Teclado = data.Teclado || null;
     const Accesorio = data.Accesorio || null;
 
-    db.query('CALL AgregarEquipos(?,?,?,?,?,?,?,?,?,?,?,?)', [data.Num_Serie, data.Equipo, data.Marca, data.Modelo, data.User, data.Ubi, Hardware, Software, Num_Serie_CPU, Mouse, Teclado, Accesorio], function (err, result) {
+    db.query('CALL AgregarEquipos(?,?,?,?,?,?,?,?,?,?,?,?)', [data.Num_Serie, data.Equipo, data.Marca, data.Modelo, data.Encargado, data.Ubi, Hardware, Software, Num_Serie_CPU, Mouse, Teclado, Accesorio], function (err, result) {
         if (err) { 
             if (err.code === 'ER_DUP_ENTRY') { // Manejar error de llave duplicada
                 return callback(null, { type: 'failed', message: 'Ya existe un equipo con ese número de serie.' });

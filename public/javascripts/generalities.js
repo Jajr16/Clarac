@@ -123,6 +123,16 @@ function addFunctions(add, cancel, mensaje) {
     trash.css('display', 'none')
 }
 
+function eliminarOpcionesSueltas(especificoDiv) {
+    const div = document.querySelector(especificoDiv);
+    
+    const opcionesSueltas = Array.from(div.children).filter(
+        element => element.tagName === 'OPTION' && element.parentNode === div
+    );
+    
+    opcionesSueltas.forEach(option => option.remove());
+}
+
 function dissapear() {
     const inputM = $('.EditData')
     const inputS = $('.EditSelect')
@@ -133,6 +143,7 @@ function dissapear() {
     inputS.attr('disabled', true)
     inputM.val('')
     inputS.val('')
+    
     $('.Modify').remove()
     $('.Cancel').remove()
     select.prev('label').remove()

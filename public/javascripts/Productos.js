@@ -51,6 +51,40 @@ if (!Permisos['ALMACÉN']) {
                 }
             }
         }
+        if (Permisos['ALMACÉN'].includes('3')) {
+            function modify(oldCodBarras, e) {
+                e.preventDefault()
+                const updatedData = {
+                    Cod_Barras: document.querySelector('.CodBarrasP').value,
+                    Categoria: document.querySelector('.CateP').value,
+                    Articulo: document.querySelector('.Pname').value,
+                    Marca: document.querySelector('.MarcaP').value,
+                    Descripcion: document.querySelector('.DescP').value,
+                    Unidad: document.querySelector('.UnidadP').value,
+                    dataOldCB: oldCodBarras,
+                    User: user
+                };
+
+                fetch('/producto/mod_prod', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.type === 'RespDelProd') {
+                            showSuccessAlertReload(data.message)
+                        } else {
+                            showErrorAlert(data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                        document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+                    });
+            }
+        }
 
         // Botón para añadir
         document.addEventListener('DOMContentLoaded', function () {
@@ -85,39 +119,6 @@ if (!Permisos['ALMACÉN']) {
             }
 
             if (Permisos['ALMACÉN'].includes('3')) {
-                function modify(oldCodBarras, e) {
-                    console.log('Si entras')
-                    e.preventDefault()
-                    const updatedData = {
-                        Cod_Barras: document.querySelector('.CodBarrasP').value,
-                        Categoria: document.querySelector('.CateP').value,
-                        Articulo: document.querySelector('.Pname').value,
-                        Marca: document.querySelector('.MarcaP').value,
-                        Descripcion: document.querySelector('.DescP').value,
-                        Unidad: document.querySelector('.UnidadP').value,
-                        dataOldCB: oldCodBarras,
-                        User: user
-                    };
-
-                    fetch('/producto/mod_prod', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(updatedData)
-                    }).then(response => response.json())
-                        .then(data => {
-                            if (data.type === 'RespDelProd') {
-                                showSuccessAlertReload(data.message)
-                            } else {
-                                showErrorAlert(data.message)
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error en la solicitud:', error);
-                            document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
-                        });
-                }
                 const edit = $('.edit');
 
                 edit.click(function (e) {

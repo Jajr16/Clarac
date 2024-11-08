@@ -145,10 +145,6 @@ if (!Permisos['ALMACÉN']) {
                     const tbody = document.querySelector(".data-prod tbody");
                     const selProd = $('.Prod')
 
-                    if (data.length <= 0) {
-                        empty_table()
-                    }
-
                     data.forEach(item => {
 
                         let tr = document.createElement('tr');
@@ -188,6 +184,7 @@ if (!Permisos['ALMACÉN']) {
 
                         tbody.appendChild(tr);
                     });
+                    empty_table('data-prod', 2)
                     sselect()
                 })
                 .catch(error => {

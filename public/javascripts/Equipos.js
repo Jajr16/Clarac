@@ -295,10 +295,6 @@ if (!Permisos['EQUIPOS']) {
                 const tbody = document.querySelector(".data-eqp tbody");
                 const selEqp = $('.Eqp')
 
-                if (data.length <= 0) {
-                    empty_table()
-                }
-
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
 
@@ -426,6 +422,7 @@ if (!Permisos['EQUIPOS']) {
 
                     tbody.appendChild(tr);
                 });
+                empty_table('data-eqp', 2)
                 sselect()
             })
             .catch(error => {

@@ -497,7 +497,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 areaSelect.innerHTML = ''; // Limpiar opciones previas
                 const uniqueAreas = new Set(["ADMINISTRACION", "PREESCOLAR", "PRIMARIA", "SECUNDARIA", 
                     "PREPARATORIA", "SERVICIOS GENERALES", "SERVICIOS GENERALES Y REC. MATERIALES",
-                    "COMPRAS","PREESCOLAR","DIRECCION ADMINISTRATIVA","DIRECCION ACADEMICA","PREPARATORIA",
+                    "COMPRAS","DIRECCION ADMINISTRATIVA","DIRECCION ACADEMICA",
                     "CONTROL ADMINISTRATIVO","APOYO ACADEMICO","DIRECCION GENERAL","RECURSOS HUMANOS Y CONTABILIDAD", "SISTEMAS",]);
         
                 uniqueAreas.forEach(area => {

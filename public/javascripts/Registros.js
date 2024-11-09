@@ -114,7 +114,7 @@ function obtenerEmpleados() {
             const selectElement = document.getElementById('empleados');
 
             // Limpiar las opciones existentes
-            selectElement.innerHTML = '<option value="">Empleado Asignado</option>';
+            selectElement.innerHTML = '<option value="">Empleado</option>';
 
             // Verificar si los datos están en el formato correcto
             if (Array.isArray(data)) {
@@ -222,19 +222,29 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                 addBody(`
                     <div class="DP">
                             <label>Empleado</label>
-                            <input type="text" class="Pname Nom" id="Nom" name="Nom" value="" placeholder="Nombre Empleado" required>
-                        </div>
+                            <select id="empleados" name="Nom" class="Pname Nom searchInput Empleado"  required>
+                                <option value="">Empleado</option>
+                            </select>
+                    </div>
                         <div class="DP">
                             <label>Area</label>
                             <select id="Area" name="Area" class="empleado-campo searchInput Area" required >
                                 <option value="">Área</option>
-                                <option>ADMINISTRACION</option>
-                                <option>PREESCOLAR</option>
-                                <option>PRIMARIA</option>
-                                <option>SECUNDARIA</option>
-                                <option>PREPARATORIA</option>
-                                <option>SERVICIOS GENERALES</option>
-                                <option>SISTEMAS</option>
+                                <option value="ADMINISTRACION">ADMINISTRACION</option>
+                                <option value="PRIMARIA">PRIMARIA</option>
+                                <option value="SECUNDARIA">SECUNDARIA</option>
+                                <option value="SERVICIOS GENERALES">SERVICIOS GENERALES</option>
+                                <option value="SERVICIOS GENERALES Y REC. MATERIALES">SERVICIOS GENERALES Y REC. MATERIALES</option>
+                                <option value="COMPRAS">COMPRAS</option>
+                                <option value="PREESCOLAR">PREESCOLAR</option>
+                                <option value="DIRECCION ADMINISTRATIVA">DIRECCION ADMINISTRATIVA</option>
+                                <option value="DIRECCION ACADEMICA">DIRECCION ACADEMICA</option>
+                                <option value="PREPARATORIA">PREPARATORIA</option>
+                                <option value="CONTROL ADMINISTRATIVO">CONTROL ADMINISTRATIVO</option>
+                                <option value="APOYO ACADEMICO">APOYO ACADEMICO</option>
+                                <option value="DIRECCION GENERAL">DIRECCION GENERAL</option>
+                                <option value="RECURSOS HUMANOS Y CONTABILIDAD">RECURSOS HUMANOS Y CONTABILIDAD</option>
+                                <option value="SISTEMAS">SISTEMAS</option>
                             </select>
                         </div>
                         <div class="DP">
@@ -250,7 +260,10 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                         <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
                     </div>
                     `, e);
-                    sselect();
+                    obtenerEmpleados().then(() => {
+                        // Llamar a sselect después de llenar el select con empleados
+                        sselect();
+                    });
             });
             $('.sacar').click((e) => {
                 addBody(`
@@ -262,11 +275,11 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                     </div>
                     <div class="DP">
                         <label>Nombre Usuario</label>
-                        <input type="text" class="test Usuario" name="a" placeholder="Nombre Usuario" required>
+                        <input type="text" class="test Usuario" name="a" placeholder="Nombre Usuario" oninput="mayus(this);" onkeypress="return checkA(event)" required>
                     </div>
                     <div class="DP">
                         <label>Contraseña Nueva</label>
-                        <input type="password" class="testing Password" name="s" placeholder="Contraseña Nueva" required>
+                        <input type="password" class="testing Password" name="s" placeholder="Contraseña Nueva" oninput="mayus(this);" onkeypress="return checkA(event)" required>
                     </div>
                     <div class="subtitle-container">
                         Asignar Módulos
@@ -469,40 +482,53 @@ else if (Permisos && Permisos['EMPLEADOS'] && Permisos['EMPLEADOS'].includes('1'
                     <button class="options meter FTB" style="margin-right: 1rem;"><i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>Agregar Empleado</button>
                 </center>
             </div>`)
-        $('.meter').click((e) => {
-            addBody(`
-                <div class="DP">
-                        <label>Empleado</label>
-                        <input type="text" class="Pname Nom" id="Nom" name="Nom" value="" placeholder="Nombre Empleado" required>
-                    </div>
+            $('.meter').click((e) => {
+                addBody(`
                     <div class="DP">
-                        <label>Area</label>
-                        <select id="Area" name="Area" class="empleado-campo searchInput Area" required >
-                            <option value="">Área</option>
-                            <option>ADMINISTRACION</option>
-                            <option>PREESCOLAR</option>
-                            <option>PRIMARIA</option>
-                            <option>SECUNDARIA</option>
-                            <option>PREPARATORIA</option>
-                            <option>SERVICIOS GENERALES</option>
-                            <option>SISTEMAS</option>
-                        </select>
+                            <label>Empleado</label>
+                            <select id="empleados" name="Nom" class="Pname Nom searchInput Empleado"  required>
+                                <option value="">Empleado</option>
+                            </select>
                     </div>
-                    <div class="DP">
-                        <label>Jefe</label>
-                        <select id="Jefe" name="Jefe" class="empleado-campo searchInput Jefe" required>
-                            <option>Jefe</option>
-                            <option> Navarro Jimenez Martha Lidia</option>
-                        </select>
-                </div>
-                
-                <div class="buttons">
-                    <input type="submit" value="Guardar" id="" onclick="addEmpleado(event)" name="" class="">
-                    <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
-                </div>
-                `, e);
-                sselect();
-        });
+                        <div class="DP">
+                            <label>Area</label>
+                            <select id="Area" name="Area" class="empleado-campo searchInput Area" required >
+                                <option value="">Área</option>
+                                <option value="ADMINISTRACION">ADMINISTRACION</option>
+                                <option value="PRIMARIA">PRIMARIA</option>
+                                <option value="SECUNDARIA">SECUNDARIA</option>
+                                <option value="SERVICIOS GENERALES">SERVICIOS GENERALES</option>
+                                <option value="SERVICIOS GENERALES Y REC. MATERIALES">SERVICIOS GENERALES Y REC. MATERIALES</option>
+                                <option value="COMPRAS">COMPRAS</option>
+                                <option value="PREESCOLAR">PREESCOLAR</option>
+                                <option value="DIRECCION ADMINISTRATIVA">DIRECCION ADMINISTRATIVA</option>
+                                <option value="DIRECCION ACADEMICA">DIRECCION ACADEMICA</option>
+                                <option value="PREPARATORIA">PREPARATORIA</option>
+                                <option value="CONTROL ADMINISTRATIVO">CONTROL ADMINISTRATIVO</option>
+                                <option value="APOYO ACADEMICO">APOYO ACADEMICO</option>
+                                <option value="DIRECCION GENERAL">DIRECCION GENERAL</option>
+                                <option value="RECURSOS HUMANOS Y CONTABILIDAD">RECURSOS HUMANOS Y CONTABILIDAD</option>
+                                <option value="SISTEMAS">SISTEMAS</option>
+                            </select>
+                        </div>
+                        <div class="DP">
+                            <label>Jefe</label>
+                            <select id="Jefe" name="Jefe" class="empleado-campo searchInput Jefe" required>
+                                <option>Jefe</option>
+                                <option> Navarro Jimenez Martha Lidia</option>
+                            </select>
+                    </div>
+                    
+                    <div class="buttons">
+                        <input type="submit" value="Guardar "id="registrarEmpleado" value="Registrar Empleado" onclick="addEmpleado(event)">
+                        <input type="submit" value="Cancelar" id="" onclick="cancel()" name="cancelEqp" class="Cancel">
+                    </div>
+                    `, e);
+                    obtenerEmpleados().then(() => {
+                        // Llamar a sselect después de llenar el select con empleados
+                        sselect();
+                    });
+            });
     }
     function cancel() {
         $('.description-product').html(`
@@ -573,11 +599,11 @@ else if (Permisos && Permisos['USUARIOS'] && Permisos['USUARIOS'].includes('1') 
                     </div>
                     <div class="DP">
                         <label>Nombre Usuario</label>
-                        <input type="text" class="test Usuario" name="a" placeholder="Nombre Usuario" required>
+                        <input type="text" class="test Usuario" name="a" placeholder="Nombre Usuario"oninput="mayus(this);" onkeypress="return checkA(event)" required>
                     </div>
                     <div class="DP">
                         <label>Contraseña Nueva</label>
-                        <input type="password" class="testing Password" name="s" placeholder="Contraseña Nueva" required>
+                        <input type="password" class="testing Password" name="s" placeholder="Contraseña Nueva" oninput="mayus(this);" onkeypress="return checkA(event)" required>
                     </div>
                     <div class="subtitle-container">
                         Asignar Módulos

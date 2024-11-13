@@ -464,14 +464,17 @@ DELIMITER ;
 DELIMITER //
 
 CREATE PROCEDURE AgregarEmpleados(
-    IN Num_emp VARCHAR(45), 
-    IN Nom VARCHAR(45),
-    IN Area VARCHAR(45), 
-    IN Num_Jefe VARCHAR(45))
+    IN p_Num_emp VARCHAR(45), 
+    IN p_Nom VARCHAR(45),
+    IN p_Area VARCHAR(45), 
+    IN p_Jefe_nombre VARCHAR(45)
+)
 BEGIN
+    DECLARE jefe_num_emp VARCHAR(45);
+
+    -- Manejo de errores
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejo del error: devolver un mensaje de error y hacer rollback
         ROLLBACK;
         SELECT 'Error: Ocurrió un error al insertar el empleado' AS status;
     END;
@@ -479,8 +482,31 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 
-    -- Realizar la inserción
-    INSERT INTO empleado (Num_emp, Nom, Área, Num_Jefe) VALUES (NULL, Nom, Area, Num_Jefe);
+    -- Mostrar los valores de entrada recibidos (para depuración)
+    SELECT 'Valores de entrada:', p_Num_emp AS 'Num_emp recibido', p_Nom AS 'Nom recibido', p_Area AS 'Area recibida', p_Jefe_nombre AS 'Jefe recibido';
+
+    -- Buscar el Num_emp del jefe basado en su nombre
+    SELECT Num_emp INTO jefe_num_emp
+    FROM empleado
+    WHERE Nom = p_Jefe_nombre
+    LIMIT 1;
+
+    -- Mostrar el resultado de la búsqueda del jefe
+    SELECT 'Resultado de búsqueda de jefe:', jefe_num_emp AS 'Num_emp del jefe encontrado';
+
+    -- Verificar si se encontró el jefe
+    IF jefe_num_emp IS NULL THEN
+        SET jefe_num_emp = NULL;
+        SELECT 'Advertencia: No se encontró el jefe, asignando NULL a Num_Jefe' AS status;
+    ELSE
+        SELECT 'Jefe encontrado con Num_emp:' AS status, jefe_num_emp;
+    END IF;
+
+    -- Realizar la inserción y mostrar los valores que se van a insertar
+    SELECT 'Realizando inserción con valores:', p_Num_emp AS 'Num_emp a insertar', p_Nom AS 'Nom a insertar', p_Area AS 'Área a insertar', jefe_num_emp AS 'Num_Jefe a insertar';
+
+    INSERT INTO empleado (Num_emp, Nom, Área, Num_Jefe)
+    VALUES (p_Num_emp, p_Nom, p_Area, jefe_num_emp);
 
     -- Confirmar si la inserción fue exitosa
     SELECT 'Success' AS status;
@@ -1336,26 +1362,41 @@ DELIMITER ;
 DELIMITER |
 CREATE PROCEDURE ActualizarRegEmp(
     IN emp_num VARCHAR(45),
-    IN nombre VARCHAR(45),
-    IN area VARCHAR(45)
+    IN e_nombre VARCHAR(45),
+    IN e_area VARCHAR(45),
+    IN jefe_mod VARCHAR(45)
 )
 BEGIN
+    DECLARE jefe_num VARCHAR(45);
+
+    -- Manejador de excepciones
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         SELECT 'Error' AS status, 'Transaction failed' AS message;
     END;
 
+    -- Iniciar transacción
     START TRANSACTION;
-    
-    -- Actualiza el usuario y la contraseña en la tabla usuario
+
+    -- Obtener el Num_emp del jefe usando su nombre
+    SELECT Num_emp INTO jefe_num
+    FROM empleado
+    WHERE Nom = jefe_mod
+    LIMIT 1;
+
+    -- Actualizar los datos del empleado y establecer el Num_Jefe encontrado
     UPDATE empleado
-    SET Nom = nombre, Área = area
+    SET Nom = e_nombre, Área = e_area, Num_Jefe = jefe_num
     WHERE Num_emp = emp_num;
 
+    -- Confirmación de éxito
     SELECT 'Success' AS status;
+
+    -- Finalizar transacción
     COMMIT;
-END |
+END //
+
 DELIMITER ;
 
 -- Modificar Permisos

@@ -111,7 +111,7 @@ function obtenerEmpleados() {
         .then(data => {
             // console.log("Datos recibidos:", data);
 
-            const selectElement = document.getElementById('empleados');
+            const selectElement = document.getElementById('Jefe');
 
             // Limpiar las opciones existentes
             selectElement.innerHTML = '<option value="">Empleado</option>';
@@ -222,9 +222,7 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                 addBody(`
                     <div class="DP">
                             <label>Empleado</label>
-                            <select id="empleados" name="Nom" class="Pname Nom searchInput Empleado"  required>
-                                <option value="">Empleado</option>
-                            </select>
+                            <input type="text" class="Pname Nom Empleado" name="Nom" placeholder="Nombre Empleado" oninput="mayus(this);" onkeypress="return checkA(event)" required>
                     </div>
                         <div class="DP">
                             <label>Area</label>
@@ -248,10 +246,8 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                             </select>
                         </div>
                         <div class="DP">
-                            <label>Jefe</label>
+                            <label>Jefe del empleado</label>
                             <select id="Jefe" name="Jefe" class="empleado-campo searchInput Jefe" required>
-                                <option>Jefe</option>
-                                <option> Navarro Jimenez Martha Lidia</option>
                             </select>
                     </div>
                     
@@ -269,7 +265,7 @@ if (Permisos && Permisos['USUARIOS'] && Permisos['EMPLEADOS'] && Permisos['USUAR
                 addBody(`
                     <div class="DP">
                         <label for="empleados" >Empleado Asignado</label>
-                        <select id="empleados" name="Fname" class="searchInput Empleado"  required>
+                        <select id="Jefe" name="Fname" class="searchInput Empleado"  required>
                             <option value="">Empleado Asignado</option>
                         </select>
                     </div>
@@ -486,9 +482,7 @@ else if (Permisos && Permisos['EMPLEADOS'] && Permisos['EMPLEADOS'].includes('1'
                 addBody(`
                     <div class="DP">
                             <label>Empleado</label>
-                            <select id="empleados" name="Nom" class="Pname Nom searchInput Empleado"  required>
-                                <option value="">Empleado</option>
-                            </select>
+                            <input type="text" class="Pname Nom Empleado" name="Nom" placeholder="Nombre Empleado" oninput="mayus(this);" onkeypress="return checkA(event)" required>
                     </div>
                         <div class="DP">
                             <label>Area</label>
@@ -512,10 +506,8 @@ else if (Permisos && Permisos['EMPLEADOS'] && Permisos['EMPLEADOS'].includes('1'
                             </select>
                         </div>
                         <div class="DP">
-                            <label>Jefe</label>
+                            <label>Jefe del empleado</label>
                             <select id="Jefe" name="Jefe" class="empleado-campo searchInput Jefe" required>
-                                <option>Jefe</option>
-                                <option> Navarro Jimenez Martha Lidia</option>
                             </select>
                     </div>
                     
@@ -593,7 +585,7 @@ else if (Permisos && Permisos['USUARIOS'] && Permisos['USUARIOS'].includes('1') 
                 addBody(`
                     <div class="DP">
                         <label for="empleados" >Empleado Asignado</label>
-                        <select id="empleados" name="Fname" class="searchInput Empleado"  required>
+                        <select id="Jefe" name="Fname" class="searchInput Empleado"  required>
                             <option value="">Empleado Asignado</option>
                         </select>
                     </div>

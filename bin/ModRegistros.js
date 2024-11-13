@@ -5,7 +5,7 @@ var success = require('./success')
 function modEmpleado(req, callback) {
     const data = req.body
     console.log("Datos recibidos:", data);
-    db.query('CALL AgregarEmpleados(?,?,?,?)', [null, data.Nom, data.Area, 663], function (err, result) {
+    db.query('CALL AgregarEmpleados(?,?,?,?)', [null, data.Nom, data.Area, data.Jefe], function (err, result) {
         if (err) { 
                 Errores(err); // Otros errores
                 return callback(err);
@@ -118,7 +118,16 @@ function obtenerRegistrosUsuarios(callback) {
 }
 
 function obtenerRegistrosEmpleados(callback) {
-    const query = `SELECT Num_emp as numemp, Nom AS nombre, Área as area FROM empleado`;
+    const query = `SELECT 
+        e.Num_emp AS numemp,
+        e.Nom AS nombre,
+        e.Área AS area,
+        j.Nom AS jefe
+    FROM 
+        empleado e
+    LEFT JOIN 
+        empleado j ON e.Num_Jefe = j.Num_emp;
+`;
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
@@ -182,8 +191,8 @@ function modifyRegUsu(req, res) {
 
 function modifyRegemp(req, res) {
     const data = req.body;
-
-    db.query(`CALL ActualizarRegEmp(?, ?, ?)`, [data.Num_emp, data.Nombre, data.Area], function (err, result) {
+    console.log(data)
+    db.query(`CALL ActualizarRegEmp(?, ?, ?, ?)`, [data.Num_emp, data.Nombre, data.Area, data.Jefe], function (err, result) {
         if (err) {
             console.error('Error en la consulta:', err);
             return res.status(500).json({ message: 'Error al modificar el empleado', details: err });

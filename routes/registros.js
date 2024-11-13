@@ -127,7 +127,8 @@ router.get('/getRegistrosEmpleados', (req, res) => {
         const empleados = result.map(row => ({
             numemp: row.numemp,           
             nombre: row.nombre, 
-            area: row.area
+            area: row.area,
+            jefe: row.jefe
         }));
 
         // console.log("Empleados enviados al frontend:", empleados); 

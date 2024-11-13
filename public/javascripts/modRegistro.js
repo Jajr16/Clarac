@@ -3,8 +3,32 @@ var pathname = window.location.pathname;
 var user = localStorage.getItem('user');
 let slimSelectInstances = [];
 
+// Función para inicializar SlimSelect en los selects específicos
+function initializeSlimSelects() {
+    // Limpiar instancias previas de SlimSelect para evitar duplicados
+    slimSelectInstances.forEach(instance => {
+        if (instance && typeof instance.destroy === 'function') {
+            instance.destroy();
+        }
+    });
+    slimSelectInstances = [];
+
+    // Inicializar SlimSelect en los elementos específicos
+    const areaSelect = document.querySelector('.Area');
+    const jefeSelect = document.querySelector('.Jefe');
+
+    if (areaSelect) {
+        const areaInstance = new SlimSelect({ select: areaSelect });
+        slimSelectInstances.push(areaInstance);
+    }
+    if (jefeSelect) {
+        const jefeInstance = new SlimSelect({ select: jefeSelect });
+        slimSelectInstances.push(jefeInstance);
+    }
+}
+
 function mostrarListaEmpleadosEnRegistro() {
-    const registroSelect = document.querySelector('#Nombre'); // Asume que este es el select en la parte de registro
+    const registroSelect = document.querySelector('#Jefe'); // Asume que este es el select en la parte de registro
 
     if (registroSelect) {
         // Guardar las opciones actuales para verificar duplicados
@@ -38,40 +62,41 @@ function obtenerEmpleados() {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta de la red');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // console.log("Datos recibidos:", data);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la red');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // console.log("Datos recibidos:", data);
 
-                const selectElement = document.getElementById('Nombre');
+            const selectElement = document.getElementById('Jefe');
 
-                // Limpiar las opciones existentes
-                selectElement.innerHTML = '<option value=""></option>';
+            // Limpiar las opciones existentes
+            selectElement.innerHTML = '<option value=""></option>';
 
-                // Verificar si los datos están en el formato correcto
-                if (Array.isArray(data)) {
-                    data.forEach(empleado => {
-                        const option = document.createElement('option');
-                        option.value = empleado;
-                        option.textContent = empleado;
-                        selectElement.appendChild(option);
-                    });
-                } else {
-                    console.error("Datos recibidos no son un array:", data);
-                }
+            // Verificar si los datos están en el formato correcto
+            if (Array.isArray(data)) {
+                data.forEach(empleado => {
+                    const option = document.createElement('option');
+                    option.value = empleado;
+                    option.textContent = empleado;
+                    selectElement.appendChild(option);
+                });
+            } else {
+                console.error("Datos recibidos no son un array:", data);
+            }
 
-                resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                reject(error);
-            });
+            resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+            reject(error);
+        });
     });
 }
+
 
 function clearContent() {
     const tbody = document.querySelector(".data-prod tbody");
@@ -231,7 +256,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 User: user
 
             };
-
+            console.log(updatedData)
             fetch('/registro/mod_reg_emp', {
                 method: 'POST',
                 headers: {
@@ -360,8 +385,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     <div class="global_data">
                         <div class="DP">
                             <label>Empleado</label>
-                            <select id="Nombre" name="Nombre" class="EditData2 Nombre2 Empleado"  required>
-                            </select>
+                            <input type="text" id="Nombre" name="Nombre" class="Nombre2 Empleado" required placeholder="Nombre del Empleado">
                         </div>
                         <div class="DP">
                             <label>Área</label>
@@ -455,62 +479,37 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         }
 
         function populateInputs2(item) {
-            const nombreSelect = document.querySelector('.Nombre2');
-            const areaSelect = document.querySelector('.Area');
+            console.log("Item actual:", item);
+            const nombreInput = document.querySelector('.Nombre2');
             const jefeSelect = document.querySelector('.Jefe');
+            const areaSelect = document.querySelector('.Area');
         
-            if (nombreSelect) {
-                // Limpiar las opciones previas sin agregar una opción vacía
-                nombreSelect.innerHTML = ''; 
-        
-                // Llenar las opciones de empleados y seleccionar la coincidencia
-                obtenerEmpleados().then(() => {
-                    let optionSeleccionada = false;
-        
-                    document.querySelectorAll('#Nombre option').forEach(option => {
-                        const newOption = option.cloneNode(true);
-                        nombreSelect.appendChild(newOption);
-        
-                        // Si el valor del empleado de la tabla coincide, se selecciona
-                        if (newOption.value === item.nombre) {
-                            newOption.selected = true;
-                            optionSeleccionada = true;
-                        }
-                    });
-        
-                    // Si no se encontró una opción que coincida, se agrega y selecciona manualmente
-                    if (!optionSeleccionada) {
-                        const manualOption = document.createElement('option');
-                        manualOption.value = item.nombre;
-                        manualOption.textContent = item.nombre;
-                        manualOption.selected = true;
-                        nombreSelect.appendChild(manualOption);
-                    }
-                }).catch(error => {
-                    console.error('Error al obtener la lista de empleados:', error);
-                });
+            if (nombreInput) {
+                nombreInput.value = item.nombre || '';
             } else {
                 console.error("No se encontró el elemento .Nombre2");
             }
         
             if (areaSelect) {
-                areaSelect.innerHTML = ''; // Limpiar opciones previas
-                const uniqueAreas = new Set(["ADMINISTRACION", "PREESCOLAR", "PRIMARIA", "SECUNDARIA", 
+                const uniqueAreas = ["ADMINISTRACION", "PREESCOLAR", "PRIMARIA", "SECUNDARIA", 
                     "PREPARATORIA", "SERVICIOS GENERALES", "SERVICIOS GENERALES Y REC. MATERIALES",
-                    "COMPRAS","DIRECCION ADMINISTRATIVA","DIRECCION ACADEMICA",
-                    "CONTROL ADMINISTRATIVO","APOYO ACADEMICO","DIRECCION GENERAL","RECURSOS HUMANOS Y CONTABILIDAD", "SISTEMAS",]);
+                    "COMPRAS", "DIRECCION ADMINISTRATIVA", "DIRECCION ACADEMICA",
+                    "CONTROL ADMINISTRATIVO", "APOYO ACADEMICO", "DIRECCION GENERAL", 
+                    "RECURSOS HUMANOS Y CONTABILIDAD", "SISTEMAS"];
+                
+                areaSelect.innerHTML = ''; // Limpiar opciones previas
         
                 uniqueAreas.forEach(area => {
-                    const areaOption = document.createElement('option');
-                    areaOption.value = area;
-                    areaOption.textContent = area;
+                    const option = document.createElement('option');
+                    option.value = area;
+                    option.textContent = area;
                     if (item.area === area) {
-                        areaOption.selected = true;
+                        option.selected = true;
                     }
-                    areaSelect.appendChild(areaOption);
+                    areaSelect.appendChild(option);
                 });
         
-                if (!uniqueAreas.has(item.area)) {
+                if (!uniqueAreas.includes(item.area)) {
                     const customAreaOption = document.createElement('option');
                     customAreaOption.value = item.area;
                     customAreaOption.textContent = item.area;
@@ -523,18 +522,25 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         
             if (jefeSelect) {
                 jefeSelect.innerHTML = ''; // Limpiar opciones previas
-                const jefeOption = document.createElement('option');
-                jefeOption.value = "NAVARRO JIMENEZ MARTHA LIDIA";
-                jefeOption.textContent = "NAVARRO JIMENEZ MARTHA LIDIA";
-                jefeOption.selected = true;
-                jefeSelect.appendChild(jefeOption);
-                jefeSelect.disabled = true;
+                obtenerEmpleados().then(() => {
+                    const jefeOption = document.createElement('option');
+                    jefeOption.value = item.jefe || ''; // Usa el nombre del jefe obtenido de la consulta
+                    jefeOption.textContent = item.jefe || 'Sin Jefe Asignado';
+                    jefeOption.selected = true;
+                    jefeSelect.appendChild(jefeOption); // Agrega la opción del jefe
+        
+                    // Inicializar SlimSelect en los selects de Area y Jefe
+                    initializeSlimSelects();
+                }).catch(error => {
+                    console.error('Error al obtener la lista de empleados:', error);
+                });
             } else {
                 console.error("No se encontró el elemento .Jefe");
             }
         
             $('#modyEqp').attr('onclick', `modifyRegEmp('${item.nombre}', '${item.numemp}', event)`);
         }
+        
         
         // Función para obtener los datos de los usuarios y mostrarlos en la tabla
         function obtenerRegistrosUsuarios() {
@@ -562,7 +568,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
 
                     // Populate table and select with new data
                     data.forEach(item => {
-                        console.log("Item actual:", item);
+                        // console.log("Item actual:", item);
                         // Populate select options
                         selEqp.append(new Option(item.nombre, item.nombre));
 

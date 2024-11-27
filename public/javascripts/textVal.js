@@ -1,4 +1,4 @@
-//CAMPOS SOLO LETRAS Y NÚMEROS
+//CAMPOS SOLO LETRAS
 function checkL(e) {
     tecla = (document.all) ? e.keyCode : e.which;
 

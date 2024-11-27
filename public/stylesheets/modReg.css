@@ -47,10 +47,10 @@
     width: 100%;
     justify-content: space-between;
 }
-
+/* 
 .DP > input[type='text']:first-of-type {
     margin-right: 1rem;
-}
+} */
 
 /* .DP > select:first-of-type {
     margin-right: 1rem;

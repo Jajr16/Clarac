@@ -43,7 +43,6 @@ function mostrarListaEmpleadosEnRegistro() {
                 }
             });
 
-            console.log("Lista de empleados cargada en el registro, manteniendo opciones existentes.");
         }).catch(error => {
             console.error("Error al cargar la lista de empleados en el registro:", error);
         });
@@ -62,38 +61,37 @@ function obtenerEmpleados() {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la red');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // console.log("Datos recibidos:", data);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta de la red');
+                }
+                return response.json();
+            })
+            .then(data => {
 
-            const selectElement = document.getElementById('Jefe');
+                const selectElement = document.getElementById('Jefe');
 
-            // Limpiar las opciones existentes
-            selectElement.innerHTML = '<option value=""></option>';
+                // Limpiar las opciones existentes
+                selectElement.innerHTML = '<option value=""></option>';
 
-            // Verificar si los datos están en el formato correcto
-            if (Array.isArray(data)) {
-                data.forEach(empleado => {
-                    const option = document.createElement('option');
-                    option.value = empleado;
-                    option.textContent = empleado;
-                    selectElement.appendChild(option);
-                });
-            } else {
-                console.error("Datos recibidos no son un array:", data);
-            }
+                // Verificar si los datos están en el formato correcto
+                if (Array.isArray(data)) {
+                    data.forEach(empleado => {
+                        const option = document.createElement('option');
+                        option.value = empleado;
+                        option.textContent = empleado;
+                        selectElement.appendChild(option);
+                    });
+                } else {
+                    console.error("Datos recibidos no son un array:", data);
+                }
 
-            resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
-        })
-        .catch(error => {
-            console.error('Error en la solicitud:', error);
-            reject(error);
-        });
+                resolve();  // Resuelve la promesa una vez que los datos hayan sido procesados
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                reject(error);
+            });
     });
 }
 
@@ -161,7 +159,6 @@ function sselect2() {
                     select: element
                 });
                 slimSelectInstances.push(instance); // Guardar la instancia en el array
-                console.log("SlimSelect inicializado en:", element);
             } catch (error) {
                 console.error("Error al inicializar SlimSelect en el elemento:", element, error);
             }
@@ -256,7 +253,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                 User: user
 
             };
-            console.log(updatedData)
+            
             fetch('/registro/mod_reg_emp', {
                 method: 'POST',
                 headers: {
@@ -301,7 +298,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         });
         // Función para inicializar SlimSelect en elementos con clase `.searchInput`
         function sselect() {
-            console.log("Iniciando sselect...");
 
             let searchs = $('.searchInput').toArray();
             if (searchs.length === 0) {
@@ -315,7 +311,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                         new SlimSelect({
                             select: element
                         });
-                        console.log("SlimSelect inicializado en:", element);
                     } catch (error) {
                         console.error("Error al inicializar SlimSelect en el elemento:", element, error);
                     }
@@ -385,11 +380,11 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     <div class="global_data">
                         <div class="DP">
                             <label>Empleado</label>
-                            <input type="text" id="Nombre" name="Nombre" class="Nombre2 Empleado" required placeholder="Nombre del Empleado">
+                            <input type="text" id="Nombre" name="Nombre" class="Nombre2 Empleado" required placeholder="Nombre del Empleado" disabled>
                         </div>
                         <div class="DP">
                             <label>Área</label>
-                            <select id="Area" class="Area EditSelect EditData2" name="Area" required>
+                            <select id="Area" class="Area EditSelect EditData2" name="Area" required >
                                 <option></option>
                                 <option value="ADMINISTRACION">ADMINISTRACION</option>
                                 <option value="PRIMARIA">PRIMARIA</option>
@@ -410,7 +405,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                         </div>
                         <div class="DP">
                             <label>Jefe</label>
-                            <select id="Jefe" class="Jefe EditSelect EditData2" name="Jefe" required></select>
+                            <select id="Jefe" class="Jefe EditSelect EditData2" name="Jefe" required ></select>
                         </div>
                     </div>
                     <div class="DP buttons">
@@ -433,15 +428,15 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     <div class="global_data">
                         <div class="DP">
                             <label>Empleado Asignado</label>
-                            <select id="Nombre" class="Nombre EditSelect EditData" name="Nombre" required></select>
+                            <select id="Nombre" class="Nombre EditSelect EditData" name="Nombre" required disabled></select>
                         </div>
                         <div class="DP">
                             <label>Nombre Usuario</label>
-                            <input autocomplete="off" id="Usuario" name="Usuario" class="Usuario EditData" required >
+                            <input autocomplete="off" id="Usuario" name="Usuario" class="Usuario EditData" required disabled>
                         </div>
                         <div class="DP">
                             <label>Contraseña Nueva</label>
-                            <input autocomplete="off" id="Password" name="Password EditData" class="Password" required >
+                            <input autocomplete="off" id="Password" name="Password EditData" class="Password" required disabled>
                         </div>
                     </div>
                     <div class="DP buttons">
@@ -459,7 +454,11 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
             });
         }
         function populateInputs(item) {
-            console.log("Datos de item:", item); // Verificar el contenido de item
+            const inputsEnDP = document.querySelectorAll('div.DP input');
+
+            inputsEnDP.forEach(input => {
+                input.disabled = false;
+            });
 
             const nombreSelect = $('.Nombre');
             if (nombreSelect.find(`option[value="${item.nombre}"]`).length) {
@@ -479,26 +478,31 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
         }
 
         function populateInputs2(item) {
-            console.log("Item actual:", item);
+            const inputsEnDP = document.querySelectorAll('div.DP input');
+
+            inputsEnDP.forEach(input => {
+                input.disabled = false;
+            });
+
             const nombreInput = document.querySelector('.Nombre2');
             const jefeSelect = document.querySelector('.Jefe');
             const areaSelect = document.querySelector('.Area');
-        
+
             if (nombreInput) {
                 nombreInput.value = item.nombre || '';
             } else {
                 console.error("No se encontró el elemento .Nombre2");
             }
-        
+
             if (areaSelect) {
-                const uniqueAreas = ["ADMINISTRACION", "PREESCOLAR", "PRIMARIA", "SECUNDARIA", 
+                const uniqueAreas = ["ADMINISTRACION", "PREESCOLAR", "PRIMARIA", "SECUNDARIA",
                     "PREPARATORIA", "SERVICIOS GENERALES", "SERVICIOS GENERALES Y REC. MATERIALES",
                     "COMPRAS", "DIRECCION ADMINISTRATIVA", "DIRECCION ACADEMICA",
-                    "CONTROL ADMINISTRATIVO", "APOYO ACADEMICO", "DIRECCION GENERAL", 
+                    "CONTROL ADMINISTRATIVO", "APOYO ACADEMICO", "DIRECCION GENERAL",
                     "RECURSOS HUMANOS Y CONTABILIDAD", "SISTEMAS"];
-                
+
                 areaSelect.innerHTML = ''; // Limpiar opciones previas
-        
+
                 uniqueAreas.forEach(area => {
                     const option = document.createElement('option');
                     option.value = area;
@@ -508,7 +512,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     }
                     areaSelect.appendChild(option);
                 });
-        
+
                 if (!uniqueAreas.includes(item.area)) {
                     const customAreaOption = document.createElement('option');
                     customAreaOption.value = item.area;
@@ -519,7 +523,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
             } else {
                 console.error("No se encontró el elemento .Area");
             }
-        
+
             if (jefeSelect) {
                 jefeSelect.innerHTML = ''; // Limpiar opciones previas
                 obtenerEmpleados().then(() => {
@@ -528,7 +532,7 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
                     jefeOption.textContent = item.jefe || 'Sin Jefe Asignado';
                     jefeOption.selected = true;
                     jefeSelect.appendChild(jefeOption); // Agrega la opción del jefe
-        
+
                     // Inicializar SlimSelect en los selects de Area y Jefe
                     initializeSlimSelects();
                 }).catch(error => {
@@ -537,17 +541,17 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
             } else {
                 console.error("No se encontró el elemento .Jefe");
             }
-        
+
             $('#modyEqp').attr('onclick', `modifyRegEmp('${item.nombre}', '${item.numemp}', event)`);
         }
-        
-        
+
+
         // Función para obtener los datos de los usuarios y mostrarlos en la tabla
         function obtenerRegistrosUsuarios() {
             fetch('/registro/getRegistrosUsuarios')
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Datos recibidos del backend:", data);
+            
                     const tbody = document.querySelector(".data-prod tbody");
                     const headers = document.getElementById('table-headers');
                     const selEqp = $('#mySelect');  // Assume `#mySelect` is the target select element
@@ -568,7 +572,6 @@ if (!Permisos['EMPLEADOS'] && !Permisos['USUARIOS']) {
 
                     // Populate table and select with new data
                     data.forEach(item => {
-                        // console.log("Item actual:", item);
                         // Populate select options
                         selEqp.append(new Option(item.nombre, item.nombre));
 

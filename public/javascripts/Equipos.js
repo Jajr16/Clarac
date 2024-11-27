@@ -297,11 +297,10 @@ if (!Permisos['EQUIPOS']) {
 
                 data.forEach(item => {
                     selEqp.append($('<option>', { value: item.Num_Serie, text: item.Num_Serie }))
-
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                    <td>${item.Num_Serie}</td>
                     <td>${item.Equipo}</td>
+                    <td>${item.Nom}</td>
                     `;
 
                     selEqp.change(function () {

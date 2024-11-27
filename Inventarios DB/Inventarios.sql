@@ -460,7 +460,7 @@ BEGIN
 END |
 
 DELIMITER ;
-
+-- drop procedure AgregarEmpleados;
 DELIMITER //
 
 CREATE PROCEDURE AgregarEmpleados(
@@ -1333,11 +1333,11 @@ END //
 DELIMITER ;
 
 -- Modificar Registro Usuarios
-DELIMITER |
+DELIMITER //
 CREATE PROCEDURE ActualizarRegUsu(
-    IN emp_num VARCHAR(45),
-    IN usuario VARCHAR(45),
-    IN contra VARCHAR(45)
+    IN in_emp_num VARCHAR(45),
+    IN in_usuario VARCHAR(45),
+    IN in_contra VARCHAR(45)
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -1347,19 +1347,22 @@ BEGIN
     END;
 
     START TRANSACTION;
-    
+
     -- Actualiza el usuario y la contraseña en la tabla usuario
     UPDATE usuario 
-    SET Usuario = usuario, Pass = contra
-    WHERE Num_emp = emp_num;
+    SET `Usuario` = in_usuario, `Pass` = in_contra
+    WHERE `Num_emp` = in_emp_num;
 
+    -- Confirmación de éxito
     SELECT 'Success' AS status;
+
     COMMIT;
-END |
+END //
 DELIMITER ;
 
+-- Drop procedure actualizarRegEmp;
 -- Modificar Registro Empleados
-DELIMITER |
+DELIMITER //
 CREATE PROCEDURE ActualizarRegEmp(
     IN emp_num VARCHAR(45),
     IN e_nombre VARCHAR(45),

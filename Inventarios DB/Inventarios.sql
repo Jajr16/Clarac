@@ -460,18 +460,21 @@ BEGIN
 END |
 
 DELIMITER ;
-
+-- drop procedure AgregarEmpleados;
 DELIMITER //
 
 CREATE PROCEDURE AgregarEmpleados(
-    IN Num_emp VARCHAR(45), 
-    IN Nom VARCHAR(45),
-    IN Area VARCHAR(45), 
-    IN Num_Jefe VARCHAR(45))
+    IN p_Num_emp VARCHAR(45), 
+    IN p_Nom VARCHAR(45),
+    IN p_Area VARCHAR(45), 
+    IN p_Jefe_nombre VARCHAR(45)
+)
 BEGIN
+    DECLARE jefe_num_emp VARCHAR(45);
+
+    -- Manejo de errores
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejo del error: devolver un mensaje de error y hacer rollback
         ROLLBACK;
         SELECT 'Error: Ocurrió un error al insertar el empleado' AS status;
     END;
@@ -479,8 +482,31 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 
-    -- Realizar la inserción
-    INSERT INTO empleado (Num_emp, Nom, Área, Num_Jefe) VALUES (NULL, Nom, Area, Num_Jefe);
+    -- Mostrar los valores de entrada recibidos (para depuración)
+    SELECT 'Valores de entrada:', p_Num_emp AS 'Num_emp recibido', p_Nom AS 'Nom recibido', p_Area AS 'Area recibida', p_Jefe_nombre AS 'Jefe recibido';
+
+    -- Buscar el Num_emp del jefe basado en su nombre
+    SELECT Num_emp INTO jefe_num_emp
+    FROM empleado
+    WHERE Nom = p_Jefe_nombre
+    LIMIT 1;
+
+    -- Mostrar el resultado de la búsqueda del jefe
+    SELECT 'Resultado de búsqueda de jefe:', jefe_num_emp AS 'Num_emp del jefe encontrado';
+
+    -- Verificar si se encontró el jefe
+    IF jefe_num_emp IS NULL THEN
+        SET jefe_num_emp = NULL;
+        SELECT 'Advertencia: No se encontró el jefe, asignando NULL a Num_Jefe' AS status;
+    ELSE
+        SELECT 'Jefe encontrado con Num_emp:' AS status, jefe_num_emp;
+    END IF;
+
+    -- Realizar la inserción y mostrar los valores que se van a insertar
+    SELECT 'Realizando inserción con valores:', p_Num_emp AS 'Num_emp a insertar', p_Nom AS 'Nom a insertar', p_Area AS 'Área a insertar', jefe_num_emp AS 'Num_Jefe a insertar';
+
+    INSERT INTO empleado (Num_emp, Nom, Área, Num_Jefe)
+    VALUES (p_Num_emp, p_Nom, p_Area, jefe_num_emp);
 
     -- Confirmar si la inserción fue exitosa
     SELECT 'Success' AS status;
@@ -523,8 +549,8 @@ BEGIN
         VALUES (NumEmp, Usuario, Pass);
 
         -- Confirmar los cambios si todo fue exitoso
-        COMMIT;
         SELECT 'Success' AS status;
+        COMMIT;
     END IF;
 END //
 
@@ -550,12 +576,13 @@ BEGIN
     -- Insertar el permiso en la tabla de permisos
     INSERT INTO permisos (permiso, usuario, modulo) 
     VALUES (permiso, usuario, modulo);
-
+	
+    -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 
 DELIMITER ;
@@ -580,11 +607,12 @@ BEGIN
     INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario
     WHERE Usuario = USR), NOW(), 0);
 
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 
 DELIMITER ;
@@ -608,11 +636,12 @@ BEGIN
 
     INSERT INTO soli_car VALUES (NULL, CBS, CANT, (SELECT Num_Emp FROM usuario WHERE Usuario = USR), NOW());
 
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 
 DELIMITER ;
@@ -818,11 +847,12 @@ BEGIN
 
     END IF;
 
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
@@ -843,11 +873,13 @@ BEGIN
 		ELSE
 			SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
 		END IF;
+        
+	 -- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+   
 END //
 DELIMITER ;
 
@@ -864,11 +896,13 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 		SELECT Usuario FROM usuario WHERE Num_Emp = (SELECT num_emp FROM empleado WHERE Nom = NomEnc);
+        
+	-- Confirmar si la inserción fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
@@ -904,11 +938,12 @@ BEGIN
         );
     END IF;
 
+	-- Confirmar si la eliminación fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
 
-    -- Confirmar si la eliminación fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
@@ -966,11 +1001,11 @@ BEGIN
             AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
     END IF;
 
+	-- Confirmar si la modificación fue exitosa
+    SELECT 'Success' AS status;
     -- Confirmar los cambios
     COMMIT;
-
-    -- Confirmar si la modificación fue exitosa
-    SELECT 'Success' AS status;
+    
 END //
 DELIMITER ;
 
@@ -1091,11 +1126,10 @@ BEGIN
         UPDATE soli_car SET cerrada = 1 WHERE sol_id = solID;
     END IF;
 
+	-- Devolver el estado de éxito solo si la transacción fue exitosa
+    SELECT 'Success' AS status, 'Operación exitosa' AS message;
     -- Confirmar los cambios si no hay errores
     COMMIT;
-
-    -- Devolver el estado de éxito solo si la transacción fue exitosa
-    SELECT 'Success' AS status, 'Operación exitosa' AS message;
 END //
 DELIMITER ;
 
@@ -1299,11 +1333,11 @@ END //
 DELIMITER ;
 
 -- Modificar Registro Usuarios
-DELIMITER |
+DELIMITER //
 CREATE PROCEDURE ActualizarRegUsu(
-    IN emp_num VARCHAR(45),
-    IN usuario VARCHAR(45),
-    IN contra VARCHAR(45)
+    IN in_emp_num VARCHAR(45),
+    IN in_usuario VARCHAR(45),
+    IN in_contra VARCHAR(45)
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -1313,44 +1347,63 @@ BEGIN
     END;
 
     START TRANSACTION;
-    
+
     -- Actualiza el usuario y la contraseña en la tabla usuario
     UPDATE usuario 
-    SET Usuario = usuario, Pass = contra
-    WHERE Num_emp = emp_num;
+    SET `Usuario` = in_usuario, `Pass` = in_contra
+    WHERE `Num_emp` = in_emp_num;
+
+    -- Confirmación de éxito
+    SELECT 'Success' AS status;
 
     COMMIT;
-    SELECT 'Success' AS status;
-END |
+END //
 DELIMITER ;
 
+-- Drop procedure actualizarRegEmp;
 -- Modificar Registro Empleados
-DELIMITER |
+DELIMITER //
 CREATE PROCEDURE ActualizarRegEmp(
     IN emp_num VARCHAR(45),
-    IN nombre VARCHAR(45),
-    IN area VARCHAR(45)
+    IN e_nombre VARCHAR(45),
+    IN e_area VARCHAR(45),
+    IN jefe_mod VARCHAR(45)
 )
 BEGIN
+    DECLARE jefe_num VARCHAR(45);
+
+    -- Manejador de excepciones
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         SELECT 'Error' AS status, 'Transaction failed' AS message;
     END;
 
+    -- Iniciar transacción
     START TRANSACTION;
-    
-    -- Actualiza el usuario y la contraseña en la tabla usuario
+
+    -- Obtener el Num_emp del jefe usando su nombre
+    SELECT Num_emp INTO jefe_num
+    FROM empleado
+    WHERE Nom = jefe_mod
+    LIMIT 1;
+
+    -- Actualizar los datos del empleado y establecer el Num_Jefe encontrado
     UPDATE empleado
-    SET Nom = nombre, Área = area
+    SET Nom = e_nombre, Área = e_area, Num_Jefe = jefe_num
     WHERE Num_emp = emp_num;
 
-    COMMIT;
+    -- Confirmación de éxito
     SELECT 'Success' AS status;
-END |
+
+    -- Finalizar transacción
+    COMMIT;
+END //
+
 DELIMITER ;
 
 -- Modificar Permisos
+drop procedure ModificarPermisos;
 DELIMITER $$
 CREATE PROCEDURE ModificarPermisos(
     IN user VARCHAR(255),
@@ -1388,8 +1441,8 @@ BEGIN
     END WHILE;
 
     -- Commit the transaction
-    COMMIT;
     SELECT 'Success' AS status;
+    COMMIT;
 END$$
 DELIMITER ;
 
@@ -1448,8 +1501,8 @@ BEGIN
     END IF;
 
     -- Commit the transaction
-    COMMIT;
     SELECT 'Success' AS status;
+    COMMIT;
 END$$
 DELIMITER ;
 

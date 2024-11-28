@@ -2,3 +2,4 @@ Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual th
 Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE Cod_Barras = 'A'' at line 1 | Error obtenido el -> 07/11/2024 10:36
 Error: ER_ROW_IS_REFERENCED_2: Cannot delete or update a parent row: a foreign key constraint fails (`inventarios`.`soli_car`, CONSTRAINT `soli_car_ibfk_1` FOREIGN KEY (`Cod_Barras_SC`) REFERENCES `almacen` (`Cod_Barras`)) | Error obtenido el -> 07/11/2024 10:37
 Error: ER_SP_WRONG_NO_OF_ARGS: Incorrect number of arguments for PROCEDURE inventarios.ActualizarEquipos; expected 14, got 13 | Error obtenido el -> 07/11/2024 21:4
+undefined | Error obtenido el -> 19/11/2024 12:33

@@ -192,6 +192,7 @@ if (!Permisos['ALMACÉN']) {
 
                     tbody.appendChild(tr);
                 });
+                empty_table('data-prod', 3)
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);

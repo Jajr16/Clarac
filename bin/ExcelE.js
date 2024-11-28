@@ -9,10 +9,10 @@ const createWorksheet = (workbook) => {
     const worksheet = workbook.addWorksheet("My Sheet");
     worksheet.columns = [
         { header: 'N. Inv', key: 'N_Inv', width: 11 },
-        { header: 'N. Serie', key: 'NS', width: 18 },
         { header: 'Equipo', key: 'Eqp', width: 30 },
         { header: 'Marca', key: 'Marca', width: 25 },
         { header: 'Modelo', key: 'Modelo', width: 30 },
+        { header: 'N. Serie', key: 'NS', width: 18 },
         { header: 'Hardware', key: 'Hardware', width: 30 },
         { header: 'Software', key: 'Software', width: 30 },
         { header: 'Monitor', key: 'Monitor', width: 30 },
@@ -71,10 +71,10 @@ const getExcelE = async (res) => {
                 results.forEach(row => {
                     worksheet.addRow({
                         N_Inv: row.N_Inventario,
-                        NS: row.Num_Serie,
                         Eqp: row.Equipo,
                         Marca: row.Marca,
                         Modelo: row.Modelo,
+                        NS: row.Num_Serie,
                         Hardware: row.Hardware,
                         Software: row.Software,
                         Monitor: row.Monitor,

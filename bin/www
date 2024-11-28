@@ -8,7 +8,6 @@ var app = require('../app');
 var debug = require('debug')('clarac:server');
 var http = require('http');
 
-
 /**
  * Get port from environment and store in Express.
  */
@@ -21,11 +20,13 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
 /**
- * Listen on provided port, on all network interfaces.
+ * Listen on provided port, on all network interfaces (0.0.0.0).
  */
 
-server.listen(port);
+var host = '0.0.0.0';
+server.listen(port, host); // Modifica aquí para que escuche en todas las interfaces
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -87,4 +88,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.log(`Servidor ejecutándose en http://${host}:${port}`);
 }

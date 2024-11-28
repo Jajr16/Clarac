@@ -4,6 +4,7 @@
 
 a {
     text-decoration: none;
+    color: black;
 }
 
 a:visited {
@@ -254,6 +255,10 @@ input[type="submit"]:hover {
 .mini-menu li:hover {
     margin: 0;
     background-color: #001781;
+    color: white;
+}
+
+.mini-menu li a:hover {
     color: white;
 }
 

@@ -883,6 +883,8 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS getUserMob;
+
 DELIMITER //
 CREATE PROCEDURE getUserMob(
     IN NomEnc varchar(45))

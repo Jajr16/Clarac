@@ -1543,3 +1543,6 @@ CREATE TRIGGER AUAP AFTER INSERT ON usuario
 		INSERT INTO permisos VALUES (1, NEW.Usuario,'PETICIONES');
 	END
 | DELIMITER ;
+
+DELETE FROM mobiliario where Num_Inventario = 75;
+select*from mobiliario;

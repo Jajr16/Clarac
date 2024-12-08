@@ -21,7 +21,7 @@ if (!Permisos['MOBILIARIO']) {
         function agregarEncargadoOUsuario(formData, Permisos, user) {
             // Verificamos si el permiso es '5'
             if (Permisos['MOBILIARIO'].includes('5')) {
-                const encargado = document.querySelector('.actionSelect').value;
+                let encargado = document.querySelector('.actionSelect').value;
                 formData.append('encargado', encargado);
             } else {
                 formData.append('user', user);
@@ -90,7 +90,7 @@ if (!Permisos['MOBILIARIO']) {
                     // Agregar encargado o usuario
                     agregarEncargadoOUsuario(formData, Permisos, user);
 
-                    fetch('/mobiliario/users/check-filename', {
+                    fetch('/mobiliario/users/check-filename', { 
                         method: 'POST',
                         body: formData  // Enviar el FormData sin especificar el Content-Type
                     })
@@ -212,7 +212,8 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('ubicacion', document.querySelector('.UbiM').value);
                 formData.append('articulo', oldName);
                 formData.append('descripcion', oldDesc);
-                formData.append('oldUsuario', oldUser);
+                
+                formData.append('oldUsuario', identificate(oldUser));
 
                 fetch('/mobiliario/mod_mob', {
                     method: 'POST',
@@ -374,8 +375,8 @@ if (!Permisos['MOBILIARIO']) {
                             formData.append('articulo', item.Articulo)
                             formData.append('descripcion', item.Descripcion)
 
-                            formData.append('user', identificate(item.Nombre))
-
+                            formData.append('user', item.Nombre)
+                            
                             fetch('/mobiliario/users/disp_image', {
                                 method: 'POST',
                                 body: formData
@@ -405,8 +406,10 @@ if (!Permisos['MOBILIARIO']) {
                         formData.append('articulo', item.Articulo)
                         formData.append('descripcion', item.Descripcion)
 
-                        formData.append('user', identificate(item.Nombre))
-
+                        formData.append('user', item.Nombre)
+                        formData.forEach((value, key) => {
+                            console.log(`${key}: ${value}`);
+                        });
                         fetch('/mobiliario/users/disp_image', {
                             method: 'POST',
                             body: formData

@@ -946,7 +946,7 @@ BEGIN
     
 END //
 DELIMITER ;
-
+drop procedure if exists ModificarUEMob;
 DELIMITER //
 CREATE PROCEDURE ModificarUEMob(
     IN nuevoArticulo VARCHAR(100),
@@ -970,24 +970,30 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 
-    IF encargado IS NOT NULL THEN
+ --   IF encargado IS NOT NULL THEN
         -- Modificar el mobiliario en la tabla de mobiliario utilizando el encargado
-        UPDATE mobiliario
-        SET 
-            Articulo = nuevoArticulo,
-            Descripcion = nuevaDescripcion,
-            Num_emp = (SELECT Num_emp from empleado where Nom = encargado),
-            Ubicacion = nuevaUbicacion,
-            Cantidad = nuevaCantidad
-        WHERE 
-            Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua 
-            AND Num_emp = (SELECT Num_emp from empleado where Nom = usuarioAntiguo);
+--        UPDATE mobiliario
+--        SET 
+--            Articulo = nuevoArticulo,
+--            Descripcion = nuevaDescripcion,
+--            Num_emp = (SELECT Num_emp from empleado where Nom = encargado),
+--            Ubicacion = nuevaUbicacion,
+--            Cantidad = nuevaCantidad
+--        WHERE 
+--            Articulo = articuloAntiguo 
+--            AND Descripcion = descripcionAntigua 
+--            AND Num_emp = (SELECT Num_emp from empleado where Nom = usuarioAntiguo);
             
-		select Num_emp from mobiliario;
+		-- select Num_emp from mobiliario;
         
-    ELSE
+--    ELSE
         -- Modificar el mobiliario en la tabla de mobiliario utilizando el usuario
+        
+        IF encargado IS NOT NULL THEN
+			SELECT Usuario INTO usuar FROM usuario WHERE Num_Emp = (SELECT Num_emp from empleado where Nom = encargado);
+		END IF;
+        
+        
         UPDATE mobiliario
         SET 
             Articulo = nuevoArticulo,
@@ -999,7 +1005,7 @@ BEGIN
             Articulo = articuloAntiguo 
             AND Descripcion = descripcionAntigua
             AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
-    END IF;
+--    END IF;
 
 	-- Confirmar si la modificación fue exitosa
     SELECT 'Success' AS status;
@@ -1546,3 +1552,4 @@ CREATE TRIGGER AUAP AFTER INSERT ON usuario
 
 DELETE FROM mobiliario where Num_Inventario = 75;
 select*from mobiliario;
+select*from empleado;

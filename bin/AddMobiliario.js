@@ -26,9 +26,9 @@ function addFurniture(req, callback) {
 
     const data = req.body;
     
-    const usuario = data.user || null;
-    const encargado = data.encargado || null;
-
+    let usuario = data.user || null;
+    let encargado = data.encargado || null;
+    
     console.log("el usuario es " + usuario);
     console.log("el encargado es " + encargado);
     

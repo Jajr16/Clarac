@@ -18,3 +18,5 @@ undefined | Error obtenido el -> 07/12/2024 20:34
 undefined | Error obtenido el -> 07/12/2024 20:45
 undefined | Error obtenido el -> 07/12/2024 20:46
 undefined | Error obtenido el -> 07/12/2024 20:51
+Error: ER_DUP_ENTRY: Duplicate entry 'B' for key 'almacen.PRIMARY' | Error obtenido el -> 07/12/2024 22:36
+Error: ER_DUP_ENTRY: Duplicate entry 'B' for key 'almacen.PRIMARY' | Error obtenido el -> 07/12/2024 22:36

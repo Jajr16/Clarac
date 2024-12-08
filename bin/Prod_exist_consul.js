@@ -13,7 +13,8 @@ function prodExistConsul(req, callback) {
             const dataToSend = res[0].map(item => ({
                 Cod_Barras: item.CB,
                 Articulo: item.Arti,
-                Existencia: item.Existencia
+                Existencia: item.Existencia,
+                eliminado: item.eliminado
             }));
             
             return callback(null, dataToSend);

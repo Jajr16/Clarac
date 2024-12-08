@@ -167,28 +167,35 @@ if (!Permisos['ALMACÉN']) {
         }).then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector(".data-prod tbody");
-
+                console.log(data)
                 data.forEach(item => {
                     let tr = document.createElement('tr');
+
+                    if (item.eliminado === 1) {
+                        tr.classList.add('eliminate')
+                    }
+
                     tr.innerHTML = `
                     <td>${item.Cod_Barras}</td>
                     <td>${item.Articulo}</td>
                         <td>${item.Existencia}</td>`;
 
-                    tr.addEventListener('click', () => {
-                        const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
+                    if (item.eliminado !== 1) {
+                        tr.addEventListener('click', () => {
+                            const selector = `.description-product .DP label[article='${item.Cod_Barras}']`;
 
-                        if ($(selector).length === 0) {
-                            $(`
-                                <div class="DP prod-count">
-                                <label article="${item.Cod_Barras}">${item.Articulo}</label>
-                                <input autocomplete="off" placeholder="Cantidad" type="number" id="CantidaDFE" name="CantidaDFE" class="CantidaDFE" required min="0">
-                                </div>
-                                `).insertBefore('.buttons');
-                        } else {
-                            $(selector).closest('.prod-count').remove();
-                        }
-                    });
+                            if ($(selector).length === 0) {
+                                $(`
+                                    <div class="DP prod-count">
+                                    <label article="${item.Cod_Barras}">${item.Articulo}</label>
+                                    <input autocomplete="off" placeholder="Cantidad" type="number" max="${item.Existencia}" id="CantidaDFE" name="CantidaDFE" class="CantidaDFE" required min="0">
+                                    </div>
+                                    `).insertBefore('.buttons');
+                            } else {
+                                $(selector).closest('.prod-count').remove();
+                            }
+                        });
+                    }
 
                     tbody.appendChild(tr);
                 });

@@ -566,3 +566,7 @@ input[type="submit"]:hover {
     right: 0.7rem;
     position: absolute;
 }
+
+.eliminate {
+    background-color: #ff3535!important;
+}

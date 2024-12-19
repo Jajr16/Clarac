@@ -21,6 +21,7 @@ const equipoRoutes = require('./routes/equipos')
 const mobiliarioRoutes = require('./routes/mobiliario')
 const productoRoutes = require('./routes/productos')
 const prodExistsRoutes = require('./routes/prod_exists')
+const prodSacadosRoutes = require('./routes/prod_sacados')
 const responsivasRoutes = require('./routes/responsivas')
 const excelsRoutes = require('./routes/excels')
 const registrosRoutes = require('./routes/registros')
@@ -124,6 +125,7 @@ app.use('/equipo', equipoRoutes);
 app.use('/mobiliario', mobiliarioRoutes);
 app.use('/producto', productoRoutes);
 app.use('/prod_exts', prodExistsRoutes);
+app.use('/prods_sacados', prodSacadosRoutes);
 app.use('/responsiva', responsivasRoutes);
 app.use('/excels', excelsRoutes);
 app.use('/registro', registrosRoutes);

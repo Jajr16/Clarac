@@ -65,6 +65,15 @@ router.get('/productos_exist', isAuthenticated, permissions('ALMACÉN'), functio
   });
 });
 
+// Registro de productos sacados
+router.get('/registro_PS', isAuthenticated, permissions('ALMACÉN'), function (req, res, next) {
+  res.render('registro_PS', {
+    title: 'Registro de productos sacados',
+    layout: 'other_layout',
+    // permissions: getPermissions(req)
+  });
+});
+
 // Responsivas
 router.get('/responsivas', isAuthenticated, permissions('RESPONSIVAS'), function (req, res, next) {
   res.render('responsivas', {

@@ -759,6 +759,31 @@ BEGIN
 END |
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS consulRPS;
+
+DELIMITER | 
+CREATE PROCEDURE consulRPS()
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+    SELECT sp.*, a.Articulo, e.Nom AS Nombre_Empleado
+    FROM salidas_productos sp
+    JOIN almacen a ON sp.Cod_BarrasS = a.Cod_Barras
+    JOIN empleado e ON sp.Num_EmpS = e.Num_Emp;
+END |
+DELIMITER ;
+
+SELECT sp.*, a.Articulo, e.Nom AS Nombre_Empleado
+    FROM salidas_productos sp
+    JOIN almacen a ON sp.Cod_BarrasS = a.Cod_Barras
+    JOIN empleado e ON sp.Num_EmpS = e.Num_Emp;
+
+select*from almacen;
+select*from empleado;
+
 DELIMITER | 
 CREATE PROCEDURE consulPet(
 	IN USR VARCHAR(45)

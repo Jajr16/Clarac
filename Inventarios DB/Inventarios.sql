@@ -276,5 +276,5 @@ CREATE TABLE status_soli(
     on update cascade on delete cascade
 );
 
-DELETE FROM mobiliario where Num_Inventario = 75;
+DELETE FROM mobiliario;
 select*from almacen;

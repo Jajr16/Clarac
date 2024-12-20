@@ -59,7 +59,7 @@ async function getExcelRPS(res) {
                 // Configura la respuesta para enviar el archivo
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader('Content-Disposition', `attachment; filename=Almacen-${nombreArchivo}_${contador}.xlsx`);
-                res.setHeader('X-Filename', `Registro-Productos-Sacados-${nombreArchivo}_${contador}.xlsx`); // Agrega el nombre del archivo al header
+                res.setHeader('X-Filename', `Salida-Productos-${nombreArchivo}_${contador}.xlsx`); // Agrega el nombre del archivo al header
                 contador++;
 
                 // Envía el archivo al cliente

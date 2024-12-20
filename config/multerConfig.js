@@ -3,7 +3,7 @@ const { GridFsStorage } = require('multer-gridfs-storage');
 const crypto = require('crypto');
 const customId = require('../utils/customId'); // Mueve customId a utils
 
-const url = 'mongodb://localhost:27017/Clarac';
+const url = 'mongodb://127.0.0.1:27017/Clarac';
 
 const storage = new GridFsStorage({
   url: url,

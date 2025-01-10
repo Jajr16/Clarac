@@ -20,3 +20,7 @@ undefined | Error obtenido el -> 07/12/2024 20:46
 undefined | Error obtenido el -> 07/12/2024 20:51
 Error: ER_DUP_ENTRY: Duplicate entry 'B' for key 'almacen.PRIMARY' | Error obtenido el -> 07/12/2024 22:36
 Error: ER_DUP_ENTRY: Duplicate entry 'B' for key 'almacen.PRIMARY' | Error obtenido el -> 07/12/2024 22:36
+Error: PROCEDURE inventarios.showMob does not exist | Error obtenido el -> 19/12/2024 12:2
+Error: PROCEDURE inventarios.showMob does not exist | Error obtenido el -> 19/12/2024 12:2
+Error: PROCEDURE inventarios.consulRPS does not exist | Error obtenido el -> 19/12/2024 19:51
+Error: PROCEDURE inventarios.consulRPS does not exist | Error obtenido el -> 19/12/2024 19:51

@@ -23,8 +23,8 @@ function cargarArchivoJSON() {
 }
 
 function addFurniture(req, callback) {
-
     const data = req.body;
+    console.log(data)
     
     let usuario = data.user || null;
     let encargado = data.encargado || null;

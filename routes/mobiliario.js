@@ -13,12 +13,15 @@ const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
 
 const customId = require('../utils/customId');
 
-const url = 'mongodb://localhost:27017/Clarac';
+const url = 'mongodb://127.0.0.1:27017/Clarac';
 let gfsBucket = null;
 
 try {
   const conn = mongoose.createConnection(url);
-  mongoose.connect(url);
+  mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
   conn.once('open', () => {
     gfsBucket = new GridFSBucket(conn.db, { bucketName: 'uploads' });
@@ -187,6 +190,7 @@ router.post('/users/check-filename', subperm('MOBILIARIO', [1]), isAuthenticated
 });
 
 router.post('/users/upload', isAuthenticated, subperm('MOBILIARIO', [1]), upload.single('file'), (req, res) => {
+  console.log(req.body)
   if (!req.file) {
     console.log('No file uploaded');
     res.json({ type: 'failed', message: 'Ingrese una imagen para poder continuar.' });

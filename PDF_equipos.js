@@ -66,6 +66,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                         <td>${equi.N_Inventario}</td>
                         <td>${equi.Num_Serie}</td>
                         <td>${equi.Equipo}</td>
+                        <td>${equi.Ubi}</td>
                         <td>${equi.Marca}</td>
                         <td>${equi.Modelo}</td>
                         <td>${equi.Num_Serie_CPU}</td>
@@ -150,6 +151,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                             <th>No. INV</th>
                             <th>No. SERIE</th>
                             <th>EQUIPO</th>
+                            <th>UBI</th>
                             <th>MARCA</th>
                             <th>MODELO</th>
                             <th>N.S. CPU</th>

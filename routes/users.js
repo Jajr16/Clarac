@@ -14,7 +14,7 @@ router.get('/home', isAuthenticated, function (req, res, next) {
 // Consulta de mobiliario
 router.get('/consulMob', isAuthenticated, permissions('MOBILIARIO'), function (req, res, next) {
   res.render('consulMob', {
-    title: 'Consultar Mobiliario',
+    title: 'CLARAC | Mobiliario',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -23,7 +23,7 @@ router.get('/consulMob', isAuthenticated, permissions('MOBILIARIO'), function (r
 // Registros
 router.get('/registros', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), function (req, res, next) {
   res.render('registros', {
-    title: 'Registros',
+    title: 'CLARAC | Registros',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -32,7 +32,7 @@ router.get('/registros', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), 
 // Modificar Registros
 router.get('/modReg', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), function (req, res, next) {
   res.render('modReg', {
-    title: 'Modificar Registros',
+    title: 'CLARAC | Modificar Registros',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -41,7 +41,7 @@ router.get('/modReg', isAuthenticated, permissions('USUARIOS', 'EMPLEADOS'), fun
 // Modificar Permisos
 router.get('/modPer', isAuthenticated, permissions('USUARIOS'), function (req, res, next) {
   res.render('modPer', {
-    title: 'Modificar Permisos',
+    title: 'CLARAC | Permisos',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -50,7 +50,7 @@ router.get('/modPer', isAuthenticated, permissions('USUARIOS'), function (req, r
 // Consulta de productos
 router.get('/consulProd', isAuthenticated, permissions('ALMACÉN'), function (req, res, next) {
   res.render('consulProd', {
-    title: 'Consultar Productos',
+    title: 'CLARAC | Productos',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -59,7 +59,7 @@ router.get('/consulProd', isAuthenticated, permissions('ALMACÉN'), function (re
 // Productos existentes
 router.get('/productos_exist', isAuthenticated, permissions('ALMACÉN'), function (req, res, next) {
   res.render('productos_exist', {
-    title: 'Productos existentes',
+    title: 'CLARAC | Productos existentes',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -68,7 +68,7 @@ router.get('/productos_exist', isAuthenticated, permissions('ALMACÉN'), functio
 // Responsivas
 router.get('/responsivas', isAuthenticated, permissions('RESPONSIVAS'), function (req, res, next) {
   res.render('responsivas', {
-    title: 'Responsivas',
+    title: 'CLARAC | Responsivas',
     // permissions: getPermissions(req)
   });
 });
@@ -76,7 +76,7 @@ router.get('/responsivas', isAuthenticated, permissions('RESPONSIVAS'), function
 // Consulta de Equipos
 router.get('/consulEqp', isAuthenticated, permissions('EQUIPOS'), function (req, res, next) {
   res.render('consulEqp', {
-    title: 'Consultar Equipos',
+    title: 'CLARAC | Equipos',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -85,7 +85,7 @@ router.get('/consulEqp', isAuthenticated, permissions('EQUIPOS'), function (req,
 // Peticiones
 router.get('/Peticiones', isAuthenticated, permissions('PETICIONES'), function (req, res, next) {
   res.render('peticiones', {
-    title: 'Peticiones | CLARAC',
+    title: 'CLARAC | Peticiones',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -94,7 +94,7 @@ router.get('/Peticiones', isAuthenticated, permissions('PETICIONES'), function (
 // Solicitudes
 router.get('/Solicitudes', isAuthenticated, permissions('PETICIONES'), valArea('DIRECCION GENERAL'), function (req, res, next) {
   res.render('solicitudes', {
-    title: 'Solicitudes | CLARAC',
+    title: 'CLARAC | Solicitudes',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });
@@ -103,7 +103,7 @@ router.get('/Solicitudes', isAuthenticated, permissions('PETICIONES'), valArea('
 // Estatus de peticiones
 router.get('/petalm', isAuthenticated, permissions('ALMACÉN'), subperm('ALMACÉN', [1,2,3,4]), function (req, res, next) {
   res.render('almacenista', {
-    title: 'Estatus de peticiones | CLARAC',
+    title: 'CLARAC | Estatus de peticiones',
     layout: 'other_layout',
     // permissions: getPermissions(req)
   });

@@ -113,19 +113,6 @@ if (!Permisos['EQUIPOS']) {
 
             const selectEqp = $('.Ename')
             selectEqp.append($('<option>', { disabled: true, selected: true }))
-            selectEqp.append($('<option>', { value: 'CPU', text: 'CPU' }))
-            selectEqp.append($('<option>', { value: 'MONITOR', text: 'MONITOR' }))
-            selectEqp.append($('<option>', { value: 'IMPRESORA', text: 'IMPRESORA' }))
-            selectEqp.append($('<option>', { value: 'NOBREAK', text: 'NOBREAK' }))
-            selectEqp.append($('<option>', { value: 'REGULADOR', text: 'REGULADOR' }))
-            selectEqp.append($('<option>', { value: 'MULTIFUNCIONAL', text: 'MULTIFUNCIONAL' }))
-            selectEqp.append($('<option>', { value: 'TELÉFONO', text: 'TELÉFONO' }))
-            selectEqp.append($('<option>', { value: 'PIZARRÓN DIGITAL', text: 'PIZARRÓN DIGITAL' }))
-            selectEqp.append($('<option>', { value: 'SERVIDOR', text: 'SERVIDOR' }))
-            selectEqp.append($('<option>', { value: 'SWITCH', text: 'SWITCH' }))
-            selectEqp.append($('<option>', { value: 'GATEWAY', text: 'GATEWAY' }))
-            selectEqp.append($('<option>', { value: 'BOCINA', text: 'BOCINA' }))
-            selectEqp.append($('<option>', { value: 'PROYECTOR', text: 'PROYECTOR' }))
 
             selectEqp.on('change', function () {
                 if (selectEqp.val() !== 'MONITOR') {

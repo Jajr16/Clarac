@@ -19,13 +19,14 @@ const createWorksheet = (workbook) => {
         { header: 'Teclado', key: 'Teclado', width: 15 },
         { header: 'Mouse', key: 'Mouse', width: 20 },
         { header: 'Accesorio', key: 'Acces', width: 20 },
+        { header: 'Ubicación', key: 'Ubi', width: 20 },
         { header: 'Encargado', key: 'Encargado', width: 40 }
     ];
     return worksheet;
 };
 
 const applyHeaderStyle = (worksheet) => {
-    for (let i = 'A'.charCodeAt(0); i <= 'L'.charCodeAt(0); i++) {
+    for (let i = 'A'.charCodeAt(0); i <= 'M'.charCodeAt(0); i++) {
         const cell = String.fromCharCode(i) + '1';
         worksheet.getCell(cell).fill = {
             type: 'pattern',
@@ -39,7 +40,7 @@ const applyHeaderStyle = (worksheet) => {
         };
     }
     worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
-    worksheet.autoFilter = 'A:L';
+    worksheet.autoFilter = 'A:M';
 };
 
 const getExcelE = async (res) => {
@@ -50,7 +51,8 @@ const getExcelE = async (res) => {
         db.query(`
             SELECT DISTINCT 
                 Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
-                empleado.Nom, 
+                empleado.Nom,
+                equipo.Ubi,
                 IFNULL(pcs.Hardware, "-") Hardware,
                 IFNULL(pcs.Software, "-") Software,
                 IFNULL(Monitor.Num_Serie_CPU, "-") Monitor,
@@ -81,7 +83,8 @@ const getExcelE = async (res) => {
                         Mouse: row.Mouse,
                         Teclado: row.Teclado,
                         Acces: row.Accesorio,
-                        Encargado: row.Nom
+                        Encargado: row.Nom,
+                        Ubi: row.Ubi
                     });
                 });
 

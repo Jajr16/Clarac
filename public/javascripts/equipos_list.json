@@ -2,6 +2,9 @@
     {
         "EQUIPO": "CPU"
     },
+    { 
+        "EQUIPO": "MONITOR"
+    },
     {
         "EQUIPO": "IMPRESORA"
     },
@@ -10,12 +13,6 @@
     },
     {
         "EQUIPO": "REGULADOR"
-    },
-    {
-        "EQUIPO": "DISCO DURO EXTERNO"
-    },
-    {
-        "EQUIPO": "ESCANER"
     },
     {
         "EQUIPO": "MULTIFUNCIONAL"
@@ -40,5 +37,20 @@
     },
     {
         "EQUIPO": "PROYECTOR"
+    },
+    {
+        "EQUIPO": "DISCO DURO EXTERNO"
+    },
+    {
+        "EQUIPO": "ESCANER"
+    },
+    {
+        "EQUIPO": "COPIADORA"
+    },
+    {
+        "EQUIPO": "ACCES POINT"
+    },
+    {
+        "EQUIPO": "EQUIPO DE AUDIO"
     }
 ]

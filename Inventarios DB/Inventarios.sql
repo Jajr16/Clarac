@@ -728,6 +728,7 @@ BEGIN
 END |
 DELIMITER ;
 
+drop procedure consulPE;
 DELIMITER | 
 CREATE PROCEDURE consulPE()
 BEGIN
@@ -1547,4 +1548,6 @@ CREATE TRIGGER AUAP AFTER INSERT ON usuario
 | DELIMITER ;
 
 DELETE FROM mobiliario where Num_Inventario = 75;
-select*from almacen;
+select*from usuario;
+select*from empleado;
+select*from permisos;

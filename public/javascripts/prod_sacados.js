@@ -30,7 +30,7 @@ if (!Permisos['ALMACÉN']) {
 
                     tbody.appendChild(tr);
                 });
-                empty_table('data-prod', 3);
+                empty_table('data-prod', 5);
                 sselect();
             })
             .catch(error => {

@@ -570,3 +570,7 @@ input[type="submit"]:hover {
 .eliminate {
     background-color: #ff3535!important;
 }
+
+.fa-xmark {
+    color: rgb(134, 0, 0);
+}

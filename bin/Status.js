@@ -18,6 +18,8 @@ function consulStatus(req, callback){
                     Enviado: item.status_peti,
                 }));
 
+                console.log(dataToSend)
+
                 return callback(null, { type: 'success',  dataToSend});
             } else {
                 return callback(null, []); 

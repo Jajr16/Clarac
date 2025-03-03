@@ -4,6 +4,7 @@ const router = express.Router();
 const petAdd = require('../bin/AddPet');
 const consulStatus = require('../bin/Status');
 const consulSol = require('../bin/Solicitudes');
+const deletePeti = require('../bin/DeletePeti');
 const confirmPet = require('../bin/ConfirmacionPet');
 const confirmPetDir = require('../bin/confirmPetDir');
 const viewStatus = require('../bin/viewStatusDir');
@@ -24,6 +25,15 @@ router.post('/addPet', isAuthenticated, subperm('PETICIONES', [1]), async (req, 
 
 router.post('/status', isAuthenticated, subperm('PETICIONES', [1]), async (req, res) => {
     consulStatus(req, (err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
+        }
+        res.json(result);
+    });
+});
+
+router.post('/cancelar', isAuthenticated, subperm('PETICIONES', [1]), async (req, res) => {
+    deletePeti(req, (err, result) => {
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
         }

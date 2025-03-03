@@ -51,6 +51,30 @@ if (!Permisos['PETICIONES']) {
             $('.description-product').removeClass('table-responsive-box')
         }
 
+        function eliminar(e, fecha, CB, Cantidad) {
+            e.stopPropagation(); 
+            
+            fetch('/pet/cancelar', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'fecha': fecha, 'CB': CB, 'user': user, 'cantidad': Cantidad })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.type == "success" || data.type == "Success") {
+                    showSuccessAlertReload(data.message);
+                } else {
+                    showErrorAlert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
+            });
+            
+        }
+
         function CRUDButtons() {
             $('.status').click((e) => {
                 e.preventDefault()
@@ -70,6 +94,7 @@ if (!Permisos['PETICIONES']) {
                                             <th>Producto</th>
                                             <th>Cantidad</th>
                                             <th>Estatus</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -79,13 +104,19 @@ if (!Permisos['PETICIONES']) {
                             const tbody = document.querySelector(".peti-table tbody");
                             data.dataToSend.forEach(item => {
                                 let tr = document.createElement('tr');
-
+                                
                                 tr.innerHTML = `
                                     <td>${item.Arti}</td>
                                     <td>${item.Cantidad}</td>
                                     <td>${item.Enviado}</td>
                                 `
-                                console.log(item.Enviado)
+
+                                if (item.Enviado !== 'Solicitud rechazada' || item.Enviado !== 'Entrega completa.') {
+                                    tr.innerHTML += `<td><i class="fa-solid fa-xmark" onclick="eliminar(event, '${item.fecha}', '${item.Cod_Barras}', '${item.Cantidad}')"></i></td>`
+                                } else {
+                                    tr.innerHTML += '<td style="background: inherit;"></td>'
+                                }
+
                                 if (item.Enviado !== 'Solicitud rechazada' &&
                                     item.Enviado !== 'Artículo recibido, esperando confirmación del almacenista.' &&
                                     item.Enviado !== 'Entrega completa.' && 
@@ -185,8 +216,8 @@ if (!Permisos['PETICIONES']) {
                         selProd.append($('<option>', { value: item.Articulo, text: item.Articulo }))
 
                         tr.innerHTML = `
-                        <td>${item.Cod_Barras}</td>
-                        <td>${item.Articulo}</td>
+                            <td>${item.Cod_Barras}</td>
+                            <td>${item.Articulo}</td>
                             <td>${item.Existencia}</td>`;
 
 
@@ -229,9 +260,13 @@ if (!Permisos['PETICIONES']) {
                 document.getElementById('errorMessage').innerText = 'Error en el servidor. Por favor, inténtelo de nuevo más tarde.';
             });
 
-        window.addEventListener('load', function (event) {
-            sselect()
-            CRUDButtons()
-        })
+            
+            window.addEventListener('load', function (event) {
+                CRUDButtons()
+                new SlimSelect({
+                    select: ".Prod"
+                });
+            })
+
     }
 }

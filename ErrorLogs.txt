@@ -24,3 +24,4 @@ Error: PROCEDURE inventarios.showMob does not exist | Error obtenido el -> 19/12
 Error: PROCEDURE inventarios.showMob does not exist | Error obtenido el -> 19/12/2024 12:2
 Error: PROCEDURE inventarios.consulRPS does not exist | Error obtenido el -> 19/12/2024 19:51
 Error: PROCEDURE inventarios.consulRPS does not exist | Error obtenido el -> 19/12/2024 19:51
+Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?)' at line 1 | Error obtenido el -> 02/03/2025 20:48

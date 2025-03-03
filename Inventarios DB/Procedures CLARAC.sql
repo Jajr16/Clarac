@@ -478,8 +478,7 @@ BEGIN
 			soli_car.Cod_Barras_SC AS CBSC,
 			almacen.Articulo AS artic,
 			soli_car.cantidad_SC AS Cant,
-			soli_car.request_date AS fecha,
-			
+			DATE_FORMAT(soli_car.request_date, '%Y-%m-%d %H:%i:%s') AS fecha,
 			CASE 
 				WHEN soli_car.cerrada = 1 AND status_soli.sol_id IS NULL THEN 'Solicitud rechazada'
                 WHEN status_soli.sol_id IS NULL THEN 'En espera de confirmación'
@@ -1224,6 +1223,26 @@ BEGIN
     FROM salidas_productos sp
     JOIN almacen a ON sp.Cod_BarrasS = a.Cod_Barras
     JOIN empleado e ON sp.Num_EmpS = e.Num_Emp;
+END |
+DELIMITER ;
+
+DELIMITER |
+CREATE PROCEDURE deletePeticion(
+	IN fecha datetime,
+    IN CB VARCHAR(45),
+    IN usu VARCHAR(45),
+    IN cantidad INT
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		ROLLBACK;
+	END;
+    START TRANSACTION;
+    
+    DELETE FROM soli_car WHERE request_date = fecha AND Cod_Barras_SC = CB AND emp_SC = (SELECT Num_Emp FROM usuario WHERE Usuario = usu) AND cantidad_SC = cantidad;
+    
+    
 END |
 DELIMITER ;
 

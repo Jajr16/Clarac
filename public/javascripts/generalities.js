@@ -134,15 +134,20 @@ function eliminarOpcionesSueltas(especificoDiv) {
 }
 
 function dissapear() {
+    console.log('Vaciando inputs')
+    
     const inputM = $('.EditData')
     const inputS = $('.EditSelect')
     const select = $('.actionSelect')
 
-    inputM.attr("placeholder", '')
-    inputM.attr("readonly", true)
-    inputS.attr('disabled', true)
+    // Limpiar contenido de input
     inputM.val('')
     inputS.val('')
+
+    inputM.attr("readonly", true)
+    inputS.attr('disabled', true)
+    
+    inputM.attr("placeholder", '')
     
     $('.Modify').remove()
     $('.Cancel').remove()

@@ -46,15 +46,6 @@ router.post('/', isAuthenticated, (req, res) => {
   });
 });
 
-router.post('/new_mob', isAuthenticated, subperm('MOBILIARIO', [1]), (req, res) => {
-  addFurnit(req, (err, result) => {
-    if (err) {
-      return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
-    }
-    res.json(result);
-  });
-});
-
 router.post('/getName', isAuthenticated, (req, res) => {
   getName(req, (err, result) => {
     if (err) {
@@ -204,32 +195,6 @@ router.post('/users/upload', isAuthenticated, subperm('MOBILIARIO', [1]), upload
     res.json(result);
   });
 });
-
-// router.get('/users/files', isAuthenticated, async (req, res) => {
-//   if (!gfsBucket) {
-//     console.log('gfsBucket no está inicializado');
-//     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
-//   }
-
-//   console.log('Obteniendo archivos de GridFS...');
-
-//   try {
-//     const files = await gfsBucket.find().toArray();
-
-//     console.log('Archivos obtenidos:', files);
-//     if (!files || files.length === 0) {
-//       console.log('No hay archivos guardados');
-//       return res.status(404).json({ err: 'No hay archivos guardados' });
-//     }
-
-//     console.log('Devolviendo lista de archivos');
-//     res.json(files);
-
-//   } catch (err) {
-//     console.error('Error al obtener archivos:', err);
-//     res.status(500).json({ err: 'Error al obtener archivos' });
-//   }
-// });
 
 router.post('/users/disp_image', isAuthenticated, upload.none(), async (req, res) => {
   let filename = customId(req, false)

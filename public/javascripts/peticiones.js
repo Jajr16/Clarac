@@ -110,8 +110,9 @@ if (!Permisos['PETICIONES']) {
                                     <td>${item.Cantidad}</td>
                                     <td>${item.Enviado}</td>
                                 `
+                                console.log(item.Enviado == 'Entrega completa.')
 
-                                if (item.Enviado !== 'Solicitud rechazada' || item.Enviado !== 'Entrega completa.') {
+                                if (item.Enviado !== 'Solicitud rechazada' && item.Enviado !== 'Entrega completa.') {
                                     tr.innerHTML += `<td><i class="fa-solid fa-xmark" onclick="eliminar(event, '${item.fecha}', '${item.Cod_Barras}', '${item.Cantidad}')"></i></td>`
                                 } else {
                                     tr.innerHTML += '<td style="background: inherit;"></td>'

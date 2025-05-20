@@ -3,7 +3,7 @@ var Errores = require('./Error')
 
 function consulmob(req, callback) {
     const data = req.body;
-    console.log(data)
+    console.log(`Los datos que llegan a Mobiliario son: ${JSON.stringify(data)}`)
     
     db.query(`CALL showMob(?)`, [data.username], function (err2, result) {
         if (err2) { Errores(err2); } // Se hace un control de errores
@@ -16,7 +16,7 @@ function consulmob(req, callback) {
                     Cantidad: item.Cantidad,
                     Area: item.Área,
                     Nombre: item.Nom,
-                    Usuario: item.Num_emp
+                    Usuario: item.usuario
                 }));
                 return callback(null, dataToSend);
             } else {

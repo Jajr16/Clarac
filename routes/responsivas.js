@@ -6,7 +6,7 @@ const upload = require('../config/multerConfig');
 const { isAuthenticated, permissions, subperm } = require('../middleware/authMiddleware');
 
 const getResponsives = require('../bin/getResponsives')
-const getEmploys = require('../bin/getEmploys')
+const {getEmploys, getUsersAndEmploys} = require('../bin/getEmploys')
 
 router.post('/', isAuthenticated, permissions('RESPONSIVAS'), upload.none(), async (req, res) => {
     getResponsives(req, async (err, result) => {
@@ -34,6 +34,15 @@ router.get('/getEmploys', isAuthenticated, upload.none(), async (req, res) => {
         }
         res.json(result);
     });
+})
+
+router.get('/getUsersAndEmploys', isAuthenticated, upload.none(), async (req, res) => {
+    getUsersAndEmploys((err, result) => {
+        if (err) {
+            return res.status(500).json({ type: 'error', message: 'Error en el servidor: ', details: err });
+        }
+        res.json(result);
+    })
 })
 
 module.exports = router;

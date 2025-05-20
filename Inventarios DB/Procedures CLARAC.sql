@@ -536,19 +536,11 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 	
-    IF encargado IS NOT NULL THEN
-		-- Insertar el mobiliario en la tabla de mobiliario
-		INSERT INTO mobiliario VALUES (NULL, arti, descrip, (
-			SELECT Num_emp from empleado where Nom = encargado
-        ), ubi, Cant, (select Área from empleado where Num_emp = (SELECT Num_emp from empleado where Nom = encargado)));
-        
-    ELSE
-        -- Insertar el mobiliario en la tabla de mobiliario
-		INSERT INTO mobiliario VALUES (NULL, arti, descrip, (
-			SELECT Num_emp from usuario where Usuario = usuar
-        ), ubi, Cant, (select Área from empleado where Num_emp = (SELECT Num_emp from usuario where Usuario = usuar)));
+	-- Insertar el mobiliario en la tabla de mobiliario
+	INSERT INTO mobiliario VALUES (NULL, arti, descrip, (
+		SELECT Num_emp from usuario where Usuario = usuar
+	), ubi, Cant, (select Área from empleado where Num_emp = (SELECT Num_emp from usuario where Usuario = usuar)));
 
-    END IF;
 
 	-- Confirmar si la inserción fue exitosa
     SELECT 'Success' AS status;
@@ -574,7 +566,7 @@ BEGIN
 		IF EXISTS (SELECT 1 FROM permisos WHERE usuario = usu AND permiso = 5 AND modulo = 'MOBILIARIO') THEN
 			SELECT m.*, e.Nom, u.usuario FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp INNER JOIN usuario u ON u.Num_Emp = m.Num_emp;
 		ELSE
-			SELECT m.*, e.Nom FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
+			SELECT m.*, e.Nom, u.usuario FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp INNER JOIN usuario u ON u.Num_Emp = m.Num_emp WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
 		END IF;
         
 	 -- Confirmar si la inserción fue exitosa
@@ -650,12 +642,12 @@ BEGIN
 END //
 DELIMITER ;
 
+select*from mobiliario;
 drop procedure if exists ModificarUEMob;
 DELIMITER //
 CREATE PROCEDURE ModificarUEMob(
     IN nuevoArticulo VARCHAR(100),
     IN nuevaDescripcion VARCHAR(400),
-    IN usuar VARCHAR(45),
     IN encargado VARCHAR(45),
     IN nuevaUbicacion VARCHAR(400),
     IN nuevaCantidad INT,
@@ -674,36 +666,18 @@ BEGIN
     -- Iniciar la transacción
     START TRANSACTION;
 
-    IF encargado IS NOT NULL THEN
-        -- Modificar el mobiliario en la tabla de mobiliario utilizando el encargado
-        UPDATE mobiliario
-        SET 
-            Articulo = nuevoArticulo,
-            Descripcion = nuevaDescripcion,
-            Num_emp = (SELECT Num_emp from empleado where Nom = encargado),
-            Ubicacion = nuevaUbicacion,
-            Cantidad = nuevaCantidad
-        WHERE 
-            Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua 
-            AND Num_emp = (SELECT Num_emp from empleado where Nom = usuarioAntiguo);
-            
-		select Num_emp from mobiliario;
-        
-    ELSE
-        -- Modificar el mobiliario en la tabla de mobiliario utilizando el usuario
-        UPDATE mobiliario
-        SET 
-            Articulo = nuevoArticulo,
-            Descripcion = nuevaDescripcion,
-            Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuar),
-            Ubicacion = nuevaUbicacion,
-            Cantidad = nuevaCantidad
-        WHERE 
-            Articulo = articuloAntiguo 
-            AND Descripcion = descripcionAntigua
-            AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
-    END IF;
+	-- Modificar el mobiliario en la tabla de mobiliario utilizando el usuario
+	UPDATE mobiliario
+	SET 
+		Articulo = nuevoArticulo,
+		Descripcion = nuevaDescripcion,
+		Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = encargado),
+		Ubicacion = nuevaUbicacion,
+		Cantidad = nuevaCantidad
+	WHERE 
+		Articulo = articuloAntiguo 
+		AND Descripcion = descripcionAntigua
+		AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
 
 	-- Confirmar si la modificación fue exitosa
     SELECT 'Success' AS status;

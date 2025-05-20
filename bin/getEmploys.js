@@ -18,4 +18,22 @@ function getEmploys(callback) {
     });
 }
 
-module.exports = getEmploys;
+function getUsersAndEmploys(callback) {
+    db.query('select e.Nom, u.usuario from empleado e INNER JOIN usuario u ON u.Num_Emp = e.Num_emp', function (err, res) {
+        if (err) {
+            Errores(err);
+            return callback(err);
+        } else {
+            if (res.length > 0) {
+                const dataToSend = res.map(item => ({
+                    employee: item.Nom,
+                    user: item.usuario
+                }));
+
+                return callback(null, dataToSend);
+            }
+        }
+    });
+}
+
+module.exports = {getUsersAndEmploys, getEmploys}

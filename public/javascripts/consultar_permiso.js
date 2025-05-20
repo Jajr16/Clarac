@@ -13,29 +13,35 @@ window.insertSelectForEmployees = function (defaultEmployee) {
             targetDiv.insertAdjacentHTML('beforebegin', selectHTML);
             const employSelect = document.querySelector('#actionSelect');
 
-            fetch('/responsiva/getEmploys', {
+            fetch('/responsiva/getUsersAndEmploys', {
                 method: 'GET'
             })
-            .then(response => response.json())
-            .then(data => {
-                employSelect.innerHTML = '<option disabled selected>Encargado...</option>';
-                data.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.employee;
-                    option.textContent = item.employee;
-                    option.setAttribute('encargado', item.user);
-                    employSelect.appendChild(option);
-                });
+                .then(response => response.json())
+                .then(data => {
+                    employSelect.innerHTML = '<option disabled selected>Encargado...</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.user;
+                        option.textContent = item.employee;
+                        option.setAttribute('encargado', item.employee);
+                        employSelect.appendChild(option);
+                    });
 
-                // Establecer el valor predeterminado si se proporciona
-                if (defaultEmployee) {
-                    employSelect.value = defaultEmployee;
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
-            });
+                    // Establecer el valor predeterminado si se proporciona
+                    if (defaultEmployee) {
+                        const options = employSelect.options;
+                        for (let i = 0; i < options.length; i++) {
+                            if (options[i].text.trim() === defaultEmployee.trim()) {
+                                employSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
+                });
 
             new SlimSelect({
                 select: '.actionSelect'

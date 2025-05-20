@@ -7,12 +7,11 @@ function modifyMob(req, callback) {
     const data = req.body;
     console.log(data)
 
-    const usuario = data.user || null;          // Usuario actual (puede ser nulo)
     const encargado = data.encargado || null;   // Encargado (puede ser nulo)
 
     // Realizar la llamada al procedimiento almacenado
-    db.query('CALL ModificarUEMob(?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-        [data.Narticulo, data.Ndescripcion, usuario, encargado, data.ubicacion, data.cantidad, data.articulo, data.descripcion, data.oldUsuario], 
+    db.query('CALL ModificarUEMob(?, ?, ?, ?, ?, ?, ?, ?)', 
+        [data.Narticulo, data.Ndescripcion, encargado, data.ubicacion, data.cantidad, data.articulo, data.descripcion, data.oldUsuario], 
         function (err, result) {
             if (err) { 
                 Errores(err); 

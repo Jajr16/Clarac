@@ -8,23 +8,13 @@ if (!Permisos['MOBILIARIO']) {
 } else {
     if (pathname == "/users/consulMob" && (Permisos['MOBILIARIO'].includes('4') || Permisos['MOBILIARIO'].includes('2') || Permisos['MOBILIARIO'].includes('1') || Permisos['MOBILIARIO'].includes('3') || Permisos['MOBILIARIO'].includes('5'))) {
 
-        function identificate(name) {
-            let nombre = ''
-            if (nom == name) {
-                nombre = user;
-            } else {
-                nombre = name
-            }
-            return nombre
-        }
-
         function agregarEncargadoOUsuario(formData, Permisos, user) {
             // Verificamos si el permiso es '5'
             if (Permisos['MOBILIARIO'].includes('5')) {
                 let encargado = document.querySelector('.actionSelect').value;
                 formData.append('encargado', encargado);
             } else {
-                formData.append('user', user);
+                formData.append('encargado', user);
             }
         }
 
@@ -90,7 +80,7 @@ if (!Permisos['MOBILIARIO']) {
                     // Agregar encargado o usuario
                     agregarEncargadoOUsuario(formData, Permisos, user);
 
-                    fetch('/mobiliario/users/check-filename', { 
+                    fetch('/mobiliario/users/check-filename', {
                         method: 'POST',
                         body: formData  // Enviar el FormData sin especificar el Content-Type
                     })
@@ -154,36 +144,6 @@ if (!Permisos['MOBILIARIO']) {
                     const imagen = document.getElementsByClassName('furniture-image')[0];
                     imagen.addEventListener('click', ImageFunction);
                 });
-
-                // Función para manejar el botón "Cancelar"
-                window.dissapear = function () {
-                    // Volver a deshabilitar el input
-                    inputP.attr("disabled", true);
-
-                    // Mostrar el botón "fa-circle-plus" de nuevo
-                    addF.show();
-
-                    // Eliminar los botones "Guardar" y "Cancelar"
-                    $('.Modify').remove();
-                    $('.Cancel').remove();
-
-                    // Eliminar el select y su label si existen
-                    const select = document.querySelector('#actionSelect');
-                    const label = document.querySelector('label[for="actionSelect"]');
-                    if (select) {
-                        select.remove();
-                    }
-                    if (label) {
-                        label.remove();
-                    }
-
-                    // Ocultar los botones "edit" y "trash"
-                    $('.edit').hide();
-                    $('.trash').hide();
-
-                    // Mostrar otros elementos ocultos, si es necesario
-                    $('.editE').css('display', 'inline');
-                };
             }
         });
 
@@ -199,6 +159,10 @@ if (!Permisos['MOBILIARIO']) {
 
         if (Permisos['MOBILIARIO'].includes('3')) {
             function modify(oldName, oldDesc, oldUser, e) {
+
+                const nombreViejo = $('.actionSelect').val()
+                console.log(nombreViejo)
+
                 e.preventDefault()
 
                 const formData = new FormData();
@@ -212,8 +176,9 @@ if (!Permisos['MOBILIARIO']) {
                 formData.append('ubicacion', document.querySelector('.UbiM').value);
                 formData.append('articulo', oldName);
                 formData.append('descripcion', oldDesc);
-                
-                formData.append('oldUsuario', identificate(oldUser));
+
+                console.log(`El usuario anterior es: ${oldUser}, su nombre antiguo es: ${oldName}`)
+                formData.append('oldUsuario', oldUser);
 
                 fetch('/mobiliario/mod_mob', {
                     method: 'POST',
@@ -318,6 +283,7 @@ if (!Permisos['MOBILIARIO']) {
                 const nombre_Articulo = $('.Fname').val();
                 const desc_Articulo = $('.DescM').val();
                 const empleado = $('.EmpM').val(); // Obtener el nombre del empleado
+                const oldUser = $('.EmpM').data('usr')
                 removeEmpM(); // Llamada a la función
 
                 const image = $('.furniture-image');
@@ -330,12 +296,12 @@ if (!Permisos['MOBILIARIO']) {
                 window.insertSelectForEmployees(empleado);
 
                 if (Permisos['MOBILIARIO'].includes('5')) {
-                    var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${empleado}', event)" class="Modify">`;
+                    var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${oldUser}', event)" class="Modify">`;
                 } else {
                     var modify = `<input type="submit" value="Guardar" id="modyMob" name="modyMob" onclick="modify('${nombre_Articulo}', '${desc_Articulo}', '${user}', event)" class="Modify">`;
                 }
 
-                var cancel = `<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(event); dissapearImage();" name="Cancel" class="Cancel">`;
+                var cancel = `<input type="submit" value="Cancelar" id="Cancel" onclick="dissapear(); dissapearImage();" name="Cancel" class="Cancel">`;
 
                 editsFunctions(modify, cancel);
 
@@ -359,6 +325,8 @@ if (!Permisos['MOBILIARIO']) {
                     empty_table()
                 }
 
+                console.log(data)
+
                 data.forEach(item => {
                     selMob.append($('<option>', { value: item.Articulo, text: item.Articulo }))
 
@@ -375,8 +343,8 @@ if (!Permisos['MOBILIARIO']) {
                             formData.append('articulo', item.Articulo)
                             formData.append('descripcion', item.Descripcion)
 
-                            formData.append('user', item.Nombre)
-                            
+                            formData.append('user', item.Usuario)
+
                             fetch('/mobiliario/users/disp_image', {
                                 method: 'POST',
                                 body: formData
@@ -406,7 +374,7 @@ if (!Permisos['MOBILIARIO']) {
                         formData.append('articulo', item.Articulo)
                         formData.append('descripcion', item.Descripcion)
 
-                        formData.append('user', item.Nombre)
+                        formData.append('user', item.Usuario)
                         formData.forEach((value, key) => {
                             console.log(`${key}: ${value}`);
                         });
@@ -429,7 +397,7 @@ if (!Permisos['MOBILIARIO']) {
                                     const divHTML = `
                                             <div class="DF">
                                                 <label>Encargado:</label>
-                                                <input autocomplete="off" type="text" id="EmpM" name="EmpM" class="EmpM EditData" required
+                                                <input autocomplete="off" type="text" data-usr="${item.Usuario}" id="EmpM" name="EmpM" class="EmpM EditData" required
                                                     maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
                                             </div>`;
                                     targetDiv.insertAdjacentHTML('beforebegin', divHTML);

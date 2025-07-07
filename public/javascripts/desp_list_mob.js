@@ -9,17 +9,23 @@ async function cargarMobilairio() {
 
         const mobiliarioJson = await response.json();
 
-        window.selectMobiliario = new SlimSelect({
-            select: '#Fname',
-            events: {
-                addable: function (value) {
-                    return {
-                        text: value.toUpperCase(),
-                        value: value.toUpperCase()
-                    }
-                },
-            }
-        })
+        if (Permisos['ADMIN']) {
+            window.selectMobiliario = new SlimSelect({
+                select: '#Fname',
+                events: {
+                    addable: function (value) {
+                        return {
+                            text: value.toUpperCase(),
+                            value: value.toUpperCase()
+                        }
+                    },
+                }
+            })
+        } else {
+            window.selectMobiliario = new SlimSelect({
+                select: '#Fname'
+            })
+        }
 
         let options = [{
             text: '',

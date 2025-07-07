@@ -20,17 +20,24 @@ if (!Permisos['EQUIPOS']) {
             select: '#Employees'
         })
 
-        let listaEquipos = new SlimSelect({
-            select: '#Ename',
-            events: {
-                addable: function (value) {
-                    return {
-                        text: value.toUpperCase(),
-                        value: value.toUpperCase()
-                    }
-                },
-            }
-        })
+        let listaEquipos = ''
+        if (Permisos['ADMIN']) {
+            listaEquipos = new SlimSelect({
+                select: '#Ename',
+                events: {
+                    addable: function (value) {
+                        return {
+                            text: value.toUpperCase(),
+                            value: value.toUpperCase()
+                        }
+                    },
+                }
+            })
+        } else {
+            listaEquipos = new SlimSelect({
+                select: '#Ename'
+            })
+        }
 
         function disabledSelect() {
             listaEquipos.setSelected('')

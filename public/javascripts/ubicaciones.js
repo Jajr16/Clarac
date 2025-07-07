@@ -8,17 +8,24 @@ async function cargarUbicaciones() {
 
         const ubicacionRespuesta = await response.json();
 
-        window.selectUbicacion = new SlimSelect({
-            select: '.ubiSelect',
-            events: {
-                addable: function (value) {
-                    return {
-                        text: value.toUpperCase(),
-                        value: value.toUpperCase()
+        if (Permisos['ADMIN']) {
+            window.selectUbicacion = new SlimSelect({
+                select: '.ubiSelect',
+                events: {
+                    addable: function (value) {
+                        return {
+                            text: value.toUpperCase(),
+                            value: value.toUpperCase()
+                        }
                     }
                 }
-            }
-        })
+            })
+        } else {
+            console.log('NO PERMISO GENERAL')
+            window.selectUbicacion = new SlimSelect({
+                select: '.ubiSelect'
+            })
+        }
 
         let options = [{
             text: '',
@@ -33,7 +40,7 @@ async function cargarUbicaciones() {
 
         selectUbicacion.setData(options)
 
-        
+
     } catch (error) {
         console.error('Error al cargar información de las ubicaciones. ', error);
     }

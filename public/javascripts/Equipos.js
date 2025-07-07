@@ -19,10 +19,26 @@ if (!Permisos['EQUIPOS']) {
         let selectEmploy = new SlimSelect({
             select: '#Employees'
         })
-        
+
+        let listaEquipos = new SlimSelect({
+            select: '#Ename',
+            events: {
+                addable: function (value) {
+                    return {
+                        text: value.toUpperCase(),
+                        value: value.toUpperCase()
+                    }
+                },
+            }
+        })
+
         function disabledSelect() {
+            listaEquipos.setSelected('')
+            listaEquipos.disable();
             selectEmploy.setSelected('')
             selectEmploy.disable();
+            window.selectUbicacion.disable();
+            window.selectUbicacion.setSelected('')
         }
 
         if (Permisos['EQUIPOS'].includes('1')) {
@@ -32,6 +48,7 @@ if (!Permisos['EQUIPOS']) {
                 const addData = {
                     Num_Serie: document.querySelector('.NumSerieE').value,
                     Equipo: document.querySelector('.Ename').value,
+
                     Marca: document.querySelector('.MarcaE').value,
                     Modelo: document.querySelector('.ModeloE').value,
                     Ubi: document.querySelector('.UbiE').value,
@@ -112,7 +129,6 @@ if (!Permisos['EQUIPOS']) {
             Components_CPU.css('display', 'none')
 
             const selectEqp = $('.Ename')
-            selectEqp.append($('<option>', { disabled: true, selected: true }))
 
             selectEqp.on('change', function () {
                 if (selectEqp.val() !== 'MONITOR') {
@@ -137,6 +153,10 @@ if (!Permisos['EQUIPOS']) {
                 addP.click(function (e) {
                     selectEmploy.setSelected('')
                     selectEmploy.enable();
+                    listaEquipos.setSelected('')
+                    listaEquipos.enable();
+                    window.selectUbicacion.setSelected('')
+                    window.selectUbicacion.enable()
 
                     var add = `<input type="submit" value="Guardar" id="modyEqp" name="modyEqp" onclick="addEquipment(event)" class="Modify">`;
                     var cancel = '<input type="submit" value="Cancelar" id="cancelEqp" onclick="dissapear(); disabledSelect();" name="cancelEqp" class="Cancel">';
@@ -145,15 +165,23 @@ if (!Permisos['EQUIPOS']) {
                 })
             }
 
-            const employ = $('.Employees')
             fetch('../responsiva/getEmploys', {
                 method: 'GET'
             })
                 .then(response => response.json())
                 .then(data => {
-                    data.forEach(item => {
-                        employ.append($('<option>', { value: item.employee, text: item.employee }))
-                    })
+                    console.log(data)
+
+                    const options = [{ text: '', value: '' }]
+                    const optionlist = data.map(item => ({
+                        text: item.employee,
+                        value: item.employee
+                    }))
+
+                    options.push(...optionlist)
+
+                    selectEmploy.setData(options)
+
                     eliminarOpcionesSueltas('.ss-main.Employees')
                 })
                 .catch(error => {
@@ -260,7 +288,9 @@ if (!Permisos['EQUIPOS']) {
 
             edit.click(function (e) {
                 selectEmploy.enable();
-                
+                listaEquipos.enable();
+                window.selectUbicacion.enable();
+
                 var Num_Serie = $('.NumSerieE').val();
                 var encargadOld = $('.Employees').val();
 
@@ -295,9 +325,10 @@ if (!Permisos['EQUIPOS']) {
                             iconsLogic()
                             $('.NumSerieE').val(item.Num_Serie);
                             $('.Ename').val(item.Equipo);
+                            listaEquipos.setSelected(item.Equipo)
                             $('.MarcaE').val(item.Marca);
                             $('.ModeloE').val(item.Modelo);
-                            $('.UbiE').val(item.Ubi);
+                            window.selectUbicacion.setSelected(item.Ubi)
                             $('.AsignCPU').val('')
                             selectEmploy.setSelected('')
                             $('.Hardware').val('')
@@ -364,9 +395,10 @@ if (!Permisos['EQUIPOS']) {
 
                         $('.NumSerieE').val(item.Num_Serie);
                         $('.Ename').val(item.Equipo);
+                        listaEquipos.setSelected(item.Equipo)
                         $('.MarcaE').val(item.Marca);
                         $('.ModeloE').val(item.Modelo);
-                        $('.UbiE').val(item.Ubi);
+                        window.selectUbicacion.setSelected(item.Ubi);
                         $('.AsignCPU').val('')
                         $('.Hardware').val('')
                         selectEmploy.setSelected('')

@@ -356,8 +356,8 @@ if (!Permisos['MOBILIARIO']) {
                             }).then(blob => {
                                 const url = URL.createObjectURL(blob); // Crear URL del blob
                                 document.querySelector('.furniture-image').src = url;
-                                $('.Fname').val(item.Articulo);
-                                $('.UbiM').val(item.Ubicacion);
+                                window.selectMobiliario.setSelected(item.Articulo);
+                                window.selectUbicacion.setSelected(item.Ubicacion)
                                 $('.CantidadM').val(item.Cantidad);
                                 $('.DescM').val(item.Descripcion);
                             }).catch(error => {
@@ -389,7 +389,7 @@ if (!Permisos['MOBILIARIO']) {
                         }).then(blob => {
                             const url = URL.createObjectURL(blob); // Crear URL del blob
                             document.querySelector('.furniture-image').src = url;
-                            $('.Fname').val(item.Articulo);
+                            window.selectMobiliario.setSelected(item.Articulo);
 
                             if (Permisos['MOBILIARIO'].includes('5')) {
                                 const targetDiv = document.querySelector('.DF');
@@ -406,7 +406,7 @@ if (!Permisos['MOBILIARIO']) {
                                 $('.EmpM').val(item.Nombre);
                             }
 
-                            $('.UbiM').val(item.Ubicacion);
+                            window.selectUbicacion.setSelected(item.Ubicacion)
                             $('.CantidadM').val(item.Cantidad);
                             $('.DescM').val(item.Descripcion);
                         }).catch(error => {

@@ -10,6 +10,7 @@ const delFurnit = require('../bin/deleteMobiliario');
 const getName = require('../bin/getName');
 const upload = require('../config/multerConfig');
 const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
+const { agregarNuevoElemento } = require('../utils/nuevoArchivo');
 
 const customId = require('../utils/customId');
 
@@ -60,7 +61,11 @@ router.post('/mod_mob', isAuthenticated, subperm('MOBILIARIO', [3]), upload.none
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-    res.json(result);
+    agregarNuevoElemento(req.body.Narticulo.toUpperCase(), 'mobiliario_list', (resultado) => {
+      if (resultado.success) {
+        res.json(result);
+      }
+    })
   });
 });
 
@@ -192,7 +197,11 @@ router.post('/users/upload', isAuthenticated, subperm('MOBILIARIO', [1]), upload
     if (err) {
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
-    res.json(result);
+    agregarNuevoElemento(req.body.articulo.toUpperCase(), 'mobiliario_list', (resultado) => {
+      if (resultado.success) {
+        res.json(result);
+      }
+    })
   });
 });
 
@@ -229,38 +238,5 @@ router.post('/users/disp_image', isAuthenticated, upload.none(), async (req, res
     res.status(500).json({ err: 'Error al obtener el archivo' });
   }
 });
-
-// router.get('/users/image/:id', isAuthenticated, async (req, res) => {
-//   if (!gfsBucket) {
-//     console.log('gfsBucket no está inicializado');
-//     return res.status(500).json({ err: 'GridFSBucket no está inicializado' });
-//   }
-
-//   console.log('Obteniendo archivo de GridFS...', req.params.id);
-
-//   try {
-//     const fileImageCursor = await gfsBucket.find({ _id: req.params.id }).toArray();
-
-//     if (!fileImageCursor || fileImageCursor.length === 0) {
-//       console.log('No se encontró el archivo');
-//       return res.status(404).json({ err: 'No se encontró el archivo' });
-//     }
-
-//     const fileImage = fileImageCursor[0];
-
-//     if (fileImage.contentType === 'image/jpeg' || fileImage.contentType === 'image/png' || fileImage.contentType === 'image/jpg') {
-//       console.log('Es una imagen, devolviendo el stream');
-//       const readstream = gfsBucket.openDownloadStream(fileImage._id);
-//       readstream.pipe(res);
-//     } else {
-//       console.log('El archivo no es una imagen');
-//       res.status(404).json({ err: 'No es una imagen' });
-//     }
-
-//   } catch (err) {
-//     console.error('Error al obtener el archivo: ', err);
-//     res.status(500).json({ err: 'Error al obtener archivos' });
-//   }
-// });
 
 module.exports = router;

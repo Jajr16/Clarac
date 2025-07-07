@@ -36,3 +36,16 @@ undefined | Error obtenido el -> 20/05/2025 14:51
 Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?)' at line 1 | Error obtenido el -> 20/05/2025 14:53
 undefined | Error obtenido el -> 20/05/2025 14:55
 undefined | Error obtenido el -> 20/05/2025 14:57
+undefined | Error obtenido el -> 20/06/2025 13:9
+undefined | Error obtenido el -> 20/06/2025 13:9
+undefined | Error obtenido el -> 20/06/2025 13:19
+Error: Incorrect number of arguments for PROCEDURE inventarios.ModificarUEMob; expected 9, got 8 | Error obtenido el -> 21/06/2025 12:26
+undefined | Error obtenido el -> 21/06/2025 15:56
+undefined | Error obtenido el -> 21/06/2025 16:2
+undefined | Error obtenido el -> 21/06/2025 16:3
+undefined | Error obtenido el -> 21/06/2025 16:3
+undefined | Error obtenido el -> 21/06/2025 16:5
+undefined | Error obtenido el -> 21/06/2025 16:5
+undefined | Error obtenido el -> 21/06/2025 16:6
+[[{"Level":"Error","Code":1062,"Message":"Duplicate entry 'A1' for key 'equipo.PRIMARY'"}],{"fieldCount":0,"affectedRows":0,"insertId":0,"info":"","serverStatus":16418,"warningStatus":0,"changedRows":0}] | Error obtenido el -> 21/06/2025 16:9
+[[{"Level":"Error","Code":1062,"Message":"Duplicate entry 'A1' for key 'equipo.PRIMARY'"}],{"fieldCount":0,"affectedRows":0,"insertId":0,"info":"","serverStatus":16418,"warningStatus":0,"changedRows":0}] | Error obtenido el -> 21/06/2025 16:10

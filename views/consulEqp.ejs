@@ -46,7 +46,9 @@
             <div class="description-equipment">
                 <div class="DE">
                     <label>Equipo:</label>
-                    <select id="Ename" class="Ename EditData EditSelect" name="Ename" required disabled></select>
+                    <select id="Ename" class="Ename EditData EditSelect" name="Ename" required disabled>
+                        <option disabled selected></option>
+                    </select>
                 </div>
                 <div class="DE">
                     <label>Número de serie:</label>
@@ -65,8 +67,8 @@
                 </div>
                 <div class="DE">
                     <label>Ubicación:</label>
-                    <input autocomplete="off" type="text" id="UbiE" name="UbiE" class="UbiE EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select autocomplete="off" type="text" id="UbiE" name="UbiE" class="UbiE EditData ubiSelect" required
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" disabled ></select>
                 </div>
                 <div class="DE">
                     <label>Encargado:</label>
@@ -111,3 +113,5 @@
 <link rel="stylesheet" type="text/css" href="/stylesheets/equipments.css">
 <script type="text/javascript" src="/javascripts/Equipos.js"></script>
 <script type="text/javascript" src="/javascripts/desp_list_eqp.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script type="text/javascript" src="/javascripts/ubicaciones.js"></script>

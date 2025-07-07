@@ -1,56 +1,62 @@
 [
-    {
-        "EQUIPO": "CPU"
-    },
-    { 
-        "EQUIPO": "MONITOR"
-    },
-    {
-        "EQUIPO": "IMPRESORA"
-    },
-    {
-        "EQUIPO": "NOBREAK"
-    },
-    {
-        "EQUIPO": "REGULADOR"
-    },
-    {
-        "EQUIPO": "MULTIFUNCIONAL"
-    },
-    {
-        "EQUIPO": "TELÉFONO"
-    },
-    {
-        "EQUIPO": "PIZARRÓN DIGITAL"
-    },
-    {
-        "EQUIPO": "SERVIDOR"
-    },
-    {
-        "EQUIPO": "SWITCH"
-    },
-    {
-        "EQUIPO": "GATEWAY"
-    },
-    {
-        "EQUIPO": "BOCINA"
-    },
-    {
-        "EQUIPO": "PROYECTOR"
-    },
-    {
-        "EQUIPO": "DISCO DURO EXTERNO"
-    },
-    {
-        "EQUIPO": "ESCANER"
-    },
-    {
-        "EQUIPO": "COPIADORA"
-    },
-    {
-        "EQUIPO": "ACCES POINT"
-    },
-    {
-        "EQUIPO": "EQUIPO DE AUDIO"
-    }
+  {
+    "EQUIPO": "CPU"
+  },
+  {
+    "EQUIPO": "MONITOR"
+  },
+  {
+    "EQUIPO": "IMPRESORA"
+  },
+  {
+    "EQUIPO": "NOBREAK"
+  },
+  {
+    "EQUIPO": "REGULADOR"
+  },
+  {
+    "EQUIPO": "MULTIFUNCIONAL"
+  },
+  {
+    "EQUIPO": "TELÉFONO"
+  },
+  {
+    "EQUIPO": "PIZARRÓN DIGITAL"
+  },
+  {
+    "EQUIPO": "SERVIDOR"
+  },
+  {
+    "EQUIPO": "SWITCH"
+  },
+  {
+    "EQUIPO": "GATEWAY"
+  },
+  {
+    "EQUIPO": "BOCINA"
+  },
+  {
+    "EQUIPO": "PROYECTOR"
+  },
+  {
+    "EQUIPO": "DISCO DURO EXTERNO"
+  },
+  {
+    "EQUIPO": "ESCANER"
+  },
+  {
+    "EQUIPO": "COPIADORA"
+  },
+  {
+    "EQUIPO": "ACCES POINT"
+  },
+  {
+    "EQUIPO": "EQUIPO DE AUDIO"
+  },
+  {
+    "EQUIPO": "TABLET"
+  },
+  {
+    "EQUIPO": "CELULAR"
+  }
 ]

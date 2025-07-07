@@ -517,6 +517,7 @@ BEGIN
 END |
 DELIMITER ;
 
+drop procedure AgregarUEMob;
 DELIMITER //
 CREATE PROCEDURE AgregarUEMob(
 	IN arti varchar(100),

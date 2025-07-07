@@ -50,8 +50,8 @@
             <div class="description-furniture">
                 <div class="DF">
                     <label>Ubicación:</label>
-                    <input autocomplete="off" type="text" id="UbiM EditData" name="UbiM" class="UbiM EditData" required
-                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <select autocomplete="off" type="text" id="UbiM EditData" name="UbiM" class=" ubiSelect UbiM EditData" required
+                        maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" disabled></select>
                 </div>
                 <div class="DF">
                     <label>Cantidad:</label>
@@ -76,3 +76,5 @@
 <script type="text/javascript" src="/javascripts/Mobiliario.js"></script>
 <script type="text/javascript" src="/javascripts/desp_list_mob.js"></script>
 <script type="text/javascript" src="/javascripts/consultar_permiso.js"></script>
+<script type="text/javascript" src="/javascripts/ubicaciones.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>

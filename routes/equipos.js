@@ -1,8 +1,9 @@
 
 const express = require('express');
 const router = express.Router();
-const upload = require('../config/multerConfig'); 
+const upload = require('../config/multerConfig');
 const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
+const { agregarNuevoElemento } = require('../utils/nuevoArchivo');
 
 
 const equipments = require('../bin/Equipos');
@@ -24,7 +25,11 @@ router.post('/new_eqp', isAuthenticated, subperm('EQUIPOS', [1]), (req, res) => 
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
         }
-        res.json(result);
+        agregarNuevoElemento(req.body.Equipo.toUpperCase(), 'equipos_list', (resultado) => {
+            if (resultado.success) {
+                res.json(result);
+            }
+        })
     });
 });
 
@@ -33,7 +38,11 @@ router.post('/mod_eqp', isAuthenticated, subperm('EQUIPOS', [3]), upload.none(),
         if (err) {
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
         }
-        res.json(result);
+        agregarNuevoElemento(req.body.Equipo.toUpperCase(), 'equipos_list', (resultado) => {
+            if (resultado.success) {
+                res.json(result);
+            }
+        })
     });
 });
 

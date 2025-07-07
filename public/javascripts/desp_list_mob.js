@@ -9,14 +9,34 @@ async function cargarMobilairio() {
 
         const mobiliarioJson = await response.json();
 
-        const selectFname = document.getElementById('Fname');
+        window.selectMobiliario = new SlimSelect({
+            select: '#Fname',
+            events: {
+                addable: function (value) {
+                    return {
+                        text: value.toUpperCase(),
+                        value: value.toUpperCase()
+                    }
+                },
+            }
+        })
+
+        let options = [{
+            text: '',
+            value: '',
+            disabled: true,
+            selected: true
+        }]
 
         mobiliarioJson.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.ARTICULO;
-            option.textContent = item.ARTICULO;
-            selectFname.appendChild(option);
+            options.push({
+                text: item.ARTICULO,
+                value: item.ARTICULO
+            })
         });
+
+        selectMobiliario.setData(options)
+
     } catch (error) {
         console.error('Error al cargar información de mobiliarios. ', error);
     }

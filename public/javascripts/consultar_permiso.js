@@ -1,56 +1,64 @@
 window.insertSelectForEmployees = function (defaultEmployee) {
-    // Verificamos si el permiso es '5'
     if (Permisos['MOBILIARIO'].includes('5')) {
         const targetDiv = document.querySelector('.DF');
         if (!document.querySelector('#actionSelect') && !document.querySelector('label[for="actionSelect"]')) {
             const selectHTML = `
-            <div class="DF">
-                <label for="actionSelect">Encargado:</label>
-                <select id="actionSelect" name="actionSelect" class="actionSelect"">
-                    <option value="">Cargando encargados...</option> 
-                </select>
-            </div>`;
+                <div class="DF">
+                    <label for="actionSelect">Encargado:</label>
+                    <select id="actionSelect" name="actionSelect" class="actionSelect">
+                        <option value="">Cargando encargados...</option> 
+                    </select>
+                </div>`;
             targetDiv.insertAdjacentHTML('beforebegin', selectHTML);
-            const employSelect = document.querySelector('#actionSelect');
 
+            const selectInstance = new SlimSelect({
+                select: '#actionSelect'
+            });
+
+            // Estilo (puedes conservar tu parte de jQuery si usas jQuery, pero mejor con CSS)
+            $('.actionSelect').css('margin-bottom', '0');
+            $('.ss-main').css({
+                'margin-bottom': '0',
+                'background-color': 'var(--light_gray)',
+                'border-radius': '0.7rem',
+                'color': 'black'
+            });
+
+            // Cargar datos después
             fetch('/responsiva/getUsersAndEmploys', {
                 method: 'GET'
             })
-                .then(response => response.json())
-                .then(data => {
-                    employSelect.innerHTML = '<option disabled selected>Encargado...</option>';
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.user;
-                        option.textContent = item.employee;
-                        option.setAttribute('encargado', item.employee);
-                        employSelect.appendChild(option);
-                    });
+            .then(response => response.json())
+            .then(data => {
+                const options = [{
+                    text: 'Encargado...',
+                    value: '',
+                    disabled: true,
+                    selected: true
+                }];
 
-                    // Establecer el valor predeterminado si se proporciona
-                    if (defaultEmployee) {
-                        const options = employSelect.options;
-                        for (let i = 0; i < options.length; i++) {
-                            if (options[i].text.trim() === defaultEmployee.trim()) {
-                                employSelect.selectedIndex = i;
-                                break;
-                            }
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                    showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
+                data.forEach(item => {
+                    options.push({
+                        text: item.employee,
+                        value: item.user,
+                        encargado: item.employee
+                    });
                 });
 
-            new SlimSelect({
-                select: '.actionSelect'
+                // Cargar opciones en SlimSelect
+                selectInstance.setData(options);
+
+                if (defaultEmployee) {
+                    const found = options.find(opt => opt.text.trim() === defaultEmployee.trim());
+                    if (found) {
+                        selectInstance.setSelected(selectedValue = found.value);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                showErrorAlert('Error en el servidor. Por favor, inténtelo de nuevo más tarde.');
             });
-            $('.actionSelect').css('margin-bottom', '0')
-            $('.DF .actionSelect .ss-single-selected').css('margin-bottom', '0')
-            $('.DF .actionSelect .ss-single-selected').css('background-color', 'var(--light_gray)')
-            $('.DF .actionSelect .ss-single-selected').css('border-radius', '0.7rem')
-            $('.DF .actionSelect .ss-single-selected').css('color', 'black')
         }
     }
 };

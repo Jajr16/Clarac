@@ -34,7 +34,7 @@ function valArea(requiredArea) {
 
     if (userArea === requiredArea) {
       return next()
-    } 
+    }
     return res.redirect('/users/home')
   }
 }
@@ -42,11 +42,11 @@ function valArea(requiredArea) {
 function subperm(category, subPermissions) {
   return function (req, res, next) {
     const userPermissions = req.session.permissions || {};  // Obtener permisos de sesión
-    
+
     // Verificar si el usuario tiene la categoría solicitada y los sub-permisos
     if (userPermissions[category]) {
       const hasAllSubPermissions = subPermissions.every(subPerm => userPermissions[category].includes(subPerm.toString()));
-      
+
       if (hasAllSubPermissions) {
         return next();  // El usuario tiene todos los permisos requeridos
       }

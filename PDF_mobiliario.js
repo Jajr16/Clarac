@@ -53,15 +53,18 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
             }
         </style>
             <main class="Seccion">
-                <table style="width: 100%;">               
+                <table style="width: 100%; font-size: 11px;">               
                     <tbody>`;
 
     mobiliario.forEach(mobi => {
         htmlContent +=
             `<tr>
-                        <td align="center" width="12%">${mobi.Num_Inventario}</td>
-                        <td width="auto">${mobi.Descripcion}</td>
-                    </tr>`;
+                <td align="left" width="12%">${mobi.Num_Inventario}</td>
+                <td width="15%" style="margin-rigth: 0.5rem">${mobi.Articulo}</td>
+                <td width="auto" style="margin-rigth: 0.5rem">${mobi.Descripcion}</td>
+                <td width="auto" style="margin-rigth: 0.5rem">${mobi.Ubicacion}</td>
+                <td align="center" width="12%">${mobi.Cantidad}</td>
+            </tr>`;
     });
 
     htmlContent += `
@@ -109,13 +112,13 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         </style>
         <div style="width: 100%;">
             <center style="width: 100%;">
-                <div style="font-size: 8px; width: 100%;">
+                <div style="font-size: 11px; width: 100%;">
                     <div style="padding-left: 5%; display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
                         <div style="flex: 1; padding: 0 32px; float: left; max-width: 10%;">
                             <img src="${imageSrc}" height="80px" width="auto" alt="Logo de la empresa">
                         </div>  
                         <div style="flex: 1; padding-left: 10%; width: 80%;">
-                            <center><b><p style="width: 100%; font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
+                            <center><b><p style="width: 100%; font-size: 13px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE MOBILIARIO</p></center>
                         </div>
                         <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
                             <b>FECHA: </b>${fecha_mob}
@@ -133,11 +136,14 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
                         </div>
                     </div>
                 </div>
-                <table style="font-size: 10px; padding-top: 10px; width: 95%;">
+                <table style="font-size: 11px; margin-top: 0.5cm; width: 95%;">
                     <thead>
                         <tr id="firstrow">
                             <th width="12%">No. INV.</th>
-                            <th align="left" width="auto">DESCRIPCIÓN</th>
+                            <th width="15%" style="margin-rigth: 0.5rem">ARTICULO</th>
+                            <th align="left" style="margin-rigth: 0.5rem" width="auto">DESCRIPCIÓN</th>
+                            <th align="left" style="margin-rigth: 0.5rem" width="auto">UBICACIÓN</th>
+                            <th align="left" style="margin-rigth: 0.5rem" width="12%">CANTIDAD</th>
                         </tr>
                     </thead>        
                 </table>         
@@ -145,7 +151,7 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         </div>
         `,
         footerTemplate: `
-        <center style="font-size: 8px; display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+        <center style="font-size: 11px; display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
             <div style="display: inline-flex; align-items: center; flex-direction: column; padding: 0 2rem; width:45%;">
                 <div style="border-bottom: 1px solid; width: 100%;">.
                 </div>
@@ -160,7 +166,7 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
         </center>    
         `,
         printBackground: true,
-        margin: { left: "0.5cm", top: "5.69cm", right: "0.5cm", bottom: "3cm" }
+        margin: { left: "0.5cm", top: "5cm", right: "0.5cm", bottom: "3cm" }
     });
 
     await browser.close();

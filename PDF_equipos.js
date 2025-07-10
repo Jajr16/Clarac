@@ -52,7 +52,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
             }
         </style>
             <main class="Seccion">
-                <table style="width: 100%; font-size: 4px;">               
+                <table style="width: 100%; font-size: 11px;">               
                     <tbody>`;
 
     equipos.forEach(equi => {
@@ -121,13 +121,13 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
         </style>
         <div style="width: 100%;">
             <center style="width: 100%;">
-            <div style="font-size: 5px; width: 100%;">
+            <div style="font-size: 11px; width: 100%;">
                 <div style="padding-left: 5%; display: flex; border-bottom: solid 1px; justify-content: space-evenly; align-items: center; width: 100%;">
                     <div style="flex: 1; padding: 0 32px; float: left; max-width: 10%;">
                         <img src="${imageSrc}" height="80px" width="auto" alt="Logo de la empresa">
                     </div>  
                     <div style="flex: 1; padding-left: 10%; width: 80%;">
-                        <center><b><p style="width: 100%; font-size: 10px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPOS</p></center>
+                        <center><b><p style="width: 100%; font-size: 13px;">"INSTITUTO CANADIENSE CLARAC"</p></b><p>RESPONSIVA DE EQUIPOS</p></center>
                     </div>
                     <div style="flex: 1; padding: 0 32px; float:right; width: auto;">
                         <b>FECHA: </b>${fecha_eqp}
@@ -145,7 +145,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
                     </div>
                 </div>
             </div>
-                <table style="font-size: 8px; padding-top: 10px; width: 95%;">
+                <table style="font-size: 11px; margin-top: 0.5cm; width: 95%;">
                     <thead>
                         <tr id="firstrow">
                             <th>No. INV</th>
@@ -165,7 +165,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
         </div>
         `,
         footerTemplate: `
-        <center style="font-size: 8px; display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
+        <center style="font-size: 11px; display: flex; justify-content: space-evenly; align-items: center; width: 100%;">
             <div style="display: inline-flex; align-items: center; flex-direction: column; padding: 0 2rem; width:45%;">
                 <div style="border-bottom: 1px solid; width: 100%;">.
                 </div>
@@ -180,7 +180,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
         </center>    
         `,
         printBackground: true,
-        margin: { left: "0.5cm", top: "5.69cm", right: "0.5cm", bottom: "3cm" }
+        margin: { left: "0.5cm", top: "5cm", right: "0.5cm", bottom: "3cm" }
     });
 
     await browser.close();

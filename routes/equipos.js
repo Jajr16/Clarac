@@ -26,8 +26,13 @@ router.post('/new_eqp', isAuthenticated, subperm('EQUIPOS', [1]), (req, res) => 
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
         }
         agregarNuevoElemento(req.body.Equipo.toUpperCase(), 'equipos_list', (resultado) => {
-            if (resultado.success) {
-                res.json(result);
+            if (!resultado.success) {
+                res.json(resultado)
+            }
+        })
+        agregarNuevoElemento(req.body.Ubi.toUpperCase(), 'ubicaciones', (resultado) => {
+            if (!resultado.success) {
+                res.json(resultado)
             }
         })
     });
@@ -39,8 +44,13 @@ router.post('/mod_eqp', isAuthenticated, subperm('EQUIPOS', [3]), upload.none(),
             return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
         }
         agregarNuevoElemento(req.body.Equipo.toUpperCase(), 'equipos_list', (resultado) => {
-            if (resultado.success) {
-                res.json(result);
+            if (!resultado.success) {
+                res.json(resultado)
+            }
+        })
+        agregarNuevoElemento(req.body.Ubi.toUpperCase(), 'ubicaciones', (resultado) => {
+            if (!resultado.success) {
+                res.json(resultado)
             }
         })
     });

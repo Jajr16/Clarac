@@ -62,8 +62,13 @@ router.post('/mod_mob', isAuthenticated, subperm('MOBILIARIO', [3]), upload.none
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
     agregarNuevoElemento(req.body.Narticulo.toUpperCase(), 'mobiliario_list', (resultado) => {
-      if (resultado.success) {
-        res.json(result);
+      if (!resultado.success) {
+        res.json(resultado)
+      }
+    })
+    agregarNuevoElemento(req.body.Ubicacion.toUpperCase(), 'ubicaciones', (success) => {
+      if (!success.success) {
+        res.json(success);
       }
     })
   });
@@ -198,10 +203,16 @@ router.post('/users/upload', isAuthenticated, subperm('MOBILIARIO', [1]), upload
       return res.status(500).json({ type: 'error', message: 'Error en el servidor', details: err });
     }
     agregarNuevoElemento(req.body.articulo.toUpperCase(), 'mobiliario_list', (resultado) => {
-      if (resultado.success) {
-        res.json(result);
+      if (!resultado.success) {
+        res.json(resultado)
       }
     })
+    agregarNuevoElemento(req.body.Ubicacion.toUpperCase(), 'ubicaciones', (success) => {
+      if (!success.success) {
+        res.json(success);
+      }
+    })
+    res.json(result);
   });
 });
 

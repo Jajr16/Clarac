@@ -21,7 +21,7 @@ async function getExcelA(res) {
     ];
 
     try {
-        db.query('SELECT * FROM almacen ORDER BY eliminado', async function (err, result) {
+        db.query('SELECT * FROM almacen a INNER JOIN factus_productos fp ON a.Cod_Barras = fp.Cod_Barras ORDER BY eliminado;', async function (err, result) {
             if (result.length > 0) {
                 result.forEach(row => {
                     const addedRow = worksheet.addRow({
@@ -31,7 +31,7 @@ async function getExcelA(res) {
                         MarcArt: row.Marca,
                         Desc: row.Descripcion,
                         Uni: row.Unidad,
-                        Exist: row.Existencia,
+                        Exist: row.Cantidad,
                         Eliminado: row.eliminado  ? 'Sí' : 'No'
                     });
                     

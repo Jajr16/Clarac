@@ -6,19 +6,19 @@ function modEmpleado(req, callback) {
     const data = req.body
     console.log("Datos recibidos:", data);
     db.query('CALL AgregarEmpleados(?,?,?,?)', [null, data.Nom, data.Area, data.Jefe], function (err, result) {
-        if (err) { 
-                Errores(err); // Otros errores
-                return callback(err);
+        if (err) {
+            Errores(err); // Otros errores
+            return callback(err);
         } // Se hace un control de errores
         else {
             if (result.length > 0) {//Si sí hizo una búsqueda
-                if (success(result) == 'Success'){
+                if (success(result) == 'Success') {
                     return callback(null, { type: 'success', message: 'Empleado dado de alta.' });
-                }else {
+                } else {
                     Errores(`${result.Code, result.Message}`);
                     return callback(null, { type: 'failed', message: `El Empleado no se pudo dar de alta.` })
                 }
-                
+
             } else {
                 return callback(null, { type: 'failed', message: 'El Empleado no se pudo dar de alta.' })
             }
@@ -79,19 +79,19 @@ function modPermisos(req, callback) {
     const data = req.body
     console.log("Datos recibidos:", data);
     db.query('CALL AgregarPermisos(?,?,?)', [data.Permiso, data.User, data.modulo], function (err, result) {
-        if (err) { 
-                Errores(err); // Otros errores
-                return callback(err);
+        if (err) {
+            Errores(err); // Otros errores
+            return callback(err);
         } // Se hace un control de errores
         else {
             if (result.length > 0) {//Si sí hizo una búsqueda
-                if (success(result) == 'Success'){
+                if (success(result) == 'Success') {
                     return callback(null, { type: 'success', message: 'Permisos dado de alta.' });
-                }else {
+                } else {
                     Errores(`${result.Code, result.Message}`);
                     return callback(null, { type: 'failed', message: `Los Permisos no se dieron de alta.` })
                 }
-                
+
             } else {
                 return callback(null, { type: 'failed', message: 'Los Permisos no se dieron de alta.' })
             }
@@ -135,12 +135,12 @@ function obtenerRegistrosEmpleados(callback) {
         // console.log("Resultados de la consulta:", results);
         callback(null, results);
     });
-    
+
 }
 
 function obtenerEmpleados(callback) {
     const query = 'SELECT Nom FROM empleado';
-    
+
     db.query(query, (error, results) => {
         if (error) {
             return callback(error, null);
@@ -148,7 +148,7 @@ function obtenerEmpleados(callback) {
         // console.log("Resultados de la consulta:", results);
         callback(null, results);
     });
-    
+
 }
 
 function obtenerPermisosPorUsuario(usuario, callback) {
@@ -174,10 +174,10 @@ function modifyRegUsu(req, res) {
             console.error('Error en la consulta:', err);
             return res.status(500).json({ message: 'Error al modificar el usuario', details: err });
         }
-        
+
         if (result && Array.isArray(result) && result[0].length > 0) {
             const response = result[0][0];
-            
+
             if (response.status === 'Success') {
                 return res.status(200).json({ type: 'RespDelEqp', message: 'Usuario modificado exitosamente.' });
             } else {
@@ -197,10 +197,10 @@ function modifyRegemp(req, res) {
             console.error('Error en la consulta:', err);
             return res.status(500).json({ message: 'Error al modificar el empleado', details: err });
         }
-        
+
         if (result && Array.isArray(result) && result[0].length > 0) {
             const response = result[0][0];
-            
+
             if (response.status === 'Success') {
                 return res.status(200).json({ type: 'RespDelEqp', message: 'Empleado modificado exitosamente.' });
             } else {
@@ -215,6 +215,9 @@ function modifyRegemp(req, res) {
 function modifyRegPer(req, res) {
     const { Usuario, Permissions } = req.body;
 
+    console.log("Usuario:", Usuario);
+    console.log("Permissions:", JSON.stringify(Permissions, null, 2));
+
     // Check if Usuario and Permissions are provided
     if (!Usuario || !Permissions || !Array.isArray(Permissions)) {
         return res.status(400).json({ message: 'Datos inválidos. Asegúrese de proporcionar Usuario y Permissions.' });
@@ -228,7 +231,7 @@ function modifyRegPer(req, res) {
             console.error('Error en la consulta:', err);
             return res.status(500).json({ message: 'Error al modificar los permisos', details: err });
         }
-        
+
         const response = result[0][0];
         if (response.status === 'Success') {
             return res.status(200).json({ type: 'RespDelEqp', message: 'Permisos modificados exitosamente.' });

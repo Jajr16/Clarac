@@ -225,3 +225,58 @@ button.options i {
     overflow-y: auto;
     border-radius: 1rem;
 }
+
+.actions.two-boxes {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.module-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Estilo para cada bloque de módulo (título + checkboxes) */
+.module-block {
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* Título del módulo */
+.subsubtitle-container {
+    background-color: #001781;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Contenedor de checkboxes */
+.module-category {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: #f9f9f9;
+}
+
+/* Cada checkbox */
+.DPU {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.DPU label {
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.DPU input[type="checkbox"] {
+    cursor: pointer;
+}

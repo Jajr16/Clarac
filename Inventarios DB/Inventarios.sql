@@ -220,7 +220,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 create table permisos(
 permiso enum("0", "1","2","3","4", "5") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
 usuario varchar(25),
-modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES") not null,
+modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES", "ADMIN") not null,
 primary key(permiso, usuario, modulo),
 foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
 );
@@ -278,3 +278,5 @@ CREATE TABLE status_soli(
 
 DELETE FROM mobiliario;
 select*from almacen;
+select*from permisos;
+SELECT*FROM usuario;

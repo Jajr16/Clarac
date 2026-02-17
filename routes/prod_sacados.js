@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const prodSacConsul = require('../bin/prod_sac_consul');
-const { isAuthenticated } = require('../middleware/authMiddleware');
+const prodSacConsul = require('../backend/bin/prod_sac_consul');
+const { isAuthenticated } = require('../frontend/middleware/authMiddleware');
 
 router.post('/', isAuthenticated, (req, res) => {
     prodSacConsul(req, (err, result) => {

@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const prodExistConsul = require('../bin/Prod_exist_consul');
-const prodExistAdd = require('../bin/AddProd_exist');
-const prodExistExtract = require('../bin/ExtractProd_exist')
-const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
+const prodExistConsul = require('../backend/bin/Prod_exist_consul');
+const prodExistAdd = require('../backend/bin/AddProd_exist');
+const prodExistExtract = require('../backend/bin/ExtractProd_exist')
+const { isAuthenticated, subperm } = require('../frontend/middleware/authMiddleware');
 
 router.post('/', isAuthenticated, (req, res) => {
     prodExistConsul(req, (err, result) => {

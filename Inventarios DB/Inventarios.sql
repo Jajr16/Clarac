@@ -217,12 +217,56 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-create table permisos(
-permiso enum("0", "1","2","3","4", "5") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
-usuario varchar(25),
-modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES", "ADMIN") not null,
-primary key(permiso, usuario, modulo),
-foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
+CREATE TABLE catalogo_permisos(
+	codigo VARCHAR(5) PRIMARY KEY,
+    accion VARCHAR(40) NOT NULL, 
+    descripcion VARCHAR(100)
+);
+
+INSERT INTO catalogo_permisos VALUES
+('0','super','Administrador total'),
+
+('1','read','Ver registros'),
+('2','create','Crear registros'),
+('3','update','Actualizar registros'),
+('4','delete','Eliminar registros'),
+
+('5','add_location','Agregar ubicaciones'),
+('6','add_product','Agregar productos'),
+('7','assign_manager','Asignar encargado');
+
+CREATE TABLE catalogo_modulos(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(40)
+);
+
+INSERT INTO catalogo_modulos(nombre) VALUES
+('EQUIPOS'),
+('MOBILIARIO'),
+('USUARIOS'),
+('EMPLEADOS'),
+('RESPONSIVAS'),
+('PETICIONES');
+
+CREATE TABLE usuario_permiso(
+    usuario VARCHAR(45)
+        CHARACTER SET utf8mb3
+        COLLATE utf8mb3_general_ci,
+
+    modulo_id INT,
+    codigo_permiso VARCHAR(5),
+
+    PRIMARY KEY(usuario, modulo_id, codigo_permiso),
+
+    FOREIGN KEY(usuario)
+        REFERENCES usuario(Usuario)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY(modulo_id)
+        REFERENCES catalogo_modulos(id),
+
+    FOREIGN KEY(codigo_permiso)
+        REFERENCES catalogo_permisos(codigo)
 );
 
 create table factus_Productos(

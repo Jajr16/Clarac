@@ -1,4 +1,4 @@
-const db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
+const db = require("../config/BaseDatos"); // Importar la conexión a la base de datos
 const Errores = require('./Error');
 
 async function prodExistAdd(req, callback) {

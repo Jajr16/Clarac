@@ -24,15 +24,9 @@
             crossorigin="anonymous"></script>
     </head>
 
-    <% if (!user) { %>
-    <script>
-        window.location.href = "/"; // Redirigir al login si no hay sesión
-    </script>
-    <% } else { %>
-
     <body>
         <%- include('partials/nav.ejs') %>
-        <%- include('partials/sidebar.ejs', { permissions: permissions }) %>
+        <%- include('partials/sidebar.ejs') %>
         <main>
             <%- body %>
         </main>
@@ -42,4 +36,3 @@
     <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
     <script type="text/javascript" src="/javascripts/textVal.js"></script>
     <script type="text/javascript" src="/javascripts/generalities.js"></script>
-    <% } %>

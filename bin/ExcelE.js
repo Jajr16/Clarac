@@ -1,4 +1,4 @@
-const db = require("../Conexion/BaseDatos");
+const db = require("../config/BaseDatos");
 const Errores = require('./Error');
 const Excel = require('exceljs');
 const nombreArchivo = require('./dates');

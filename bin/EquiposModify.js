@@ -1,4 +1,4 @@
-var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
+var db = require("../config/BaseDatos"); // Importar la conexión a la base de datos
 var Errores = require('./Error')
 var ErrorMessage = require('./ErrorMessage')
 var success = require('./success')

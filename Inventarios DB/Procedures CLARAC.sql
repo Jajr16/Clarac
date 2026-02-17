@@ -13,53 +13,63 @@ CREATE PROCEDURE AgregarEquipos(
     IN NSCPU VARCHAR(45),
     IN MSE VARCHAR(45), 
     IN TLD VARCHAR(45), 
-    IN ACS VARCHAR(45))
+    IN ACS VARCHAR(45)
+)
 BEGIN
 
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    DECLARE v_emp INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-		SHOW ERRORS;
         ROLLBACK;
+        RESIGNAL;
     END;
 
     START TRANSACTION;
-		-- INICIAR INSERCIÓN
-		INSERT INTO equipo VALUES (NULL,NS,EQP,MRC,MDO,
-        (SELECT empleado.Num_Emp FROM empleado 
-        WHERE empleado.Num_Emp = (SELECT Num_Emp FROM empleado WHERE Nom = ENC)),UB);
-        -- INICIAR CONDICIONALES
-        IF EQP = 'CPU' THEN
-			IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
-				INSERT INTO pcs VALUES (NS, HDW, SFT);
-            END IF;
-            
-            IF MSE IS NOT NULL THEN
-				INSERT INTO mouse VALUES (NS, MSE);
-            END IF;
-            
-            IF TLD IS NOT NULL THEN
-				INSERT INTO teclado VALUES (NS, TLD);
-            END IF;
-            
-            IF ACS IS NOT NULL THEN
-				INSERT INTO accesorio VALUES (NS, ACS);
-            END IF;
-            
-		END IF;
-        
-        IF EQP = 'MONITOR' THEN
-			IF NSCPU IS NOT NULL THEN
-				INSERT INTO monitor VALUES (NS, NSCPU);
-            END IF;
+
+    SELECT Num_Emp INTO v_emp FROM empleado WHERE Nom = ENC;
+
+    IF v_emp IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Empleado no encontrado';
+    END IF;
+
+    INSERT INTO equipo VALUES (NULL,NS,EQP,MRC,MDO,v_emp,UB);
+
+    IF EQP = 'CPU' THEN
+
+        IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
+            INSERT INTO pcs VALUES (NS, HDW, SFT);
         END IF;
-        
-    
-	SELECT 'Success' AS status;
-	COMMIT;
+
+        IF MSE IS NOT NULL THEN
+            INSERT INTO mouse VALUES (NS, MSE);
+        END IF;
+
+        IF TLD IS NOT NULL THEN
+            INSERT INTO teclado VALUES (NS, TLD);
+        END IF;
+
+        IF ACS IS NOT NULL THEN
+            INSERT INTO accesorio VALUES (NS, ACS);
+        END IF;
+
+    END IF;
+
+    IF EQP = 'MONITOR' THEN
+        IF NSCPU IS NOT NULL THEN
+            INSERT INTO monitor VALUES (NS, NSCPU);
+        END IF;
+    END IF;
+
+    COMMIT;
+
 END |
-DELIMITER  ;
+DELIMITER ;
+
 
 -- Para actualizar los equipos
+-- drop procedure ActualizarEquipos;
 DELIMITER |
 CREATE PROCEDURE ActualizarEquipos(
     IN NSN VARCHAR(45), 
@@ -77,92 +87,142 @@ CREATE PROCEDURE ActualizarEquipos(
     IN TLD VARCHAR(45), 
     IN ACS VARCHAR(45))
 BEGIN
-	DECLARE exit_msg VARCHAR(255) DEFAULT '';
-
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        IF exit_msg != '' THEN
-            SELECT exit_msg AS Error;
-        ELSE
-            SELECT 'Se produjo un error inesperado.' AS Error;
-        END IF;
+        RESIGNAL;
     END;
 
-	START TRANSACTION;
-    SELECT NSN, Eqp, MRC, MDO, UB, NSO, ENCAR, OLDENCAR, HDW, SFT, NSCPU, MSE, TLD, ACS;
-    UPDATE equipo SET 
-        Num_Serie = NSN, Equipo = Eqp, Marca = MRC,
-        Modelo = MDO, Ubi = UB, Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = ENCAR)
-    WHERE 
-        Num_Serie = NSO AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = OLDENCAR);
-    SELECT ROW_COUNT() AS Filas_Afectadas_Equipo;
+    START TRANSACTION;
+    /* ================================
+		ACTUALIZAR EQUIPO PRINCIPAL
+    ================================ */ 
+    IF ENCAR IS NULL THEN
+		SET ENCAR = OLDENCAR;
+    END IF;
     
+    IF NSN IS NULL THEN
+		SET NSN = NSO;
+	END IF;
+    
+    UPDATE equipo
+    SET Num_Serie = NSN,
+        Equipo = Eqp,
+        Marca = MRC,
+        Modelo = MDO,
+        Ubi = UB,
+        Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = ENCAR)
+    WHERE Num_Serie = NSO
+      AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = OLDENCAR);
+      
+	IF ROW_COUNT() = 0 THEN
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'No se encontró el equipo que se quiere actualizar';
+	END IF;
+      
+	UPDATE pcs SET Num_Serie = NSN WHERE Num_Serie = NSO;
+	UPDATE mouse SET Num_Serie = NSN WHERE Num_Serie = NSO;
+	UPDATE teclado SET Num_Serie = NSN WHERE Num_Serie = NSO;
+	UPDATE accesorio SET Num_Serie = NSN WHERE Num_Serie = NSO;
+	UPDATE monitor SET Num_Serie_Monitor = NSN WHERE Num_Serie_Monitor = NSO;
+
+    
+    /* ===============
+		CPU
+    =============== */
     IF Eqp = 'CPU' THEN
         IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
-			IF EXISTS (SELECT 1 FROM pcs WHERE Num_Serie = NSO) THEN
-				UPDATE pcs SET Num_Serie = NSN, Hardware = HDW, Software = SFT WHERE Num_Serie = NSO;
-			ELSE 
-				INSERT INTO pcs VALUES (NSN, HDW, SFT);
-            END IF;
-			SELECT ROW_COUNT() AS Filas_Afectadas_PCS;
+			INSERT INTO pcs VALUES (NSN, HDW, SFT)
+            ON DUPLICATE KEY UPDATE
+                Hardware = VALUES(Hardware),
+                Software = VALUES(Software);
         END IF;
         
         IF MSE IS NOT NULL THEN
-			IF EXISTS (SELECT 1 FROM Mouse WHERE Num_Serie = NSO) THEN
-				UPDATE Mouse SET Num_Serie = NSN, Mouse = MSE WHERE Num_Serie = NSO;
-			ELSE 
-				INSERT INTO Mouse VALUES (NSN, MSE);
-            END IF;
-			SELECT ROW_COUNT() AS Filas_Afectadas_Mouse;
+			INSERT INTO Mouse VALUES(NSN, MSE) 
+            ON DUPLICATE KEY UPDATE Mouse = VALUES(Mouse);
         END IF;
         
         IF TLD IS NOT NULL THEN
-			IF EXISTS (SELECT 1 FROM Teclado WHERE Num_Serie = NSO) THEN
-				UPDATE Teclado SET Num_Serie = NSN, Teclado = TLD WHERE Num_Serie = NSO;
-			ELSE 
-				INSERT INTO Teclado VALUES (NSN, TLD);
-            END IF;
-			SELECT ROW_COUNT() AS Filas_Afectadas_Teclado;
+			INSERT INTO Teclado VALUES (NSN, TLD)
+            ON DUPLICATE KEY UPDATE Teclado = VALUES(Teclado);
         END IF;
         
         IF ACS IS NOT NULL THEN
-			IF EXISTS (SELECT 1 FROM Accesorio WHERE Num_Serie = NSO) THEN
-				UPDATE Accesorio SET Num_Serie = NSN, Accesorio = ACS WHERE Num_Serie = NSO;
-			ELSE 
-				INSERT INTO Accesorio VALUES (NSN, ACS);
-            END IF;
-            SELECT ROW_COUNT() AS Filas_Afectadas_Accesorio;
+			INSERT INTO Accesorio VALUES(NSN, ACS)
+            ON DUPLICATE KEY UPDATE Accesorio = VALUES(Accesorio);
         END IF;
     END IF;
     
-    IF Eqp = 'MONITOR' THEN
-        IF NSCPU IS NOT NULL THEN
-			IF EXISTS (SELECT 1 FROM equipo WHERE Num_Serie = NSCPU AND Equipo = 'CPU') THEN
-                IF EXISTS (SELECT 1 FROM monitor WHERE Num_Serie_CPU = NSCPU AND Num_Serie_Monitor != NSO) THEN
-					SET exit_msg = 'El número de serie del CPU ya está asociado a otro monitor, 
-                    intente con otro número de serie';
-					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = exit_msg;
-				ELSE
-					IF EXISTS (SELECT 1 FROM monitor WHERE Num_Serie_Monitor = NSO) THEN
-						UPDATE monitor SET Num_Serie_Monitor = NSN, Num_Serie_CPU = NSCPU WHERE Num_Serie_Monitor = NSO;
-                    ELSE
-						INSERT INTO monitor VALUES (NSN, NSCPU);
-                    END IF;
-                END IF;
-				SELECT ROW_COUNT() AS Filas_Afectadas_Monitor;
-            ELSE
-				SET exit_msg = 'No hay un CPU con ese número de serie, inténtalo de nuevo';
-                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = exit_msg;
-            END IF;
-        END IF;
+    /* ===============
+		MONITOR
+	=============== */
+    IF Eqp = 'MONITOR' AND NSCPU IS NOT NULL THEN
+		IF NOT EXISTS (
+			SELECT 1 FROM equipo WHERE Num_Serie = NSCPU AND Equipo = 'CPU'
+        ) THEN 
+			SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No hay un CPU con ese número de serie, inténtalo de nuevo';
+		END IF;
+        
+        INSERT INTO monitor VALUES (NSN, NSCPU)
+        ON DUPLICATE KEY UPDATE
+            Num_Serie_CPU = VALUES(Num_Serie_CPU);
     END IF;
-	
-    SELECT 'Success' AS status;
     COMMIT;
 END |
 
 DELIMITER ;
+
+/* =======================
+	ELIMINAR EQUIPOS
+======================= */
+DELIMITER |
+
+CREATE PROCEDURE EliminarEquipo(
+    IN NS VARCHAR(45),
+    IN ENC VARCHAR(45)
+)
+BEGIN
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    -- Validar empleado
+    IF NOT EXISTS (
+        SELECT 1 FROM empleado WHERE Nom = ENC
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Empleado no encontrado';
+    END IF;
+
+    -- Eliminar dependencias
+    DELETE FROM monitor WHERE Num_Serie_Monitor = NS;
+    DELETE FROM pcs WHERE Num_Serie = NS;
+    DELETE FROM mouse WHERE Num_Serie = NS;
+    DELETE FROM teclado WHERE Num_Serie = NS;
+    DELETE FROM accesorio WHERE Num_Serie = NS;
+
+    -- Eliminar equipo principal
+    DELETE FROM equipo
+    WHERE Num_Serie = NS
+      AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = ENC);
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No se encontró el equipo para eliminar';
+    END IF;
+
+    COMMIT;
+END |
+
+DELIMITER ;
+
 -- drop procedure AgregarEmpleados;
 DELIMITER //
 

@@ -1,7 +1,7 @@
-var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
-var Errores = require('./Error')
-const { mobiliario_generatePDF } = require('../PDF_mobiliario.js');
-const { equipos_generatePDF } = require('../PDF_equipos.js');
+var db = require("../config/BaseDatos.js"); // Importar la conexión a la base de datos
+var Errores = require('./Error.js')
+const { mobiliario_generatePDF } = require('../modules/responsivas/pdf/pdf.mobiliario.js');
+const { equipos_generatePDF } = require('../modules/responsivas/pdf/pdf.equipos.js');
 
 function getResponsives(req, callback) {
     let data = req.body

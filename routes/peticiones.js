@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-const petAdd = require('../bin/AddPet');
-const consulStatus = require('../bin/Status');
-const consulSol = require('../bin/Solicitudes');
-const deletePeti = require('../bin/DeletePeti');
-const confirmPet = require('../bin/ConfirmacionPet');
-const confirmPetDir = require('../bin/confirmPetDir');
-const viewStatus = require('../bin/viewStatusDir');
-const consulHistory = require('../bin/viewHistory');
-const viewStatusAlmacen = require('../bin/viewStatusAlmacen');
-const viewHistoryAlmacenista = require('../bin/viewHistoryAlmacenista');
-const ConfirmAlmacen = require('../bin/ConfirmAlmacen');
-const { isAuthenticated, subperm, valArea } = require('../middleware/authMiddleware');
+const petAdd = require('../backend/bin/AddPet');
+const consulStatus = require('../backend/bin/Status');
+const consulSol = require('../backend/bin/Solicitudes');
+const deletePeti = require('../backend/bin/DeletePeti');
+const confirmPet = require('../backend/bin/ConfirmacionPet');
+const confirmPetDir = require('../backend/bin/confirmPetDir');
+const viewStatus = require('../backend/bin/viewStatusDir');
+const consulHistory = require('../backend/bin/viewHistory');
+const viewStatusAlmacen = require('../backend/bin/viewStatusAlmacen');
+const viewHistoryAlmacenista = require('../backend/bin/viewHistoryAlmacenista');
+const ConfirmAlmacen = require('../backend/bin/ConfirmAlmacen');
+const { isAuthenticated, subperm, valArea } = require('../frontend/middleware/authMiddleware');
 
 router.post('/addPet', isAuthenticated, subperm('PETICIONES', [1]), async (req, res) => {
     petAdd(req, (err, result) => {

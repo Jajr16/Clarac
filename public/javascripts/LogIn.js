@@ -5,7 +5,7 @@ form.addEventListener('submit', (e) => {
     const username = $('#user').val()
     const pass = $('#pass').val()
 
-    fetch('/login', {
+    fetch('/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

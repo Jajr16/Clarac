@@ -1,4 +1,4 @@
-var db = require("../Conexion/BaseDatos"); // Importar la conexión a la base de datos
+var db = require("../config/BaseDatos"); // Importar la conexión a la base de datos
 var Errores = require('./Error');
 const Excel = require('exceljs');
 let nombreArchivo = require('./dates')

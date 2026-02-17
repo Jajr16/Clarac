@@ -3,13 +3,13 @@
 const express = require('express');
 const router = express.Router();
 
-const products = require('../bin/Productos');
-const addProduct = require('../bin/AddProductos');
-const modProduct = require('../bin/ProductosModify');
-const delProduct = require('../bin/deleteProductos');
-const { isAuthenticated, subperm } = require('../middleware/authMiddleware');
+const products = require('../backend/bin/Productos');
+const addProduct = require('../backend/bin/AddProductos');
+const modProduct = require('../backend/bin/ProductosModify');
+const delProduct = require('../backend/bin/deleteProductos');
+const { isAuthenticated, subperm } = require('../frontend/middleware/authMiddleware');
 
-const upload = require('../config/multerConfig'); 
+const upload = require('../backend/config/multerConfig'); 
 
 router.post('/', isAuthenticated, (req, res) => {
     products(req, (err, result) => {

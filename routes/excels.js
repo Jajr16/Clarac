@@ -1,13 +1,13 @@
 
 const express = require('express');
 const router = express.Router();
-const upload = require('../config/multerConfig'); 
-const { isAuthenticated } = require('../middleware/authMiddleware');
+const upload = require('../backend/config/multerConfig'); 
+const { isAuthenticated } = require('../frontend/middleware/authMiddleware');
 
-const getExcelE = require('../bin/ExcelE')
-const getExcelM = require('../bin/ExcelM')
-const getExcelA = require('../bin/ExcelA')
-const getExcelRPS = require('../bin/ExcelRPS')
+const getExcelE = require('../backend/bin/ExcelE')
+const getExcelM = require('../backend/bin/ExcelM')
+const getExcelA = require('../backend/bin/ExcelA')
+const getExcelRPS = require('../backend/bin/ExcelRPS')
 
 router.get('/ExcelE', isAuthenticated, upload.none(), async (req, res) => {
     getExcelE(res)

@@ -31,25 +31,27 @@
       </header>
       <div class="LogIn">
         <div id="errorMessage"></div>
-        <form action="" name="Formulario" id="Formulario" method="POST">
+        <form action="" name="loginForm" id="loginForm" method="POST">
           <h1 class="title">Iniciar Sesión</h1>
           <!--Nombre-->
           <div class="field">
             <label class="label">Usuario</label>
-            <input autocomplete="off" class="input_Login" type="text" name="user" id="user"
-              placeholder="Ingresa tu usuario" required>
+            <input autocomplete="off" class="input_Login" type="text" name="loginUser" id="loginUser"
+              placeholder="Ingresa tu usuario" required
+              value="ajimenez">
           </div>
           <!--Contraseña-->
           <div class="field">
             <label class="label">Contraseña</label>
-            <input autocomplete="off" class="input_Login" type="password" name="pass" id="pass"
-              placeholder="Ingresa tu contraseña" required>
+            <input autocomplete="off" class="input_Login" type="password" name="loginPass" id="loginPass"
+              placeholder="Ingresa tu contraseña" required
+              value="Clarac2017">
           </div>
           <input type="submit" value="Aceptar" class="input_Login success_login">
         </form>
       </div>
 </body>
-<script src="/javascripts/LogIn.js"></script>
+<script type="module" src="/javascripts/login/loginMain.js"></script>
 <script type="text/javascript" src="/javascripts/Mayusculas.js"></script>
 <script type="text/javascript" src="/javascripts/textVal.js"></script>
 

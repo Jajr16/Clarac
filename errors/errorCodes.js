@@ -39,8 +39,8 @@ module.exports = {
         status: 401
     },
 
-    NO_DEVICES_FOUND: {
-        message: 'No se encontraron dispositivos para el usuario',
+    NOT_FOUND: {
+        message: 'No hay nada por el momento.',
         status: 404
     },
 

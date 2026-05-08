@@ -3,12 +3,16 @@ var db = require("../../config/BaseDatos");
 const AppError = require('../../errors/AppError');
 
 exports.getAllDevices = async (username) => {
-    const [rows] = await db.query(
-        "CALL showEqp(?)",
-        [username]
-    );
-
-    return rows[0] || [];
+    try {
+        const [rows] = await db.query(
+            "CALL showEqp(?)",
+            [username]
+        );
+    
+        return rows[0] || [];
+    } catch (error) {
+        throw new AppError(`Error al obtener equipos: ${error.message}`, 500);
+    }
 }
 
 exports.addDevice = async (device) => {
@@ -33,7 +37,7 @@ exports.addDevice = async (device) => {
             throw new AppError(err.message, 400);
         }
 
-        throw new AppError('Error al agregar equipo', 500);
+        throw new AppError(`Error al agregar equipo: ${err.message}`, 500);
     }
 };
 

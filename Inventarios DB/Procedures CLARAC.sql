@@ -71,6 +71,7 @@ DELIMITER ;
 -- Para actualizar los equipos
 -- drop procedure ActualizarEquipos;
 DELIMITER |
+
 CREATE PROCEDURE ActualizarEquipos(
     IN NSN VARCHAR(45), 
     IN Eqp VARCHAR(45),
@@ -85,94 +86,129 @@ CREATE PROCEDURE ActualizarEquipos(
     IN NSCPU VARCHAR(45),
     IN MSE VARCHAR(45), 
     IN TLD VARCHAR(45), 
-    IN ACS VARCHAR(45))
+    IN ACS VARCHAR(45)
+)
 BEGIN
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
 
     START TRANSACTION;
-    /* ================================
-		ACTUALIZAR EQUIPO PRINCIPAL
-    ================================ */ 
-    IF ENCAR IS NULL THEN
-		SET ENCAR = OLDENCAR;
-    END IF;
-    
-    IF NSN IS NULL THEN
-		SET NSN = NSO;
-	END IF;
-    
-    UPDATE equipo
-    SET Num_Serie = NSN,
-        Equipo = Eqp,
-        Marca = MRC,
-        Modelo = MDO,
-        Ubi = UB,
-        Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = ENCAR)
-    WHERE Num_Serie = NSO
-      AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = OLDENCAR);
-      
-	IF ROW_COUNT() = 0 THEN
-		SIGNAL SQLSTATE '45000'
-		SET MESSAGE_TEXT = 'No se encontró el equipo que se quiere actualizar';
-	END IF;
-      
-	UPDATE pcs SET Num_Serie = NSN WHERE Num_Serie = NSO;
-	UPDATE mouse SET Num_Serie = NSN WHERE Num_Serie = NSO;
-	UPDATE teclado SET Num_Serie = NSN WHERE Num_Serie = NSO;
-	UPDATE accesorio SET Num_Serie = NSN WHERE Num_Serie = NSO;
-	UPDATE monitor SET Num_Serie_Monitor = NSN WHERE Num_Serie_Monitor = NSO;
 
-    
-    /* ===============
-		CPU
-    =============== */
+    /* ==========================
+       VALIDAR PATCH VACÍO
+    ========================== */
+    IF NSN IS NULL
+    AND Eqp IS NULL
+    AND MRC IS NULL
+    AND MDO IS NULL
+    AND UB IS NULL
+    AND ENCAR IS NULL
+    AND HDW IS NULL
+    AND SFT IS NULL
+    AND NSCPU IS NULL
+    AND MSE IS NULL
+    AND TLD IS NULL
+    AND ACS IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No se enviaron datos para actualizar';
+    END IF;
+
+    /* ==========================
+       ACTUALIZAR EQUIPO
+    ========================== */
+    UPDATE equipo
+    SET
+        Num_Serie = COALESCE(NSN, Num_Serie),
+        Equipo    = COALESCE(Eqp, Equipo),
+        Marca     = COALESCE(MRC, Marca),
+        Modelo    = COALESCE(MDO, Modelo),
+        Ubi       = COALESCE(UB, Ubi),
+        Num_emp   = COALESCE(
+                        (SELECT Num_emp FROM empleado WHERE Nom = ENCAR),
+                        Num_emp
+                    )
+    WHERE Num_Serie = NSO
+    AND Num_emp = (SELECT Num_emp FROM empleado WHERE Nom = OLDENCAR);
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No se encontró el equipo';
+    END IF;
+
+    /* ==========================
+       PROPAGAR NUEVO NS
+    ========================== */
+    IF NSN IS NOT NULL THEN
+        UPDATE pcs SET Num_Serie = NSN WHERE Num_Serie = NSO;
+        UPDATE mouse SET Num_Serie = NSN WHERE Num_Serie = NSO;
+        UPDATE teclado SET Num_Serie = NSN WHERE Num_Serie = NSO;
+        UPDATE accesorio SET Num_Serie = NSN WHERE Num_Serie = NSO;
+        UPDATE monitor SET Num_Serie_Monitor = NSN WHERE Num_Serie_Monitor = NSO;
+    END IF;
+
+    /* ==========================
+       CPU
+    ========================== */
     IF Eqp = 'CPU' THEN
-        IF HDW IS NOT NULL AND SFT IS NOT NULL THEN
-			INSERT INTO pcs VALUES (NSN, HDW, SFT)
+
+        IF HDW IS NOT NULL OR SFT IS NOT NULL THEN
+            INSERT INTO pcs (Num_Serie, Hardware, Software)
+            VALUES (
+                COALESCE(NSN, NSO),
+                HDW,
+                SFT
+            )
             ON DUPLICATE KEY UPDATE
-                Hardware = VALUES(Hardware),
-                Software = VALUES(Software);
+                Hardware = COALESCE(HDW, Hardware),
+                Software = COALESCE(SFT, Software);
         END IF;
-        
+
         IF MSE IS NOT NULL THEN
-			INSERT INTO Mouse VALUES(NSN, MSE) 
+            INSERT INTO mouse VALUES (COALESCE(NSN, NSO), MSE)
             ON DUPLICATE KEY UPDATE Mouse = VALUES(Mouse);
         END IF;
-        
+
         IF TLD IS NOT NULL THEN
-			INSERT INTO Teclado VALUES (NSN, TLD)
+            INSERT INTO teclado VALUES (COALESCE(NSN, NSO), TLD)
             ON DUPLICATE KEY UPDATE Teclado = VALUES(Teclado);
         END IF;
-        
+
         IF ACS IS NOT NULL THEN
-			INSERT INTO Accesorio VALUES(NSN, ACS)
+            INSERT INTO accesorio VALUES (COALESCE(NSN, NSO), ACS)
             ON DUPLICATE KEY UPDATE Accesorio = VALUES(Accesorio);
         END IF;
+
     END IF;
-    
-    /* ===============
-		MONITOR
-	=============== */
+
+    /* ==========================
+       MONITOR
+    ========================== */
     IF Eqp = 'MONITOR' AND NSCPU IS NOT NULL THEN
-		IF NOT EXISTS (
-			SELECT 1 FROM equipo WHERE Num_Serie = NSCPU AND Equipo = 'CPU'
-        ) THEN 
-			SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No hay un CPU con ese número de serie, inténtalo de nuevo';
-		END IF;
-        
-        INSERT INTO monitor VALUES (NSN, NSCPU)
-        ON DUPLICATE KEY UPDATE
-            Num_Serie_CPU = VALUES(Num_Serie_CPU);
+
+        IF NOT EXISTS (
+            SELECT 1 FROM equipo
+            WHERE Num_Serie = NSCPU
+            AND Equipo = 'CPU'
+        ) THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No existe CPU con ese número de serie';
+        END IF;
+
+        INSERT INTO monitor VALUES (COALESCE(NSN, NSO), NSCPU)
+        ON DUPLICATE KEY UPDATE Num_Serie_CPU = VALUES(Num_Serie_CPU);
+
     END IF;
+
     COMMIT;
+
 END |
 
 DELIMITER ;
+
 
 /* =======================
 	ELIMINAR EQUIPOS
@@ -582,59 +618,62 @@ DELIMITER //
 CREATE PROCEDURE AgregarUEMob(
 	IN arti varchar(100),
     IN descrip varchar(400),
-    IN usuar varchar(45), 
     IN encargado varchar(45),
     IN ubi varchar(400),
-    IN Cant int)
+    IN Cant int,
+    IN url VARCHAR(255))
 BEGIN
+    DECLARE v_emp INT;
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejo del error: devolver un mensaje de error y hacer rollback
         ROLLBACK;
-        SELECT 'Error: Ocurrió un error al añadir usuario o empleado' AS status;
+        RESIGNAL;
     END;
 
-    -- Iniciar la transacción
     START TRANSACTION;
+
+    SELECT Num_Emp INTO v_emp FROM empleado WHERE Nom = encargado;
+
+    IF v_emp IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Empleado no encontrado';
+    END IF;
 	
 	-- Insertar el mobiliario en la tabla de mobiliario
-	INSERT INTO mobiliario VALUES (NULL, arti, descrip, (
-		SELECT Num_emp from usuario where Usuario = usuar
-	), ubi, Cant, (select Área from empleado where Num_emp = (SELECT Num_emp from usuario where Usuario = usuar)));
-
-
-	-- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
-    -- Confirmar los cambios
-    COMMIT;
-
+	INSERT INTO mobiliario VALUES (NULL, arti, descrip, v_emp, ubi, Cant, (select Área from empleado where Num_emp = v_emp), url);
     
+    COMMIT;
 END //
 DELIMITER ;
 
+-- DROP PROCEDURE showMob;
 DELIMITER //
 CREATE PROCEDURE showMob(
     IN usu varchar(45))
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        -- Manejo del error: devolver un mensaje de error y hacer rollback
-        ROLLBACK;
-        SELECT 'Error: Ocurrió un error al mostrar el mobiliario' AS status;
-    END;
-    -- Iniciar la transacción
-    START TRANSACTION;
-		IF EXISTS (SELECT 1 FROM permisos WHERE usuario = usu AND permiso = 5 AND modulo = 'MOBILIARIO') THEN
-			SELECT m.*, e.Nom, u.usuario FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp INNER JOIN usuario u ON u.Num_Emp = m.Num_emp;
-		ELSE
-			SELECT m.*, e.Nom, u.usuario FROM mobiliario m JOIN empleado e ON m.Num_emp = e.Num_emp INNER JOIN usuario u ON u.Num_Emp = m.Num_emp WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
-		END IF;
+    DECLARE tiene_permiso INT DEFAULT 0;
+    
+    SELECT EXISTS(
+    SELECT 1
+    FROM usuario_permiso
+    WHERE modulo_id = 2
+      AND usuario = usu
+      AND (codigo_permiso = 7 OR codigo_permiso = 0)
+	) INTO tiene_permiso;
         
-	 -- Confirmar si la inserción fue exitosa
-    SELECT 'Success' AS status;
-    -- Confirmar los cambios
-    COMMIT;
-
+	IF tiene_permiso > 0 THEN 
+		SELECT m.*, e.Nom, u.usuario
+        FROM mobiliario m
+        JOIN empleado e ON m.Num_emp = e.Num_emp
+        JOIN usuario u ON u.Num_Emp = m.Num_emp;
+	ELSE 
+		SELECT m.*, e.Nom, u.usuario
+        FROM mobiliario m
+        JOIN empleado e ON m.Num_emp = e.Num_emp
+        JOIN usuario u ON u.Num_Emp = m.Num_emp
+        WHERE m.Num_emp = (SELECT Num_Emp from usuario WHERE Usuario = usu);
+	END IF;
    
 END //
 DELIMITER ;
@@ -703,7 +742,6 @@ BEGIN
 END //
 DELIMITER ;
 
-select*from mobiliario;
 drop procedure if exists ModificarUEMob;
 DELIMITER //
 CREATE PROCEDURE ModificarUEMob(
@@ -717,32 +755,44 @@ CREATE PROCEDURE ModificarUEMob(
     IN usuarioAntiguo VARCHAR(45)
 )
 BEGIN
+
+	DECLARE v_empO INT;
+    DECLARE v_empN INT;
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- Manejo del error: devolver un mensaje de error y hacer rollback
         ROLLBACK;
-        SELECT 'Error: Ocurrió un error al modificar el mobiliario' AS status;
+        RESIGNAL;
     END;
 
     -- Iniciar la transacción
     START TRANSACTION;
+    
+    SELECT Num_emp INTO v_empO FROM usuario WHERE Usuario = usuarioAntiguo;
+    IF v_empO IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Empleado no encontrado.';
+	END IF;
+    
+    SELECT Num_emp INTO v_empN FROM usuario WHERE Usuario = encargado;
+    IF v_empN IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El empleado por el que quieres cambiar no se ha encontrado.';
+	END IF;        
 
 	-- Modificar el mobiliario en la tabla de mobiliario utilizando el usuario
 	UPDATE mobiliario
 	SET 
 		Articulo = nuevoArticulo,
 		Descripcion = nuevaDescripcion,
-		Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = encargado),
+		Num_emp = (v_empN),
 		Ubicacion = nuevaUbicacion,
 		Cantidad = nuevaCantidad
 	WHERE 
 		Articulo = articuloAntiguo 
 		AND Descripcion = descripcionAntigua
-		AND Num_emp = (SELECT Num_emp FROM usuario WHERE Usuario = usuarioAntiguo);
-
-	-- Confirmar si la modificación fue exitosa
-    SELECT 'Success' AS status;
-    -- Confirmar los cambios
+		AND Num_emp = (v_empO);
+        
     COMMIT;
     
 END //

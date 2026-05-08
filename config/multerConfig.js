@@ -1,30 +1,12 @@
 const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
-const crypto = require('crypto');
+const path = require('path');
 const customId = require('../utils/customId'); // Mueve customId a utils
 
-const url = 'mongodb://127.0.0.1:27017/Clarac';
-
-const storage = new GridFsStorage({
-  url: url,
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = customId(req, true);
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads'
-        };
-        resolve(fileInfo);
-      });
-    });
+const storage = multer.diskStorage({
+  destination: 'uploads/mobiliario',
+  filename: (req, file, cb) => {
+    cb(null, customId(req, true) + path.extname(file.originalname));
   }
 });
 
-const upload = multer({ storage });
-
-module.exports = upload;
+module.exports = multer({ storage });

@@ -53,7 +53,7 @@ router.get('/', verifyJWT, attachPermissions, hasPermissions('EQUIPOS', 'read'),
  *       409:
  *         description: Ya existe un equipo con ese número de serie
  */
-router.post('/newDev', verifyJWT, validate(addDeviceSchema), controller.addDevice);
+router.post('/newDev', verifyJWT, validate(addDeviceSchema), hasPermissions('EQUIPOS', 'create'), controller.addDevice);
 
 /**
  * @swagger

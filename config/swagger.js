@@ -1,4 +1,5 @@
 const swaggerJsdoc = require('swagger-jsdoc');
+const { maxLength } = require('zod');
 
 const options = {
     definition: {
@@ -103,7 +104,26 @@ const options = {
                         ns: '12345',
                         encargado: 'JIMENEZ RIVERA ARMANDO'
                     }
-                }
+                },
+                New_Furniture: {
+                    type: 'object',
+                    properties: {
+                        articulo: { type: 'string', maxLength: 100 },
+                        descripcion: { type: 'string', maxLength: 255},
+                        encargado: { type: 'string', maxLength: 255 },
+                        ubi: { type: 'string', maxLength: 400 },
+                        cantidad: { type: 'integer', minimum: 1 },
+                        url: { type: 'string', maxLength: 255 }
+                    },
+                    example: {
+                        articulo: 'Silla de oficina',
+                        descripcion: 'Silla ergonómica con soporte lumbar',
+                        encargado: 'JIMENEZ RIVERA ARMANDO',
+                        ubi: 'Oficina',
+                        cantidad: 10,
+                        url: 'uploads/mobiliario/ejemplo.jpg'
+                    }
+                },
             }
         }
     },

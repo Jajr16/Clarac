@@ -11,11 +11,10 @@ exports.getAllDevices = async (username) => {
     const devices = await repo.getAllDevices(username);
 
     if (!devices || devices.length === 0) throw new AppError(
-        ERRORS.NO_DEVICES_FOUND.message,
-        ERRORS.NO_DEVICES_FOUND.status
+        ERRORS.NOT_FOUND.message,
+        ERRORS.NOT_FOUND.status
     );
-    console.log('Dispositivos obtenidos:', devices);
-    console.log('Dispositivos obtenidos:', mapDevices(devices));
+
     return mapDevices(devices);
 }
 

@@ -1,18 +1,58 @@
 // routes/mobiliario.js
-const { GridFSBucket } = require('mongodb');
-const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const furnitures = require('../../bin/Mobiliario');
-const addFurnit = require('../../bin/AddMobiliario');
-const modFurnit = require('../../bin/MobiliarioModify');
-const delFurnit = require('../../bin/deleteMobiliario');
-const getName = require('../../bin/getName');
-const upload = require('../../config/multerConfig');
-const { isAuthenticated, subperm } = require('../../frontend/middleware/authMiddleware');
-const { agregarNuevoElemento } = require('../../utils/nuevoArchivo');
 
-const customId = require('../../utils/customId');
+const controller = require('./furniture.controller.js');
+
+const verifyJWT = require('../../middleware/verifyJWT.js');
+const attachPermissions = require('../../middleware/attachPermissions.js');
+const hasPermissions = require('../../middleware/hasPermissions.js');
+
+const validate = require('../../middleware/validateDTO.js');
+const { addFurnitureSchema } = require('./furniture.dto.js');
+
+/**
+ * @swagger
+ * /furnitures:
+ *  get:
+ *    summary: Obtener mobiliario
+ *    tags:
+ *     - Mobiliario
+ *    security:
+ *     - bearerAuth: []
+ *    responses:
+ *      200:
+ *       description: Lista de mobiliario
+ *      403:
+ *       description: Sin permisos
+ */
+router.get('/', verifyJWT, attachPermissions, hasPermissions('MOBILIARIO', 'read'), controller.getAllFurnitures);
+
+/**
+ * @swagger
+ * /furnitures:
+ *  post:
+ *    summary: Agregar un nuevo mobiliario
+ *    tags:
+ *      - Mobiliario
+ *    security:
+ *     - bearerAuth: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/New_Furniture'
+ *    responses:
+ *       200:
+ *        description: Mobiliario agregado exitosamente
+ *       403:
+ *         description: Sin permisos
+ *       422:
+ *         description: Datos de entrada inválidos
+ */
+router.post('/', verifyJWT, attachPermissions, validate(addFurnitureSchema), hasPermissions('MOBILIARIO', 'create'), controller.addFurniture);
+/* const customId = require('../../utils/customId');
 
 const url = 'mongodb://127.0.0.1:27017/Clarac';
 let gfsBucket = null;
@@ -248,6 +288,6 @@ router.post('/users/disp_image', isAuthenticated, upload.none(), async (req, res
     console.error('Error al obtener el archivo:', err);
     res.status(500).json({ err: 'Error al obtener el archivo' });
   }
-});
+}); */
 
 module.exports = router;

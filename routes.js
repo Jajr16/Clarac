@@ -1,8 +1,22 @@
+const viewsRouter = require('./views.routes.js');
+
 module.exports = (app) => {
-    app.use('/', require('./modules/login/login.route'));
-    app.use('/users', require('./modules/users/users.route'));
-    app.use('/devices', require('./modules/devices/device.routes'));
-    app.use('/furnitures', require('./modules/furniture/furniture.routes'));
+    /* 
+        ===================
+            FRONTEND
+        ===================
+    */
+    app.use('/', viewsRouter);
+
+    /* 
+        ===================
+            BACKEND
+        ===================
+    */
+    app.use('/api/auth', require('./modules/login/login.route'));
+    app.use('/api/users', require('./modules/users/users.route'));
+    app.use('/api/devices', require('./modules/devices/device.routes'));
+    app.use('/api/furnitures', require('./modules/furniture/furniture.routes'));
     // app.use('/mobiliario', require('./modules/mobiliario/mobiliario.routes'));
     // app.use('/producto', require('../routes/productos'));
     // app.use('/prod_exts', require('../routes/prod_exists'));

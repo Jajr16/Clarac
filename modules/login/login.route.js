@@ -42,9 +42,4 @@ router.post(
   loginController.login
 );
 
-
-router.get('/', function (req, res) {
-  res.render('LogIn', { title: 'CLARAC | LogIn', layout: false, errorMessage: null });
-});
-
 module.exports = router;

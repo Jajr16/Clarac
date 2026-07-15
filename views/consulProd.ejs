@@ -34,51 +34,58 @@
         <div class="subtitle-container">
             Detalles del producto
         </div>
-            <% if (permissions['ALMACÉN'].includes('2')) { %>
-            <i class="fa-solid fa-trash trash" aria-hidden="true"
+        <!-- BAJAS -->
+        <i class="fa-solid fa-trash trash" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
-            <% } %>
-            <% if (permissions['ALMACÉN'].includes('3')) { %>
-            <i class="fa fa-pencil-square-o edit" aria-hidden="true"
+        <!-- CAMBIOS -->
+        <i class="fa fa-pencil-square-o edit" aria-hidden="true"
             style="float: right; color: #001781; visibility: hidden;"></i>
-            <% } %>
-                
-                <form method="POST" enctype="multipart/form-data">
-                        <div class="description-product">
-                            <div class="DP">
-                                <label>Producto:</label>
-                                <input autocomplete="off" type="text" id="Pname" name="Pname" class="Pname EditData" required
-                                maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="description-product">
+                <div class="DP">
+                    <label>Producto:</label>
+                    <input autocomplete="off" type="text" id="Pname"
+                        name="Pname" class="Pname EditData" required
+                        maxlength="400" oninput="mayus(this);"
+                        onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Código de barras:</label>
-                    <input autocomplete="off" type="text" id="CodBarrasP" name="CodBarrasP" class="CodBarrasP EditData"
-                    required maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <input autocomplete="off" type="text" id="CodBarrasP"
+                        name="CodBarrasP" class="CodBarrasP EditData"
+                        required maxlength="400" oninput="mayus(this);"
+                        onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Categoría:</label>
-                    <select id="CateP" class="CateP EditData EditSelect" name="CateP" required disabled></select>
+                    <select id="CateP" class="CateP EditData EditSelect"
+                        name="CateP" required disabled></select>
                 </div>
                 <div class="DP">
                     <label>Marca:</label>
-                    <input autocomplete="off" type="text" id="MarcaP" name="MarcaP" class="MarcaP EditData" required
-                    maxlength="400" oninput="mayus(this);" onkeypress="return checkA(event)" readonly>
+                    <input autocomplete="off" type="text" id="MarcaP"
+                        name="MarcaP" class="MarcaP EditData" required
+                        maxlength="400" oninput="mayus(this);"
+                        onkeypress="return checkA(event)" readonly>
                 </div>
                 <div class="DP">
                     <label>Unidad de medida:</label>
-                    <select id="UnidadP" class="UnidadP EditData EditSelect" name="UnidadP" required disabled></select>
+                    <select id="UnidadP" class="UnidadP EditData EditSelect"
+                        name="UnidadP" required disabled></select>
                 </div>
                 <div>
                     <label style="margin-bottom: 1rem;">Descripción:</label>
-                    <textarea class="product-description DescP EditData" id="DescP" name="DescP" oninput="mayus(this);"
-                    onkeypress="return checkA(event)" required readonly></textarea>
+                    <textarea class="product-description DescP EditData"
+                        id="DescP" name="DescP" oninput="mayus(this);"
+                        onkeypress="return checkA(event)" required
+                        readonly></textarea>
                 </div>
                 <div class="buttons"></div>
             </div>
         </form>
     </div>
-    <% if (permissions['ALMACÉN'].includes('1')) { %>
-        <i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>
-    <% } %>
+    <!-- ALTAS -->
+    <i class="fa-solid fa-circle-plus body-icons" style="font-size: 25px;"></i>
 </div>
 <link rel="stylesheet" type="text/css" href="/stylesheets/products.css">

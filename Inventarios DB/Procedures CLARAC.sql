@@ -1248,58 +1248,51 @@ CREATE PROCEDURE showEqp(
 BEGIN
     DECLARE areaEmp VARCHAR(45);
     
-    -- Error handler to rollback on exception
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error' AS status, 'Transaction failed' AS message;
-    END;
-    START TRANSACTION;
+    -- 1. Obtenemos el área de forma directa y limpia
+    SELECT Área INTO areaEmp 
+    FROM empleado 
+    INNER JOIN usuario ON empleado.Num_emp = usuario.Num_emp 
+    WHERE usuario.Usuario = usu; -- Especifica la columna para evitar ambigüedades
     
-	SELECT Área INTO areaEmp FROM empleado INNER JOIN usuario ON empleado.Num_emp = usuario.Num_emp 
-    WHERE usuario = usu;
-    
+    -- 2. Filtramos la consulta según el privilegio del área
     IF areaEmp = 'SISTEMAS' THEN
-		SELECT DISTINCT 
-			Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
-			empleado.Nom,
-            equipo.Ubi,
-			pcs.Hardware,
-			pcs.Software,
-			Monitor.Num_Serie_CPU,
-			mouse.Mouse,
-			teclado.Teclado,
-			accesorio.Accesorio
-		FROM Equipo
-		LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
-		LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
-		LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
-		LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
-		LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie 
-		JOIN empleado ON Equipo.Num_emp = empleado.Num_emp;
-	ELSE
-		SELECT DISTINCT 
-			Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
-            equipo.Ubi,
-			pcs.Hardware,
-			pcs.Software,
-			Monitor.Num_Serie_CPU,
-			mouse.Mouse,
-			teclado.Teclado,
-			accesorio.Accesorio
-		FROM Equipo
-		LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
-		LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
-		LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
-		LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
-		LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
+        SELECT DISTINCT 
+            Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
+            empleado.Nom AS NombreEmpleado,
+            Equipo.Ubi,
+            PCs.Hardware,
+            PCs.Software,
+            Monitor.Num_Serie_CPU,
+            Mouse.Mouse,
+            Teclado.Teclado,
+            Accesorio.Accesorio
+        FROM Equipo
+        LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
+        LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
+        LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
+        LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
+        LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie 
+        LEFT JOIN empleado ON Equipo.Num_emp = empleado.Num_emp; -- Cambiado a LEFT por seguridad si un equipo no tiene dueño asignado
+    ELSE
+        SELECT DISTINCT 
+            Equipo.N_Inventario, Equipo.Num_Serie, Equipo.Equipo, Equipo.Marca, Equipo.Modelo,
+            Equipo.Ubi,
+            PCs.Hardware,
+            PCs.Software,
+            Monitor.Num_Serie_CPU,
+            Mouse.Mouse,
+            Teclado.Teclado,
+            Accesorio.Accesorio
+        FROM Equipo
+        LEFT JOIN PCs ON Equipo.Num_Serie = PCs.Num_Serie
+        LEFT JOIN Monitor ON Equipo.Num_Serie = Monitor.Num_Serie_Monitor
+        LEFT JOIN Mouse ON Equipo.Num_Serie = Mouse.Num_Serie
+        LEFT JOIN Teclado ON Equipo.Num_Serie = Teclado.Num_Serie 
+        LEFT JOIN Accesorio ON Equipo.Num_Serie = Accesorio.Num_Serie;
     END IF;
-
-    -- Commit the transaction
-    SELECT 'Success' AS status;
-    COMMIT;
 END$$
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS consulRPS;
 DELIMITER | 

@@ -53,7 +53,7 @@ router.get('/', verifyJWT, attachPermissions, hasPermissions('EQUIPOS', 'read'),
  *       409:
  *         description: Ya existe un equipo con ese número de serie
  */
-router.post('/newDev', verifyJWT, validate(addDeviceSchema), hasPermissions('EQUIPOS', 'create'), controller.addDevice);
+router.post('/', verifyJWT, validate(addDeviceSchema), hasPermissions('EQUIPOS', 'create'), controller.addDevice);
 
 /**
  * @swagger
@@ -78,7 +78,7 @@ router.post('/newDev', verifyJWT, validate(addDeviceSchema), hasPermissions('EQU
  *       422:
  *         description: Datos de entrada inválidos
  */
-router.patch('/editDev', verifyJWT, validate(editDeviceSchema), controller.editDevice);
+router.patch('/', verifyJWT, validate(editDeviceSchema), controller.editDevice);
 
 /**
  * @swagger
@@ -103,6 +103,6 @@ router.patch('/editDev', verifyJWT, validate(editDeviceSchema), controller.editD
  *       422:
  *         description: Datos de entrada inválidos
  */
-router.delete('/delDev', verifyJWT, controller.deleteDevice);
+router.delete('/', verifyJWT, controller.deleteDevice);
 
 module.exports = router;

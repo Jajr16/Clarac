@@ -246,7 +246,8 @@ INSERT INTO catalogo_modulos(nombre) VALUES
 ('USUARIOS'),
 ('EMPLEADOS'),
 ('RESPONSIVAS'),
-('PETICIONES');
+('PETICIONES'),
+('ALMACEN');
 
 CREATE TABLE usuario_permiso(
     usuario VARCHAR(45)

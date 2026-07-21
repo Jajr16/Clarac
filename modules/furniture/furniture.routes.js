@@ -13,7 +13,7 @@ const { addFurnitureSchema } = require('./furniture.dto.js');
 
 /**
  * @swagger
- * /furnitures:
+ * /api/furnitures:
  *  get:
  *    summary: Obtener mobiliario
  *    tags:
@@ -30,7 +30,7 @@ router.get('/', verifyJWT, attachPermissions, hasPermissions('MOBILIARIO', 'read
 
 /**
  * @swagger
- * /furnitures:
+ * /api/furnitures:
  *  post:
  *    summary: Agregar un nuevo mobiliario
  *    tags:

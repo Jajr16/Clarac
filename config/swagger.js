@@ -36,6 +36,25 @@ const options = {
                         password: 'Clarac2017'
                     }
                 },
+                New_Product: {
+                    type: 'object',
+                    properties: {
+                        cod_barras: { type: 'string', maxLength: 45 },
+                        categoria: { type: 'string', maxLength: 45 },
+                        articulo: { type: 'string', maxLength: 45 },
+                        marca: { type: 'string', maxLength: 100 },
+                        descripcion: { type: 'string', maxLength: 400 },
+                        unidad: { type: 'string', maxLength: 45 }
+                    },
+                    example: {
+                        cod_barras: 'ABCD1234',
+                        categoria: 'PAPELERÍA',
+                        articulo: 'Cuaderno',
+                        marca: 'Norma',
+                        descripcion: 'Cuaderno de 100 hojas, tamaño carta',
+                        unidad: 'pieza'
+                    }
+                },
                 New_Device: {
                     type: 'object',
                     properties: {

@@ -29,6 +29,11 @@ module.exports = {
         status: 403
     },
 
+    NOT_FOUND: {
+        message: 'Recurso no encontrado',
+        status: 404
+    },
+
     TOKEN_REQUIRED: {
         message: 'Token de autenticación requerido',
         status: 401
@@ -38,12 +43,7 @@ module.exports = {
         message: 'Token de autenticación inválido o expirado',
         status: 401
     },
-
-    NOT_FOUND: {
-        message: 'No hay nada por el momento.',
-        status: 404
-    },
-
+    
     CREATE_ITEM_ERROR: {
         message: 'Hubo un error al crear el producto.',
         status: 500

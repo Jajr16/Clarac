@@ -13,6 +13,7 @@ form.addEventListener('submit', async (e) => {
         const data = await login(username, password);
 
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', data.user);
         localStorage.setItem('permissions', JSON.stringify(data.permissions));
         
         redirectHome();

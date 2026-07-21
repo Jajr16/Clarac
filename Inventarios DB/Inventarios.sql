@@ -1,3 +1,4 @@
+create database inventarios;
 -- MySQL Workbench Forward Engineering
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -35,8 +36,8 @@ COMMENT = '			';
 -- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Usuario` (
-  `Num_Emp` INT NULL,
-  `Usuario` VARCHAR(45) NOT NULL,
+  `Num_Emp` INT null UNIQUE,
+  `Usuario` VARCHAR(255) NOT NULL,
   `Pass` VARCHAR(45) not NULL,
   PRIMARY KEY (`Usuario`),
   INDEX `Num_emp_idx` (`Num_Emp` ASC),
@@ -139,7 +140,7 @@ ENGINE = InnoDB;
 -- Table `Inventarios`.`Facturas_Almacen`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Facturas_Almacen` (
-  `Num_Fact` varchar(10) NOT NULL,
+  `Num_Fact` nvarchar(10) NOT NULL,
   `Ffact` DATE NULL,
   `Proveedor` varchar(45),
   PRIMARY KEY (`Num_Fact`))
@@ -250,9 +251,7 @@ INSERT INTO catalogo_modulos(nombre) VALUES
 ('ALMACEN');
 
 CREATE TABLE usuario_permiso(
-    usuario VARCHAR(45)
-        CHARACTER SET utf8mb3
-        COLLATE utf8mb3_general_ci,
+    usuario VARCHAR(45),
 
     modulo_id INT,
     codigo_permiso VARCHAR(5),
@@ -300,7 +299,7 @@ flush privileges;
 
 CREATE TABLE soli_car (
 	sol_id int auto_increment not null primary key,
-    Cod_Barras_SC VARCHAR(45),
+    Cod_Barras_SC NVARCHAR(45),
     cantidad_SC INT(10),
     emp_SC int,
     request_date datetime,
@@ -321,7 +320,5 @@ CREATE TABLE status_soli(
     on update cascade on delete cascade
 );
 
-DELETE FROM mobiliario;
-select*from almacen;
-select*from permisos;
-SELECT*FROM usuario;
+ALTER TABLE inventarios.almacen MODIFY COLUMN Existencia int DEFAULT 0 NULL;
+alter table usuario add column password_version int default 0;

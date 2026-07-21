@@ -1,3 +1,4 @@
+// Furniture Service
 const repo = require('./furniture.repository');
 
 const AppError = require('../../errors/AppError');

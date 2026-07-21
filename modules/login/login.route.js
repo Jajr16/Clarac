@@ -16,7 +16,7 @@ const loginLimiter = rateLimit({
 
 /**
  * @swagger
- * /:
+ * /api/:
  *   post:
  *     summary: Iniciar sesión
  *     tags:

@@ -1,3 +1,4 @@
+// Furniture Controller
 const service = require('./furniture.service');
 
 exports.getAllFurnitures = async (req, res, next) => {

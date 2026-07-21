@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require('./device.controller.js');
+const controller = require('./device.controller');
 
 const verifyJWT = require('../../middleware/verifyJWT.js');
 const attachPermissions = require('../../middleware/attachPermissions.js');
@@ -13,7 +13,7 @@ const { addDeviceSchema, editDeviceSchema } = require('./device.dto.js');
 
 /**
  * @swagger
- * /devices:
+ * /api/devices:
  *   get:
  *     summary: Obtener equipos
  *     tags:
@@ -30,7 +30,7 @@ router.get('/', verifyJWT, attachPermissions, hasPermissions('EQUIPOS', 'read'),
 
 /**
  * @swagger
- * /devices/newDev:
+ * /api/devices:
  *   post:
  *     summary: Agregar un nuevo equipo
  *     tags:
@@ -57,7 +57,7 @@ router.post('/', verifyJWT, validate(addDeviceSchema), hasPermissions('EQUIPOS',
 
 /**
  * @swagger
- * /devices/editDev:
+ * /api/devices:
  *   patch:
  *     summary: Editar un equipo existente
  *     tags:
@@ -82,7 +82,7 @@ router.patch('/', verifyJWT, validate(editDeviceSchema), controller.editDevice);
 
 /**
  * @swagger
- * /devices/delDev:
+ * /api/devices:
  *   delete:
  *     summary: Eliminar un equipo
  *     tags:

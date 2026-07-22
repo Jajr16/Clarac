@@ -8,13 +8,18 @@
             <form name="crearRespon" id="crearRespon">
                 <div class="two-boxes">
                     <div class="FTB">
-                        <select id="mySelect" class="Resp searchInput" required>
+                        <select id="selectTipoResp" name="selectTipoResp" class="Resp searchInput">
                             <option disabled selected>Tipo responsiva</option>
                         </select>
                     </div>
                     <div class="FTB">
-                        <select id="mySelect" class="Employees searchInput" required style="width: 100%;">
+                        <select id="selectEmpleado" name="selectEmpleado" class="Employees searchInput" style="width: 100%;">
                             <option value="" disabled selected>Buscar empleados</option>
+                        </select>
+                    </div>
+                    <div class="FTB">
+                        <select id="ubiSelect" name="ubiSelect" class="ubiSelect UbiM searchInput" style="width: 100%;">
+                            <option value="" disabled selected>Buscar por ubicación</option>
                         </select>
                     </div>
                     <input type="submit" style="width: 15rem; margin-top: 0;" value="Aceptar" class="BotonAA">
@@ -27,3 +32,4 @@
     </div>
 </div>
 <script type="text/javascript" src="/javascripts/Responsivas.js"></script>
+<script type="text/javascript" src="/javascripts/ubicaciones.js"></script>

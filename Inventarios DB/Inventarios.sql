@@ -1,3 +1,4 @@
+create database inventarios;
 -- MySQL Workbench Forward Engineering
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -35,8 +36,8 @@ COMMENT = '			';
 -- Table `Inventarios`.`Usuario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Usuario` (
-  `Num_Emp` INT NULL,
-  `Usuario` VARCHAR(45) NOT NULL,
+  `Num_Emp` INT null UNIQUE,
+  `Usuario` VARCHAR(255) NOT NULL,
   `Pass` VARCHAR(45) not NULL,
   PRIMARY KEY (`Usuario`),
   INDEX `Num_emp_idx` (`Num_Emp` ASC),
@@ -139,7 +140,7 @@ ENGINE = InnoDB;
 -- Table `Inventarios`.`Facturas_Almacen`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Inventarios`.`Facturas_Almacen` (
-  `Num_Fact` varchar(10) NOT NULL,
+  `Num_Fact` nvarchar(10) NOT NULL,
   `Ffact` DATE NULL,
   `Proveedor` varchar(45),
   PRIMARY KEY (`Num_Fact`))
@@ -217,12 +218,55 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-create table permisos(
-permiso enum("0", "1","2","3","4", "5") not null, #Tambien se puede set 1 Altas 2 Bajas 3 Cambios 4 Consultas
-usuario varchar(25),
-modulo enum("ALMACÉN", "MOBILIARIO", "EQUIPOS","RESPONSIVAS","USUARIOS","EMPLEADOS", "PETICIONES", "ADMIN") not null,
-primary key(permiso, usuario, modulo),
-foreign key (usuario) references usuario(Usuario) on delete cascade on update cascade
+CREATE TABLE catalogo_permisos(
+	codigo VARCHAR(5) PRIMARY KEY,
+    accion VARCHAR(40) NOT NULL, 
+    descripcion VARCHAR(100)
+);
+
+INSERT INTO catalogo_permisos VALUES
+('0','super','Administrador total'),
+
+('1','read','Ver registros'),
+('2','create','Crear registros'),
+('3','update','Actualizar registros'),
+('4','delete','Eliminar registros'),
+
+('5','add_location','Agregar ubicaciones'),
+('6','add_product','Agregar productos'),
+('7','assign_manager','Asignar encargado');
+
+CREATE TABLE catalogo_modulos(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(40)
+);
+
+INSERT INTO catalogo_modulos(nombre) VALUES
+('EQUIPOS'),
+('MOBILIARIO'),
+('USUARIOS'),
+('EMPLEADOS'),
+('RESPONSIVAS'),
+('PETICIONES'),
+('ALMACEN');
+
+CREATE TABLE usuario_permiso(
+    usuario VARCHAR(45),
+
+    modulo_id INT,
+    codigo_permiso VARCHAR(5),
+
+    PRIMARY KEY(usuario, modulo_id, codigo_permiso),
+
+    FOREIGN KEY(usuario)
+        REFERENCES usuario(Usuario)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY(modulo_id)
+        REFERENCES catalogo_modulos(id),
+
+    FOREIGN KEY(codigo_permiso)
+        REFERENCES catalogo_permisos(codigo)
 );
 
 create table factus_Productos(
@@ -255,7 +299,7 @@ flush privileges;
 
 CREATE TABLE soli_car (
 	sol_id int auto_increment not null primary key,
-    Cod_Barras_SC VARCHAR(45),
+    Cod_Barras_SC NVARCHAR(45),
     cantidad_SC INT(10),
     emp_SC int,
     request_date datetime,
@@ -276,7 +320,5 @@ CREATE TABLE status_soli(
     on update cascade on delete cascade
 );
 
-DELETE FROM mobiliario;
-select*from almacen;
-select*from permisos;
-SELECT*FROM usuario;
+ALTER TABLE inventarios.almacen MODIFY COLUMN Existencia int DEFAULT 0 NULL;
+alter table usuario add column password_version int default 0;

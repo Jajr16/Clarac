@@ -35,6 +35,7 @@ router.post('/new_eqp', isAuthenticated, subperm('EQUIPOS', [1]), (req, res) => 
                 res.json(resultado)
             }
         })
+        res.json(result);
     });
 });
 
@@ -53,6 +54,7 @@ router.post('/mod_eqp', isAuthenticated, subperm('EQUIPOS', [3]), upload.none(),
                 res.json(resultado)
             }
         })
+        res.json(result);
     });
 });
 

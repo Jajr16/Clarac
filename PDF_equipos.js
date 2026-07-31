@@ -85,6 +85,7 @@ async function equipos_generatePDF(num_emp, areaEmp, NombreEmp, eqpsData) {
     `;
 
     const browser = await puppeteer.launch({
+        executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         ignoreDefaultArgs: ['--disable-popup-blocking'],
         args: ['--disable-popup-blocking', '--no-sandbox', '--disable-setuid-sandbox'],
         headless: "new",

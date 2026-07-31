@@ -76,6 +76,7 @@ async function mobiliario_generatePDF(num_emp, areaEmp, NombreEmp, mobData) {
     `;
     console.log('Antes de puppeteer.launch')
     const browser = await puppeteer.launch({
+        executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         ignoreDefaultArgs: ['--disable-popup-blocking'],
         args: ['--disable-popup-blocking', '--no-sandbox', '--disable-setuid-sandbox'],
         headless: "true",

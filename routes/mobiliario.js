@@ -71,6 +71,7 @@ router.post('/mod_mob', isAuthenticated, subperm('MOBILIARIO', [3]), upload.none
         res.json(success);
       }
     })
+    res.json(result);
   });
 });
 
